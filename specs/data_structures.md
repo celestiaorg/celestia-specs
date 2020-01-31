@@ -137,9 +137,16 @@ enum BlockIDFlag {
 
 ## Vote
 
+```C++
+enum VoteType {
+    Prevote = 1,
+    Precommit = 2,
+};
+```
+
 | name               | type                  | description |
 | ------------------ | --------------------- | ----------- |
-| `type`             | `byte`                |             |
+| `type`             | `VoteType`            |             |
 | `height`           | `uint64`              |             |
 | `round`            | `uint64`              |             |
 | `blockID`          | [BlockID](#blockid)   |             |
@@ -157,6 +164,8 @@ https://github.com/tendermint/go-amino
 https://en.wikipedia.org/wiki/SHA-3
 
 https://godoc.org/golang.org/x/crypto/sha3
+
+https://docs.rs/sha3
 
 # Signing
 
