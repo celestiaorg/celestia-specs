@@ -22,7 +22,7 @@ Data Structures
 - [Hashing](#hashing)
 - [Signing](#signing)
 - [Merkle Tree](#merkle-tree)
-- [Namespace Merkle Tree](#namespace-merkle-tree)
+  - [Namespace Merkle Tree](#namespace-merkle-tree)
 - [Erasure Coding](#erasure-coding)
 
 # Blockchain Data Structures
@@ -41,7 +41,7 @@ Data Structures
 | name                 | type                      | description |
 | -------------------- | ------------------------- | ----------- |
 | `version`            | [Version](#version)       |             |
-| `chainID`            | `uint64`                  |             |
+| `chainID`            | `string`                  |             |
 | `height`             | `uint64`                  |             |
 | `time`               | [Time](#time)             |             |
 | `lastBlockID`        | [BlockID](#blockid)       |             |
@@ -175,7 +175,7 @@ https://docs.rs/sha3
 
 
 
-# Namespace Merkle Tree
+## Namespace Merkle Tree
 
 
 
