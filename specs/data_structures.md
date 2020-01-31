@@ -157,7 +157,7 @@ enum VoteType {
 
 # Serialization
 
-https://github.com/tendermint/go-amino
+https://developers.google.com/protocol-buffers/docs/proto3
 
 # Hashing
 
