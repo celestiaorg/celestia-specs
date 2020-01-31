@@ -41,7 +41,7 @@ Data Structures
 | name                 | type                      | description |
 | -------------------- | ------------------------- | ----------- |
 | `version`            | [Version](#version)       |             |
-| `chainID`            | `string`                  |             |
+| `chainID`            | `uint64`                  |             |
 | `height`             | `uint64`                  |             |
 | `time`               | [Time](#time)             |             |
 | `lastBlockID`        | [BlockID](#blockid)       |             |
