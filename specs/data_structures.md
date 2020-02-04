@@ -85,7 +85,8 @@ Wrapper for evidence data.
 
 ## Time
 
-https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/timestamp
+LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/timestamp) format for timestamps, which represents time as seconds in UTC Epoch Time and nonoseconds.
+
 
 ## BlockID
 
@@ -159,7 +160,8 @@ https://developers.google.com/protocol-buffers/docs/proto3
 
 # Hashing
 
-https://en.wikipedia.org/wiki/SHA-3
+All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)).
+This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM.
 
 https://godoc.org/golang.org/x/crypto/sha3
 
