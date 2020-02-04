@@ -8,7 +8,6 @@ Data Structures
   - [Data](#data)
   - [EvidenceData](#evidencedata)
   - [Commit](#commit)
-  - [Version](#version)
   - [Time](#time)
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
@@ -29,45 +28,51 @@ Data Structures
 
 ## Block
 
-| name         | type                          | description |
-| ------------ | ----------------------------- | ----------- |
-| `header`     | [Header](#header)             |             |
-| `data`       | [Data](#data)                 |             |
-| `evidence`   | [EvidenceData](#evidencedata) |             |
-| `lastCommit` | [Commit](#commit)             |             |
+Blocks are the top-level data structure of the LazyLedger blockchain.
+
+| name         | type                          | description                                                           |
+| ------------ | ----------------------------- | --------------------------------------------------------------------- |
+| `header`     | [Header](#header)             | Block header. Contains primarily identification info and commitments. |
+| `data`       | [Data](#data)                 | Transaction data.                                                     |
+| `evidence`   | [EvidenceData](#evidencedata) | Evidence used for slashing conditions (e.g. equivocation).            |
+| `lastCommit` | [Commit](#commit)             | Last block's Tendermint commit.                                       |
 
 ## Header
 
-| name                 | type                      | description |
-| -------------------- | ------------------------- | ----------- |
-| `version`            | [Version](#version)       |             |
-| `chainID`            | `uint64`                  |             |
-| `height`             | `uint64`                  |             |
-| `time`               | [Time](#time)             |             |
-| `lastBlockID`        | [BlockID](#blockid)       |             |
-| `lastCommitHash`     | [HashDigest](#hashdigest) |             |
-| `dataHash`           | [HashDigest](#hashdigest) |             |
-| `validatorsHash`     | [HashDigest](#hashdigest) |             |
-| `nextValidatorsHash` | [HashDigest](#hashdigest) |             |
-| `consensusHash`      | [HashDigest](#hashdigest) |             |
-| `appHash`            | [HashDigest](#hashdigest) |             |
-| `lastResultsHash`    | [HashDigest](#hashdigest) |             |
-| `evidenceHash`       | [HashDigest](#hashdigest) |             |
-| `proposerAddress`    | [Address](#address)       |             |
+| name                 | type                      | description                                       |
+| -------------------- | ------------------------- | ------------------------------------------------- |
+| `version`            | `uint64`                  | Version of the LazyLedger chain.                  |
+| `chainID`            | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID. |
+| `height`             | `uint64`                  | Block height. The genesis block is at height `1`. |
+| `time`               | [Time](#time)             |                                                   |
+| `lastBlockID`        | [BlockID](#blockid)       |                                                   |
+| `lastCommitHash`     | [HashDigest](#hashdigest) |                                                   |
+| `dataHash`           | [HashDigest](#hashdigest) |                                                   |
+| `validatorsHash`     | [HashDigest](#hashdigest) |                                                   |
+| `nextValidatorsHash` | [HashDigest](#hashdigest) |                                                   |
+| `consensusHash`      | [HashDigest](#hashdigest) |                                                   |
+| `appHash`            | [HashDigest](#hashdigest) |                                                   |
+| `lastResultsHash`    | [HashDigest](#hashdigest) |                                                   |
+| `evidenceHash`       | [HashDigest](#hashdigest) |                                                   |
+| `proposerAddress`    | [Address](#address)       |                                                   |
 
 ## Data
 
- | name  | type                            | description |
- | ----- | ------------------------------- | ----------- |
- | `txs` | [Transaction](#transaction)`[]` |             |
+Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
+
+ | name  | type                            | description           |
+ | ----- | ------------------------------- | --------------------- |
+ | `txs` | [Transaction](#transaction)`[]` | List of transactions. |
 
 TODO define a transaction format
 
 ## EvidenceData
 
-| name       | type                      | description |
-| ---------- | ------------------------- | ----------- |
-| `evidence` | [Evidence](#evidence)`[]` |             |
+Wrapper for evidence data.
+
+| name       | type                      | description                                    |
+| ---------- | ------------------------- | ---------------------------------------------- |
+| `evidence` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
 
 ## Commit
 
@@ -77,13 +82,6 @@ TODO define a transaction format
 | `round`      | `uint64`                    |             |
 | `blockID`    | [BlockID](#blockid)         |             |
 | `signatures` | [CommitSig](#commitsig)`[]` |             |
-
-## Version
-
-| name                | type     | description |
-| ------------------- | -------- | ----------- |
-| `blockchainVersion` | `uint64` |             |
-| `appVersion`        | `uint64` |             |
 
 ## Time
 
@@ -104,11 +102,11 @@ https://developers.google.com/protocol-buffers/docs/reference/csharp/class/googl
 
 ## Evidence
 
-| name     | type                 | description |
-| -------- | -------------------- | ----------- |
-| `pubKey` | [PubicKey](#signing) |             |
-| `voteA`  | [Vote](#vote)        |             |
-| `voteB`  | [Vote](#vote)        |             |
+| name     | type                  | description |
+| -------- | --------------------- | ----------- |
+| `pubKey` | [PublicKey](#signing) |             |
+| `voteA`  | [Vote](#vote)         |             |
+| `voteB`  | [Vote](#vote)         |             |
 
 ## CommitSig
 
