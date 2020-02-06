@@ -12,7 +12,7 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
-  - [Transaction](#transaction)
+  - [Message](#message)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
   - [PartSetHeader](#partsetheader)
@@ -33,7 +33,7 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 | name         | type                          | description                                                           |
 | ------------ | ----------------------------- | --------------------------------------------------------------------- |
 | `header`     | [Header](#header)             | Block header. Contains primarily identification info and commitments. |
-| `data`       | [Data](#data)                 | Transaction data.                                                     |
+| `data`       | [Data](#data)                 | Message data.                                                         |
 | `evidence`   | [EvidenceData](#evidencedata) | Evidence used for slashing conditions (e.g. equivocation).            |
 | `lastCommit` | [Commit](#commit)             | Last block's Tendermint commit.                                       |
 
@@ -58,13 +58,13 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 ## Data
 
-Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
+Wrapper for message (i.e. transaction) data, which is a simple list of [Message](#message)s.
 
- | name  | type                            | description           |
- | ----- | ------------------------------- | --------------------- |
- | `txs` | [Transaction](#transaction)`[]` | List of transactions. |
+ | name       | type                    | description       |
+ | ---------- | ----------------------- | ----------------- |
+ | `messages` | [Message](#message)`[]` | List of messages. |
 
-TODO define a transaction format
+TODO define a message format
 
 ## EvidenceData
 
@@ -85,7 +85,7 @@ Wrapper for evidence data.
 
 ## Time
 
-LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/timestamp) format for timestamps, which represents time as seconds in UTC Epoch Time and nonoseconds.
+LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/timestamp) format for timestamps, which represents time as seconds in UTC Epoch Time and nanoseconds.
 
 
 ## BlockID
@@ -99,7 +99,7 @@ LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/pr
 
 ## Address
 
-## Transaction
+## Message
 
 ## Evidence
 
@@ -163,9 +163,7 @@ https://developers.google.com/protocol-buffers/docs/proto3
 All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)).
 This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM.
 
-https://godoc.org/golang.org/x/crypto/sha3
-
-https://docs.rs/sha3
+Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
 
 # Signing
 
