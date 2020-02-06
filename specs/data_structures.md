@@ -5,7 +5,7 @@ Data Structures
 - [Blockchain Data Structures](#blockchain-data-structures)
   - [Block](#block)
   - [Header](#header)
-  - [Data](#data)
+  - [AvailableData](#availabledata)
   - [EvidenceData](#evidencedata)
   - [Commit](#commit)
   - [Time](#time)
@@ -13,7 +13,6 @@ Data Structures
   - [HashDigest](#hashdigest)
   - [Address](#address)
   - [CodingRoots](#codingroots)
-  - [Transaction](#transaction)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
   - [PartSetHeader](#partsetheader)
@@ -24,6 +23,11 @@ Data Structures
 - [Merkle Tree](#merkle-tree)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
 - [Erasure Coding](#erasure-coding)
+  - [AvailableHeader](#availableheader)
+  - [TransactionData](#transactiondata)
+  - [MessageData](#messagedata)
+  - [Transaction](#transaction)
+  - [Message](#message)
 
 # Blockchain Data Structures
 
@@ -31,44 +35,43 @@ Data Structures
 
 Blocks are the top-level data structure of the LazyLedger blockchain.
 
-| name         | type                          | description                                                           |
-| ------------ | ----------------------------- | --------------------------------------------------------------------- |
-| `header`     | [Header](#header)             | Block header. Contains primarily identification info and commitments. |
-| `data`       | [Data](#data)                 | Transaction data.                                                     |
-| `evidence`   | [EvidenceData](#evidencedata) | Evidence used for slashing conditions (e.g. equivocation).            |
-| `lastCommit` | [Commit](#commit)             | Previous block's Tendermint commit.                                   |
+| name            | type                            | description                                                           |
+| --------------- | ------------------------------- | --------------------------------------------------------------------- |
+| `header`        | [Header](#header)               | Block header. Contains primarily identification info and commitments. |
+| `availableData` | [AvailableData](#availabledata) | Data that is erasure-coded for availability.                          |
+| `evidence`      | [EvidenceData](#evidencedata)   | Evidence used for slashing conditions (e.g. equivocation).            |
+| `lastCommit`    | [Commit](#commit)               | Previous block's Tendermint commit.                                   |
 
 ## Header
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                 | type                        | description                                                 |
-| -------------------- | --------------------------- | ----------------------------------------------------------- |
-| `version`            | `uint64`                    | Version of the LazyLedger chain.                            |
-| `chainID`            | `uint64`                    | Chain ID. Each fork assigns itself a (unique) ID.           |
-| `height`             | `uint64`                    | Block height. The genesis block is at height `1`.           |
-| `time`               | [Time](#time)               | Timestamp of this block.                                    |
-| `lastBlockID`        | [BlockID](#blockid)         | Previous block's ID.                                        |
-| `lastCommitRoot`     | [HashDigest](#hashdigest)   | Previous block's Tendermint commit root.                    |
-| `dataRoot`           | [HashDigest](#hashdigest)   | Transaction data root.                                      |
-| `validatorsRoot`     | [HashDigest](#hashdigest)   | Validator set root for this block.                          |
-| `nextValidatorsHash` | [HashDigest](#hashdigest)   | Root of the next block's validator set.                     |
-| `consensusHash`      | [HashDigest](#hashdigest)   | Consensus parameters for this block.                        |
-| `appHash`            | [HashDigest](#hashdigest)   |                                                             |
-| `lastResultsHash`    | [HashDigest](#hashdigest)   |                                                             |
-| `evidenceRoot`       | [HashDigest](#hashdigest)   | Evidence data root.                                         |
-| `codingRoots`        | [CodingRoots](#codingroots) | Commitments (i.e. Merkle roots) of the erasure-coded block. |
-| `proposerAddress`    | [Address](#address)         | Address of this block's proposer.                           |
+| name                 | type                        | description                                                |
+| -------------------- | --------------------------- | ---------------------------------------------------------- |
+| `version`            | `uint64`                    | Version of the LazyLedger chain.                           |
+| `chainID`            | `uint64`                    | Chain ID. Each fork assigns itself a (unique) ID.          |
+| `height`             | `uint64`                    | Block height. The genesis block is at height `1`.          |
+| `time`               | [Time](#time)               | Timestamp of this block.                                   |
+| `lastBlockID`        | [BlockID](#blockid)         | Previous block's ID.                                       |
+| `lastCommitRoot`     | [HashDigest](#hashdigest)   | Previous block's Tendermint commit root.                   |
+| `validatorsRoot`     | [HashDigest](#hashdigest)   | Validator set root for this block.                         |
+| `nextValidatorsRoot` | [HashDigest](#hashdigest)   | Root of the next block's validator set.                    |
+| `consensusHash`      | [HashDigest](#hashdigest)   | Consensus parameters for this block.                       |
+| `appHash`            | [HashDigest](#hashdigest)   |                                                            |
+| `lastResultsHash`    | [HashDigest](#hashdigest)   |                                                            |
+| `evidenceRoot`       | [HashDigest](#hashdigest)   | Evidence data root.                                        |
+| `codingRoots`        | [CodingRoots](#codingroots) | Commitments (i.e. Merkle roots) of the erasure-coded data. |
+| `proposerAddress`    | [Address](#address)         | Address of this block's proposer.                          |
 
-## Data
+## AvailableData
 
-Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
+Data that is erasure-coded for [data availability checks](https://arxiv.org/abs/1809.09044). Commitments that depend on this data (other than the commitments to the erasure-coded version of this data) should also be here to ensure that the data behind the commitments isn't withheld.
 
- | name           | type                            | description           |
- | -------------- | ------------------------------- | --------------------- |
- | `transactions` | [Transaction](#transaction)`[]` | List of transactions. |
-
-TODO define a Transaction format
+| name              | type                                | description                   |
+| ----------------- | ----------------------------------- | ----------------------------- |
+| `header`          | [AvailableHeader](#availableheader) | Header of erasure-coded data. |
+| `transactionData` | [TransactionData](#transactiondata) | Transaction data.             |
+| `messageData`     | [MessageData](#messagedata)         | Message data.                 |
 
 ## EvidenceData
 
@@ -107,8 +110,6 @@ The block ID is comprised of two distinct Merkle roots:
 ## Address
 
 ## CodingRoots
-
-## Transaction
 
 ## Evidence
 
@@ -189,3 +190,36 @@ Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.
 
 # Erasure Coding
 
+
+
+## AvailableHeader
+
+| name               | type                      | description            |
+| ------------------ | ------------------------- | ---------------------- |
+| `transactionsRoot` | [HashDigest](#hashdigest) | Transaction data root. |
+| `messagesRoot`     | [HashDigest](#hashdigest) | Message data root.     |
+
+
+## TransactionData
+
+Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
+
+ | name           | type                            | description           |
+ | -------------- | ------------------------------- | --------------------- |
+ | `transactions` | [Transaction](#transaction)`[]` | List of transactions. |
+
+TODO define a Transaction format
+
+## MessageData
+
+Wrapper for message data, which is a simple list of [Message](#message)s.
+
+ | name       | type                    | description       |
+ | ---------- | ----------------------- | ----------------- |
+ | `messages` | [Message](#message)`[]` | List of messages. |
+
+TODO define a Message format
+
+## Transaction
+
+## Message
