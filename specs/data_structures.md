@@ -35,7 +35,7 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 | `header`     | [Header](#header)             | Block header. Contains primarily identification info and commitments. |
 | `data`       | [Data](#data)                 | Message data.                                                         |
 | `evidence`   | [EvidenceData](#evidencedata) | Evidence used for slashing conditions (e.g. equivocation).            |
-| `lastCommit` | [Commit](#commit)             | Last block's Tendermint commit.                                       |
+| `lastCommit` | [Commit](#commit)             | Previous block's Tendermint commit.                                   |
 
 ## Header
 
@@ -44,17 +44,17 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 | `version`            | `uint64`                  | Version of the LazyLedger chain.                  |
 | `chainID`            | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID. |
 | `height`             | `uint64`                  | Block height. The genesis block is at height `1`. |
-| `time`               | [Time](#time)             |                                                   |
-| `lastBlockID`        | [BlockID](#blockid)       |                                                   |
-| `lastCommitHash`     | [HashDigest](#hashdigest) |                                                   |
-| `dataHash`           | [HashDigest](#hashdigest) |                                                   |
-| `validatorsHash`     | [HashDigest](#hashdigest) |                                                   |
-| `nextValidatorsHash` | [HashDigest](#hashdigest) |                                                   |
-| `consensusHash`      | [HashDigest](#hashdigest) |                                                   |
+| `time`               | [Time](#time)             | Timestamp of this block.                          |
+| `lastBlockID`        | [BlockID](#blockid)       | Previous block's ID.                              |
+| `lastCommitRoot`     | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.          |
+| `dataRoot`           | [HashDigest](#hashdigest) | Message data root.                                |
+| `validatorsRoot`     | [HashDigest](#hashdigest) | Validator set root for this block.                |
+| `nextValidatorsHash` | [HashDigest](#hashdigest) | Root of the next block's validator set.           |
+| `consensusHash`      | [HashDigest](#hashdigest) | Consensus parameters for this block.              |
 | `appHash`            | [HashDigest](#hashdigest) |                                                   |
 | `lastResultsHash`    | [HashDigest](#hashdigest) |                                                   |
-| `evidenceHash`       | [HashDigest](#hashdigest) |                                                   |
-| `proposerAddress`    | [Address](#address)       |                                                   |
+| `evidenceRoot`       | [HashDigest](#hashdigest) | Evidence data root.                               |
+| `proposerAddress`    | [Address](#address)       | Address of this block's proposer.                 |
 
 ## Data
 
@@ -90,10 +90,14 @@ LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/pr
 
 ## BlockID
 
-| name          | type                            | description |
-| ------------- | ------------------------------- | ----------- |
-| `hash`        | [HashDigest](#hashdigest)       |             |
-| `partsHeader` | [PartSetHeader](#partsetheader) |             |
+The block ID is comprised of two distinct Merkle roots:
+1. The root of the [block header](#header)'s fields, in the order provided in the spec.
+1. The root of the complete [serialized](#serialization) block [split into parts](#todo). This is used at the network layer for securely gossiping parts of blocks.
+
+| name          | type                            | description               |
+| ------------- | ------------------------------- | ------------------------- |
+| `headerRoot`  | [HashDigest](#hashdigest)       | Root of the block header. |
+| `partsHeader` | [PartSetHeader](#partsetheader) | Parts header.             |
 
 ## HashDigest
 
@@ -129,10 +133,10 @@ enum BlockIDFlag {
 
 ## PartSetHeader
 
-| name     | type                      | description |
-| -------- | ------------------------- | ----------- |
-| `length` | `uint32`                  |             |
-| `hash`   | [HashDigest](#hashdigest) |             |
+| name     | type                      | description                      |
+| -------- | ------------------------- | -------------------------------- |
+| `length` | `uint32`                  | Number of parts.                 |
+| `root`   | [HashDigest](#hashdigest) | Root of the block's split parts. |
 
 ## Vote
 
