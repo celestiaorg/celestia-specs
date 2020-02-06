@@ -12,6 +12,7 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
+  - [CodingRoots](#codingroots)
   - [Message](#message)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
@@ -39,22 +40,25 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 ## Header
 
-| name                 | type                      | description                                       |
-| -------------------- | ------------------------- | ------------------------------------------------- |
-| `version`            | `uint64`                  | Version of the LazyLedger chain.                  |
-| `chainID`            | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID. |
-| `height`             | `uint64`                  | Block height. The genesis block is at height `1`. |
-| `time`               | [Time](#time)             | Timestamp of this block.                          |
-| `lastBlockID`        | [BlockID](#blockid)       | Previous block's ID.                              |
-| `lastCommitRoot`     | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.          |
-| `dataRoot`           | [HashDigest](#hashdigest) | Message data root.                                |
-| `validatorsRoot`     | [HashDigest](#hashdigest) | Validator set root for this block.                |
-| `nextValidatorsHash` | [HashDigest](#hashdigest) | Root of the next block's validator set.           |
-| `consensusHash`      | [HashDigest](#hashdigest) | Consensus parameters for this block.              |
-| `appHash`            | [HashDigest](#hashdigest) |                                                   |
-| `lastResultsHash`    | [HashDigest](#hashdigest) |                                                   |
-| `evidenceRoot`       | [HashDigest](#hashdigest) | Evidence data root.                               |
-| `proposerAddress`    | [Address](#address)       | Address of this block's proposer.                 |
+Block header, which is fully downloaded by both full clients and light clients.
+
+| name                 | type                        | description                                                 |
+| -------------------- | --------------------------- | ----------------------------------------------------------- |
+| `version`            | `uint64`                    | Version of the LazyLedger chain.                            |
+| `chainID`            | `uint64`                    | Chain ID. Each fork assigns itself a (unique) ID.           |
+| `height`             | `uint64`                    | Block height. The genesis block is at height `1`.           |
+| `time`               | [Time](#time)               | Timestamp of this block.                                    |
+| `lastBlockID`        | [BlockID](#blockid)         | Previous block's ID.                                        |
+| `lastCommitRoot`     | [HashDigest](#hashdigest)   | Previous block's Tendermint commit root.                    |
+| `dataRoot`           | [HashDigest](#hashdigest)   | Message data root.                                          |
+| `validatorsRoot`     | [HashDigest](#hashdigest)   | Validator set root for this block.                          |
+| `nextValidatorsHash` | [HashDigest](#hashdigest)   | Root of the next block's validator set.                     |
+| `consensusHash`      | [HashDigest](#hashdigest)   | Consensus parameters for this block.                        |
+| `appHash`            | [HashDigest](#hashdigest)   |                                                             |
+| `lastResultsHash`    | [HashDigest](#hashdigest)   |                                                             |
+| `evidenceRoot`       | [HashDigest](#hashdigest)   | Evidence data root.                                         |
+| `codingRoots`        | [CodingRoots](#codingroots) | Commitments (i.e. Merkle roots) of the erasure-coded block. |
+| `proposerAddress`    | [Address](#address)         | Address of this block's proposer.                           |
 
 ## Data
 
@@ -87,7 +91,6 @@ Wrapper for evidence data.
 
 LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/timestamp) format for timestamps, which represents time as seconds in UTC Epoch Time and nanoseconds.
 
-
 ## BlockID
 
 The block ID is comprised of two distinct Merkle roots:
@@ -102,6 +105,8 @@ The block ID is comprised of two distinct Merkle roots:
 ## HashDigest
 
 ## Address
+
+## CodingRoots
 
 ## Message
 
@@ -166,6 +171,7 @@ https://developers.google.com/protocol-buffers/docs/proto3
 
 All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)).
 This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM.
+Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
 
 Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
 
