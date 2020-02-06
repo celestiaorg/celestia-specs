@@ -13,7 +13,7 @@ Data Structures
   - [HashDigest](#hashdigest)
   - [Address](#address)
   - [CodingRoots](#codingroots)
-  - [Message](#message)
+  - [Transaction](#transaction)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
   - [PartSetHeader](#partsetheader)
@@ -34,7 +34,7 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 | name         | type                          | description                                                           |
 | ------------ | ----------------------------- | --------------------------------------------------------------------- |
 | `header`     | [Header](#header)             | Block header. Contains primarily identification info and commitments. |
-| `data`       | [Data](#data)                 | Message data.                                                         |
+| `data`       | [Data](#data)                 | Transaction data.                                                     |
 | `evidence`   | [EvidenceData](#evidencedata) | Evidence used for slashing conditions (e.g. equivocation).            |
 | `lastCommit` | [Commit](#commit)             | Previous block's Tendermint commit.                                   |
 
@@ -50,7 +50,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `time`               | [Time](#time)               | Timestamp of this block.                                    |
 | `lastBlockID`        | [BlockID](#blockid)         | Previous block's ID.                                        |
 | `lastCommitRoot`     | [HashDigest](#hashdigest)   | Previous block's Tendermint commit root.                    |
-| `dataRoot`           | [HashDigest](#hashdigest)   | Message data root.                                          |
+| `dataRoot`           | [HashDigest](#hashdigest)   | Transaction data root.                                      |
 | `validatorsRoot`     | [HashDigest](#hashdigest)   | Validator set root for this block.                          |
 | `nextValidatorsHash` | [HashDigest](#hashdigest)   | Root of the next block's validator set.                     |
 | `consensusHash`      | [HashDigest](#hashdigest)   | Consensus parameters for this block.                        |
@@ -62,13 +62,13 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 ## Data
 
-Wrapper for message (i.e. transaction) data, which is a simple list of [Message](#message)s.
+Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
 
- | name       | type                    | description       |
- | ---------- | ----------------------- | ----------------- |
- | `messages` | [Message](#message)`[]` | List of messages. |
+ | name           | type                            | description           |
+ | -------------- | ------------------------------- | --------------------- |
+ | `transactions` | [Transaction](#transaction)`[]` | List of transactions. |
 
-TODO define a message format
+TODO define a Transaction format
 
 ## EvidenceData
 
@@ -108,7 +108,7 @@ The block ID is comprised of two distinct Merkle roots:
 
 ## CodingRoots
 
-## Message
+## Transaction
 
 ## Evidence
 
