@@ -12,7 +12,7 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
-  - [CodingRoots](#codingroots)
+  - [AvailableHeader](#availableheader)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
   - [PartSetHeader](#partsetheader)
@@ -23,7 +23,6 @@ Data Structures
 - [Merkle Tree](#merkle-tree)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
 - [Erasure Coding](#erasure-coding)
-  - [AvailableHeader](#availableheader)
   - [TransactionData](#transactiondata)
   - [MessageData](#messagedata)
   - [Transaction](#transaction)
@@ -46,32 +45,31 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                 | type                        | description                                                |
-| -------------------- | --------------------------- | ---------------------------------------------------------- |
-| `version`            | `uint64`                    | Version of the LazyLedger chain.                           |
-| `chainID`            | `uint64`                    | Chain ID. Each fork assigns itself a (unique) ID.          |
-| `height`             | `uint64`                    | Block height. The genesis block is at height `1`.          |
-| `time`               | [Time](#time)               | Timestamp of this block.                                   |
-| `lastBlockID`        | [BlockID](#blockid)         | Previous block's ID.                                       |
-| `lastCommitRoot`     | [HashDigest](#hashdigest)   | Previous block's Tendermint commit root.                   |
-| `validatorsRoot`     | [HashDigest](#hashdigest)   | Validator set root for this block.                         |
-| `nextValidatorsRoot` | [HashDigest](#hashdigest)   | Root of the next block's validator set.                    |
-| `consensusHash`      | [HashDigest](#hashdigest)   | Consensus parameters for this block.                       |
-| `appHash`            | [HashDigest](#hashdigest)   |                                                            |
-| `lastResultsHash`    | [HashDigest](#hashdigest)   |                                                            |
-| `evidenceRoot`       | [HashDigest](#hashdigest)   | Evidence data root.                                        |
-| `codingRoots`        | [CodingRoots](#codingroots) | Commitments (i.e. Merkle roots) of the erasure-coded data. |
-| `proposerAddress`    | [Address](#address)         | Address of this block's proposer.                          |
+| name                 | type                                | description                                       |
+| -------------------- | ----------------------------------- | ------------------------------------------------- |
+| `version`            | `uint64`                            | Version of the LazyLedger chain.                  |
+| `chainID`            | `uint64`                            | Chain ID. Each fork assigns itself a (unique) ID. |
+| `height`             | `uint64`                            | Block height. The genesis block is at height `1`. |
+| `time`               | [Time](#time)                       | Timestamp of this block.                          |
+| `lastBlockID`        | [BlockID](#blockid)                 | Previous block's ID.                              |
+| `lastCommitRoot`     | [HashDigest](#hashdigest)           | Previous block's Tendermint commit root.          |
+| `validatorsRoot`     | [HashDigest](#hashdigest)           | Validator set root for this block.                |
+| `nextValidatorsRoot` | [HashDigest](#hashdigest)           | Root of the next block's validator set.           |
+| `consensusHash`      | [HashDigest](#hashdigest)           | Consensus parameters for this block.              |
+| `appHash`            | [HashDigest](#hashdigest)           |                                                   |
+| `lastResultsHash`    | [HashDigest](#hashdigest)           |                                                   |
+| `evidenceRoot`       | [HashDigest](#hashdigest)           | Evidence data root.                               |
+| `availableHeader`    | [AvailableHeader](#availableheader) | Header of commitments to erasure-coded data.      |
+| `proposerAddress`    | [Address](#address)                 | Address of this block's proposer.                 |
 
 ## AvailableData
 
-Data that is erasure-coded for [data availability checks](https://arxiv.org/abs/1809.09044). Commitments that depend on this data (other than the commitments to the erasure-coded version of this data) should also be here to ensure that the data behind the commitments isn't withheld.
+Data that is erasure-coded for [data availability checks](https://arxiv.org/abs/1809.09044).
 
-| name              | type                                | description                   |
-| ----------------- | ----------------------------------- | ----------------------------- |
-| `header`          | [AvailableHeader](#availableheader) | Header of erasure-coded data. |
-| `transactionData` | [TransactionData](#transactiondata) | Transaction data.             |
-| `messageData`     | [MessageData](#messagedata)         | Message data.                 |
+| name              | type                                | description       |
+| ----------------- | ----------------------------------- | ----------------- |
+| `transactionData` | [TransactionData](#transactiondata) | Transaction data. |
+| `messageData`     | [MessageData](#messagedata)         | Message data.     |
 
 ## EvidenceData
 
@@ -109,7 +107,12 @@ The block ID is comprised of two distinct Merkle roots:
 
 ## Address
 
-## CodingRoots
+## AvailableHeader
+
+| name               | type                      | description            |
+| ------------------ | ------------------------- | ---------------------- |
+| `transactionsRoot` | [HashDigest](#hashdigest) | Transaction data root. |
+| `messagesRoot`     | [HashDigest](#hashdigest) | Message data root.     |
 
 ## Evidence
 
@@ -170,9 +173,7 @@ https://developers.google.com/protocol-buffers/docs/proto3
 
 # Hashing
 
-All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)).
-This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM.
-Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
+All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)). This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM. Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
 
 Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
 
@@ -190,14 +191,6 @@ Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.
 
 # Erasure Coding
 
-
-
-## AvailableHeader
-
-| name               | type                      | description            |
-| ------------------ | ------------------------- | ---------------------- |
-| `transactionsRoot` | [HashDigest](#hashdigest) | Transaction data root. |
-| `messagesRoot`     | [HashDigest](#hashdigest) | Message data root.     |
 
 
 ## TransactionData
