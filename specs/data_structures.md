@@ -56,8 +56,6 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `validatorsRoot`     | [HashDigest](#hashdigest)           | Validator set root for this block.                |
 | `nextValidatorsRoot` | [HashDigest](#hashdigest)           | Root of the next block's validator set.           |
 | `consensusHash`      | [HashDigest](#hashdigest)           | Consensus parameters for this block.              |
-| `appHash`            | [HashDigest](#hashdigest)           |                                                   |
-| `lastResultsHash`    | [HashDigest](#hashdigest)           |                                                   |
 | `evidenceRoot`       | [HashDigest](#hashdigest)           | Evidence data root.                               |
 | `availableHeader`    | [AvailableHeader](#availableheader) | Header of commitments to erasure-coded data.      |
 | `proposerAddress`    | [Address](#address)                 | Address of this block's proposer.                 |
