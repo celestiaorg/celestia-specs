@@ -1,6 +1,12 @@
 Architecture
 ===
 
+- [Architecture](#architecture)
+- [Common Terms and Expressions](#common-terms-and-expressions)
+- [Proposal 1: Validator Set in State, Fees in App](#proposal-1-validator-set-in-state-fees-in-app)
+- [Proposal 2: Validator Set in a Consensus-Critical App, Fees in App](#proposal-2-validator-set-in-a-consensus-critical-app-fees-in-app)
+- [Proposal 3: Validator Set and Fees in a Consensus-Critical App](#proposal-3-validator-set-and-fees-in-a-consensus-critical-app)
+
 # Common Terms and Expressions
 
 | name              | description                                                                          |
