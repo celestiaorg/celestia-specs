@@ -20,8 +20,11 @@ Data Structures
 - [Serialization](#serialization)
 - [Hashing](#hashing)
 - [Signing](#signing)
-- [Merkle Tree](#merkle-tree)
+- [Merkle Trees](#merkle-trees)
+  - [Binary Merkle Tree](#binary-merkle-tree)
+  - [Sparse Binary Merkle Tree](#sparse-binary-merkle-tree)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
+    - [Verifying Merkle Proofs](#verifying-merkle-proofs)
 - [Erasure Coding](#erasure-coding)
   - [TransactionData](#transactiondata)
   - [MessageData](#messagedata)
@@ -179,12 +182,42 @@ Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.
 
 
 
-# Merkle Tree
+# Merkle Trees
 
+Merkle trees are used to authenticate various pieces of data across the LazyLedger stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.
+
+## Binary Merkle Tree
+
+
+
+## Sparse Binary Merkle Tree
 
 
 ## Namespace Merkle Tree
 
+Messages in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0).
+
+Construction of a NMT is similar to that of a plain binary Merkle tree, but with a different hashing method that commits to intervals of namespace IDs.
+
+For leaf node of message `m`:
+```C++
+n_min = m.namespace_id
+n_max = m.namespace_id
+v = h(serialize(m))
+```
+
+The `namespace_id` field is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-byte unsigned integer.
+
+Before being hashed, the [message](#message)s are [serialized](#serialization).
+
+For internal node with children $l$ and $r$:
+```C++
+n_min = min(l.n_min, r.n_min)
+n_max = max(l.n_max, r.n_max)
+v = h(l, r) = h(l.min, l.max, l.v, r.min, r.max, r.v)
+```
+
+### Verifying Merkle Proofs
 
 
 # Erasure Coding
