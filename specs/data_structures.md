@@ -95,14 +95,11 @@ LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/pr
 
 ## BlockID
 
-The block ID is comprised of two distinct Merkle roots:
-1. The root of the [block header](#header)'s fields, in the order provided in the spec.
-1. The root of the complete [serialized](#serialization) block [split into parts](#todo). This is used at the network layer for securely gossiping parts of blocks.
+The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
 
-| name          | type                            | description               |
-| ------------- | ------------------------------- | ------------------------- |
-| `headerRoot`  | [HashDigest](#hashdigest)       | Root of the block header. |
-| `partsHeader` | [PartSetHeader](#partsetheader) | Parts header.             |
+| name         | type                      | description                      |
+| ------------ | ------------------------- | -------------------------------- |
+| `headerRoot` | [HashDigest](#hashdigest) | Root of the block header fields. |
 
 ## HashDigest
 
@@ -200,7 +197,7 @@ For internal node with children `l` and `r`:
 v = h(l, r) = h(l.v, r.v)
 ```
 
-Two exceptions are made, in the case of empty nodes, in order to prevent [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). The value of an empty leaf node or an empty child node to an internal node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`.
+Two exceptions are made, in the case of empty nodes: the value of an empty leaf node or an empty child node to an internal node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459).
 
 ## Sparse Binary Merkle Tree
 
