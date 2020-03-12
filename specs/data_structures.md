@@ -103,6 +103,8 @@ The block ID is a single Merkle root: the root of the [block header](#header)'s 
 
 ## HashDigest
 
+Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
+
 ## Address
 
 ## AvailableHeader
