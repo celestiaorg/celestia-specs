@@ -15,7 +15,6 @@ Data Structures
   - [AvailableHeader](#availableheader)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
-  - [PartSetHeader](#partsetheader)
   - [Vote](#vote)
 - [Serialization](#serialization)
 - [Hashing](#hashing)
@@ -138,14 +137,6 @@ enum BlockIDFlag {
 | `validatorAddress` | [Address](#address)   |             |
 | `timestamp`        | [Time](#time)         |             |
 | `signature`        | [Signature](#signing) |             |
-
-
-## PartSetHeader
-
-| name     | type                      | description                      |
-| -------- | ------------------------- | -------------------------------- |
-| `length` | `uint32`                  | Number of parts.                 |
-| `root`   | [HashDigest](#hashdigest) | Root of the block's split parts. |
 
 ## Vote
 
