@@ -192,12 +192,13 @@ For leaf node of message `m`:
 v = h(serialize(m))
 ```
 
+An exceptions is made, in the case of empty leaf nodes: the value of an empty leaf node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459).
+
+
 For internal node with children `l` and `r`:
 ```C++
 v = h(l, r) = h(l.v, r.v)
 ```
-
-Two exceptions are made, in the case of empty nodes: the value of an empty leaf node or an empty child node to an internal node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459).
 
 ## Sparse Binary Merkle Tree
 
