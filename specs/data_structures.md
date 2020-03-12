@@ -188,7 +188,19 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 ## Binary Merkle Tree
 
+Binary Merkle trees are constructed in the usual fashion, namely:
 
+For leaf node of message `m`:
+```C++
+v = h(serialize(m))
+```
+
+For internal node with children `l` and `r`:
+```C++
+v = h(l, r) = h(l.v, r.v)
+```
+
+Two exceptions are made, in the case of empty nodes, in order to prevent [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). The value of an empty leaf node or an empty child node to an internal node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`.
 
 ## Sparse Binary Merkle Tree
 
@@ -210,7 +222,7 @@ The `namespace_id` field is the namespace ID of the message, which is a [`NAMESP
 
 Before being hashed, the [message](#message)s are [serialized](#serialization).
 
-For internal node with children $l$ and $r$:
+For internal node with children `l` and `r`:
 ```C++
 n_min = min(l.n_min, r.n_min)
 n_max = max(l.n_max, r.n_max)
