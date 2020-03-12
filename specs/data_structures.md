@@ -185,19 +185,18 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 ## Binary Merkle Tree
 
-Binary Merkle trees are constructed in the usual fashion, namely:
+Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf nodes and internal nodes being the hash of the concatenation of their children. Note that when hashing leaves , `0x00` is prepended, and when hashing internal nodes, `0x01` is prepended. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack).
 
 For leaf node of message `m`:
 ```C++
-v = h(serialize(m))
+v = h(0x00, serialize(m))
 ```
 
-An exceptions is made, in the case of empty leaf nodes: the value of an empty leaf node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459).
-
+An exceptions is made, in the case of empty leaf nodes: the value of an empty leaf node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). Implicitly, trees are padded with empty nodes up to the next larger power of 2.
 
 For internal node with children `l` and `r`:
 ```C++
-v = h(l, r) = h(l.v, r.v)
+v = h(0x01, l, r) = h(0x01, l.v, r.v)
 ```
 
 ## Sparse Binary Merkle Tree
