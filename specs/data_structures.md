@@ -107,10 +107,10 @@ The block ID is a single Merkle root: the root of the [block header](#header)'s 
 
 ## AvailableHeader
 
-| name               | type                      | description            |
-| ------------------ | ------------------------- | ---------------------- |
-| `transactionsRoot` | [HashDigest](#hashdigest) | Transaction data root. |
-| `messagesRoot`     | [HashDigest](#hashdigest) | Message data root.     |
+| name                | type                          | description                                |
+| ------------------- | ----------------------------- | ------------------------------------------ |
+| `transactionsRoots` | [HashDigest](#hashdigest)`[]` | Commitments to erasure-coded transactions. |
+| `messagesRoots`     | [HashDigest](#hashdigest)`[]` | Commitments to erasure-coded messages.     |
 
 ## Evidence
 
