@@ -7,6 +7,7 @@ Architecture
 - [Proposal 2: Validator Set and Fee Payments in State](#proposal-2-validator-set-and-fee-payments-in-state)
 - [Proposal 3: Validator Set in a Consensus-Critical App, Fees in App](#proposal-3-validator-set-in-a-consensus-critical-app-fees-in-app)
 - [Proposal 4: Validator Set and Fees in a Consensus-Critical App](#proposal-4-validator-set-and-fees-in-a-consensus-critical-app)
+- [Proposal 5: Fixed Burn For Fees](#proposal-5-fixed-burn-for-fees)
 
 # Common Terms and Expressions
 
@@ -62,3 +63,14 @@ Pros:
 
 Cons:
 * Both full and light clients must either execute fee payments alongside the validator set changes, or at least download and parse but ignore them.
+
+# Proposal 5: Fixed Burn For Fees
+
+Some fixed amount must be paid for including a message. This amount is burned, not given to the block proposer. Since this is consensus-critical, only proposals 2 and 4 above can be extended to include this feature.
+
+Pros:
+* This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.
+* No other big chain has incorporated such a mechanism, but several have it in the pipeline to investigate.
+
+Cons:
+* Setting the amount to burn is non-trivial. Too low and it won't be meaningful. Too high and it will be too expensive if the price of the coin rises. The amount must be flexible in some way.
