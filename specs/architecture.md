@@ -36,6 +36,7 @@ As above, but both the validator set changes and fee payments are transactions t
 
 Pros:
 * Single coin, no need to worry about bridging.
+* This can be built entirely using the Cosmos SDK for Tendermint apps.
 
 Cons:
 * More work for full clients to validate transactions.
