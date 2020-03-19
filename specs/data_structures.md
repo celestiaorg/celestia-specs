@@ -29,6 +29,7 @@ Data Structures
   - [MessageData](#messagedata)
   - [Transaction](#transaction)
   - [Message](#message)
+- [State](#state)
 
 # Blockchain Data Structures
 
@@ -249,3 +250,7 @@ TODO define a Message format
 ## Transaction
 
 ## Message
+
+# State
+
+TODO validator set repr
