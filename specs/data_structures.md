@@ -169,6 +169,8 @@ All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak
 
 Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
 
+Unless otherwise indicated explicitly, objects are first [serialized](#serialization) before being hashed.
+
 # Signing
 
 
