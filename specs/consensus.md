@@ -25,18 +25,19 @@ Consensus Rules
 
 ## Constants
 
-| name                   | type     | value   | description                                          |
-| ---------------------- | -------- | ------- | ---------------------------------------------------- |
-| `NAMESPACE_ID_BYTES`   | `uint64` | `32`    | Size of namespace ID, in bytes.                      |
-| `SHARE_SIZE`           | `uint64` | `256`   | Size of transaction and message shares, in bytes.    |
-| `SHARE_RESERVED_BYTES` | `uint64` | `1`     | Bytes reserved at the beginning of each share.       |
-| `GENESIS_COIN_COUNT`   | `uint64` | `10**8` | `(= 100000000)` Number of coins at genesis, in `4u`. |
+| name                   | type     | value   | unit   | description                                       |
+| ---------------------- | -------- | ------- | ------ | ------------------------------------------------- |
+| `NAMESPACE_ID_BYTES`   | `uint64` | `32`    | `byte` | Size of namespace ID, in bytes.                   |
+| `SHARE_SIZE`           | `uint64` | `256`   | `byte` | Size of transaction and message shares, in bytes. |
+| `SHARE_RESERVED_BYTES` | `uint64` | `1`     | `byte` | Bytes reserved at the beginning of each share.    |
+| `GENESIS_COIN_COUNT`   | `uint64` | `10**8` | `4u`   | `(= 100000000)` Number of coins at genesis.       |
 
 ## Rewards and Penalties
 
-| name                 | type     | value | description                      |
-| -------------------- | -------- | ----- | -------------------------------- |
-| `BASE_REWARD_FACTOR` | `uint64` |       | Factor that scales base rewards. |
+| name                 | type     | value | unit | description                      |
+| -------------------- | -------- | ----- | ---- | -------------------------------- |
+| `BASE_REWARD`        | `uint64` |       |      |                                  |
+| `BASE_REWARD_FACTOR` | `uint64` |       |      | Factor that scales base rewards. |
 
 # Leader Selection
 
