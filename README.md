@@ -1,6 +1,8 @@
 LazyLedger Specifications
 ===
 
+[![Gitter](https://badges.gitter.im/LazyLedger/lazyledger-specs.svg)](https://gitter.im/LazyLedger/lazyledger-specs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 - [LazyLedger Specifications](#lazyledger-specifications)
 - [Specs](#specs)
 
