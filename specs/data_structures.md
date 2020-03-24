@@ -165,6 +165,10 @@ https://developers.google.com/protocol-buffers/docs/proto3
 
 # Hashing
 
+| name     | type       | description           |
+| -------- | ---------- | --------------------- |
+| `digest` | `byte[32]` | Raw hash digest data. |
+
 All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)). This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM. Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
 
 Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
@@ -173,6 +177,13 @@ Unless otherwise indicated explicitly, objects are first [serialized](#serializa
 
 # Signing
 
+| name | type       | description |
+| ---- | ---------- | ----------- |
+| `r`  | `byte[32]` |             |
+| `s`  | `byte[32]` |             |
+| `v`  | `bool`     |             |
+
+Consensus-critical messages are authenticated using ECDSA, with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1).
 
 
 # Merkle Trees
