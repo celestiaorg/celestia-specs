@@ -1,0 +1,34 @@
+digraph G {
+    rankdir = "LR";
+    node [shape = record];
+
+    subgraph cluster_block {
+        label = "block";
+
+        subgraph cluster_lastcommit {
+            label = "lastCommit";
+            struct4 [label = "{lastCommit}"];
+        }
+
+        subgraph cluster_evidence {
+            label = "evidence";
+            struct3 [label = "{evidence}"];
+        }
+
+        subgraph cluster_body {
+            label = "availableData";
+            struct2 [label = "{transactionData | messageData}"];
+        }
+
+        subgraph cluster_header {
+            label = "header";
+            struct1 [label = "version | chainID | height | time | lastBlockID | lastCommitRoot | validatorsRoot | nextValidatorsRoot | consensusHash | evidenceRoot | <f10> availableHeader | proposerAddress"];
+        }
+    }
+
+    struct1:f10 -> struct2;
+
+    edge [style = invis];
+    struct1 -> struct3;
+    struct1 -> struct4;
+}

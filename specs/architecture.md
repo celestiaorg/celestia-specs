@@ -3,6 +3,7 @@ Architecture
 
 - [Architecture](#architecture)
 - [Common Terms and Expressions](#common-terms-and-expressions)
+- [System Architecture](#system-architecture)
 - [Proposal 1: Validator Set in State, Fees in App](#proposal-1-validator-set-in-state-fees-in-app)
 - [Proposal 2: Validator Set and Fee Payments in State](#proposal-2-validator-set-and-fee-payments-in-state)
 - [Proposal 3: Validator Set in a Consensus-Critical App, Fees in App](#proposal-3-validator-set-in-a-consensus-critical-app-fees-in-app)
@@ -11,11 +12,16 @@ Architecture
 
 # Common Terms and Expressions
 
-| name              | description                                                                          |
-| ----------------- | ------------------------------------------------------------------------------------ |
-| App (application) | Alternate name for "virtual sidechain."                                              |
-| Transaction       | Requests that modify the consensus-critical state (validator balances and statuses). |
-| Message           | Requests that are executed by non-consensus-critical apps.                           |
+| name              | description                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| App (application) | Alternate name for "[virtual sidechain](https://arxiv.org/abs/1905.09274)." LazyLedger apps |
+| Transaction       | Requests that modify the consensus-critical state (validator balances and statuses).        |
+| Message           | Requests that are executed by non-consensus-critical apps.                                  |
+
+
+# System Architecture
+
+![fig: Block data structures.](figures/block_data_structures.svg)
 
 # Proposal 1: Validator Set in State, Fees in App
 
