@@ -188,7 +188,7 @@ Unless otherwise indicated explicitly, objects are first [serialized](#serializa
 
 # Public-Key Cryptography
 
-Consensus-critical messages are authenticated using ECDSA, with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1).
+Consensus-critical data is authenticated using ECDSA, with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1).
 
 Only low-`s` values in signatures are valid.
 
