@@ -68,10 +68,11 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 Data that is erasure-coded for [data availability checks](https://arxiv.org/abs/1809.09044).
 
-| name              | type                                | description       |
-| ----------------- | ----------------------------------- | ----------------- |
-| `transactionData` | [TransactionData](#transactiondata) | Transaction data. |
-| `messageData`     | [MessageData](#messagedata)         | Message data.     |
+| name                     | type                                | description                                     |
+| ------------------------ | ----------------------------------- | ----------------------------------------------- |
+| `transactionData`        | [TransactionData](#transactiondata) | Transaction data.                               |
+| `intermediateStateRoots` | [HashDigest](#hashdigest)           | Intermediate state roots used for fraud proofs. |
+| `messageData`            | [MessageData](#messagedata)         | Message data.                                   |
 
 ## EvidenceData
 
@@ -114,10 +115,9 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## AvailableHeader
 
-| name                | type                          | description                                |
-| ------------------- | ----------------------------- | ------------------------------------------ |
-| `transactionsRoots` | [HashDigest](#hashdigest)`[]` | Commitments to erasure-coded transactions. |
-| `messagesRoots`     | [HashDigest](#hashdigest)`[]` | Commitments to erasure-coded messages.     |
+| name                | type                          | description                            |
+| ------------------- | ----------------------------- | -------------------------------------- |
+| `availableDataRoot` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
 ## Evidence
 
