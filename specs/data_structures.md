@@ -16,9 +16,10 @@ Data Structures
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
   - [Vote](#vote)
+  - [Signature](#signature)
 - [Serialization](#serialization)
 - [Hashing](#hashing)
-- [Signing](#signing)
+- [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
   - [Sparse Binary Merkle Tree](#sparse-binary-merkle-tree)
@@ -103,6 +104,10 @@ The block ID is a single Merkle root: the root of the [block header](#header)'s 
 
 ## HashDigest
 
+| name     | type       | description           |
+| -------- | ---------- | --------------------- |
+| `digest` | `byte[32]` | Raw hash digest data. |
+
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## Address
@@ -116,11 +121,11 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## Evidence
 
-| name     | type                  | description |
-| -------- | --------------------- | ----------- |
-| `pubKey` | [PublicKey](#signing) |             |
-| `voteA`  | [Vote](#vote)         |             |
-| `voteB`  | [Vote](#vote)         |             |
+| name     | type                                  | description |
+| -------- | ------------------------------------- | ----------- |
+| `pubKey` | [PublicKey](#public-key-cryptography) |             |
+| `voteA`  | [Vote](#vote)                         |             |
+| `voteB`  | [Vote](#vote)                         |             |
 
 ## CommitSig
 
@@ -132,12 +137,12 @@ enum BlockIDFlag {
 };
 ```
 
-| name               | type                  | description |
-| ------------------ | --------------------- | ----------- |
-| `blockIDFlag`      | `BlockIDFlag`         |             |
-| `validatorAddress` | [Address](#address)   |             |
-| `timestamp`        | [Time](#time)         |             |
-| `signature`        | [Signature](#signing) |             |
+| name               | type                    | description |
+| ------------------ | ----------------------- | ----------- |
+| `blockIDFlag`      | `BlockIDFlag`           |             |
+| `validatorAddress` | [Address](#address)     |             |
+| `timestamp`        | [Time](#time)           |             |
+| `signature`        | [Signature](#signature) |             |
 
 ## Vote
 
@@ -148,34 +153,18 @@ enum VoteType {
 };
 ```
 
-| name               | type                  | description |
-| ------------------ | --------------------- | ----------- |
-| `type`             | `VoteType`            |             |
-| `height`           | `uint64`              |             |
-| `round`            | `uint64`              |             |
-| `blockID`          | [BlockID](#blockid)   |             |
-| `timestamp`        | [Time](#time)         |             |
-| `validatorAddress` | [Address](#address)   |             |
-| `validatorIndex`   | `uint64`              |             |
-| `signature`        | [Signature](#signing) |             |
+| name               | type                    | description |
+| ------------------ | ----------------------- | ----------- |
+| `type`             | `VoteType`              |             |
+| `height`           | `uint64`                |             |
+| `round`            | `uint64`                |             |
+| `blockID`          | [BlockID](#blockid)     |             |
+| `timestamp`        | [Time](#time)           |             |
+| `validatorAddress` | [Address](#address)     |             |
+| `validatorIndex`   | `uint64`                |             |
+| `signature`        | [Signature](#signature) |             |
 
-# Serialization
-
-https://developers.google.com/protocol-buffers/docs/proto3
-
-# Hashing
-
-| name     | type       | description           |
-| -------- | ---------- | --------------------- |
-| `digest` | `byte[32]` | Raw hash digest data. |
-
-All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)). This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM. Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
-
-Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
-
-Unless otherwise indicated explicitly, objects are first [serialized](#serialization) before being hashed.
-
-# Signing
+## Signature
 
 | name | type       | description |
 | ---- | ---------- | ----------- |
@@ -183,8 +172,25 @@ Unless otherwise indicated explicitly, objects are first [serialized](#serializa
 | `s`  | `byte[32]` |             |
 | `v`  | `bool`     |             |
 
+Output of the [signing](#public-key-cryptography) process.
+
+# Serialization
+
+https://developers.google.com/protocol-buffers/docs/proto3
+
+# Hashing
+
+All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)). This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM. Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
+
+Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
+
+Unless otherwise indicated explicitly, objects are first [serialized](#serialization) before being hashed.
+
+# Public-Key Cryptography
+
 Consensus-critical messages are authenticated using ECDSA, with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1).
 
+Only low-`s` values in signatures are valid.
 
 # Merkle Trees
 
