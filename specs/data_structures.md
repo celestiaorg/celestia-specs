@@ -5,6 +5,7 @@ Data Structures
 - [Blockchain Data Structures](#blockchain-data-structures)
   - [Block](#block)
   - [Header](#header)
+  - [AvailableDataHeader](#availabledataheader)
   - [AvailableData](#availabledata)
   - [EvidenceData](#evidencedata)
   - [Commit](#commit)
@@ -12,7 +13,6 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
-  - [AvailableHeader](#availableheader)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
   - [Vote](#vote)
@@ -38,35 +38,42 @@ Data Structures
 
 Blocks are the top-level data structure of the LazyLedger blockchain.
 
-| name            | type                            | description                                                           |
-| --------------- | ------------------------------- | --------------------------------------------------------------------- |
-| `header`        | [Header](#header)               | Block header. Contains primarily identification info and commitments. |
-| `availableData` | [AvailableData](#availabledata) | Data that is erasure-coded for availability.                          |
-| `evidence`      | [EvidenceData](#evidencedata)   | Evidence used for slashing conditions (e.g. equivocation).            |
-| `lastCommit`    | [Commit](#commit)               | Previous block's Tendermint commit.                                   |
+| name                  | type                                        | description                                                           |
+| --------------------- | ------------------------------------------- | --------------------------------------------------------------------- |
+| `header`              | [Header](#header)                           | Block header. Contains primarily identification info and commitments. |
+| `availableDataHeader` | [AvailableDataHeader](#availabledataheader) | Header of available data. Contains commitments to erasure-coded data. |
+| `availableData`       | [AvailableData](#availabledata)             | Data that is erasure-coded for availability.                          |
+| `evidence`            | [EvidenceData](#evidencedata)               | Evidence used for slashing conditions (e.g. equivocation).            |
+| `lastCommit`          | [Commit](#commit)                           | Previous block's Tendermint commit.                                   |
 
 ## Header
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                 | type                                | description                                       |
-| -------------------- | ----------------------------------- | ------------------------------------------------- |
-| `version`            | `uint64`                            | Version of the LazyLedger chain.                  |
-| `chainID`            | `uint64`                            | Chain ID. Each fork assigns itself a (unique) ID. |
-| `height`             | `uint64`                            | Block height. The genesis block is at height `1`. |
-| `time`               | [Time](#time)                       | Timestamp of this block.                          |
-| `lastBlockID`        | [BlockID](#blockid)                 | Previous block's ID.                              |
-| `lastCommitRoot`     | [HashDigest](#hashdigest)           | Previous block's Tendermint commit root.          |
-| `validatorsRoot`     | [HashDigest](#hashdigest)           | Validator set root for this block.                |
-| `nextValidatorsRoot` | [HashDigest](#hashdigest)           | Root of the next block's validator set.           |
-| `consensusHash`      | [HashDigest](#hashdigest)           | Consensus parameters for this block.              |
-| `evidenceRoot`       | [HashDigest](#hashdigest)           | Evidence data root.                               |
-| `availableHeader`    | [AvailableHeader](#availableheader) | Header of commitments to erasure-coded data.      |
-| `proposerAddress`    | [Address](#address)                 | Address of this block's proposer.                 |
+| name                 | type                      | description                                                        |
+| -------------------- | ------------------------- | ------------------------------------------------------------------ |
+| `version`            | `uint64`                  | Version of the LazyLedger chain.                                   |
+| `chainID`            | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID.                  |
+| `height`             | `uint64`                  | Block height. The genesis block is at height `1`.                  |
+| `time`               | [Time](#time)             | Timestamp of this block.                                           |
+| `lastBlockID`        | [BlockID](#blockid)       | Previous block's ID.                                               |
+| `lastCommitRoot`     | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                           |
+| `validatorsRoot`     | [HashDigest](#hashdigest) | Validator set root for this block.                                 |
+| `nextValidatorsRoot` | [HashDigest](#hashdigest) | Root of the next block's validator set.                            |
+| `consensusHash`      | [HashDigest](#hashdigest) | Consensus parameters for this block.                               |
+| `evidenceRoot`       | [HashDigest](#hashdigest) | Evidence data root.                                                |
+| `availableDataRoot`  | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader). |
+| `proposerAddress`    | [Address](#address)       | Address of this block's proposer.                                  |
+
+## AvailableDataHeader
+
+| name                       | type                          | description                            |
+| -------------------------- | ----------------------------- | -------------------------------------- |
+| `availableDataCommitments` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
 ## AvailableData
 
-Data that is erasure-coded for [data availability checks](https://arxiv.org/abs/1809.09044).
+Data that is [erasure-coded](#erasure-coding) for [data availability checks](https://arxiv.org/abs/1809.09044).
 
 | name                     | type                                | description                                     |
 | ------------------------ | ----------------------------------- | ----------------------------------------------- |
@@ -112,12 +119,6 @@ The block ID is a single Merkle root: the root of the [block header](#header)'s 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## Address
-
-## AvailableHeader
-
-| name                | type                          | description                            |
-| ------------------- | ----------------------------- | -------------------------------------- |
-| `availableDataRoot` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
 ## Evidence
 
