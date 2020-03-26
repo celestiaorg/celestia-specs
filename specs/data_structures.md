@@ -183,7 +183,7 @@ Output of the [signing](#public-key-cryptography) process.
 
 # Serialization
 
-https://developers.google.com/protocol-buffers/docs/proto3
+Unless otherwise indicated explicitly, objects are serialized using [protobuf3](https://developers.google.com/protocol-buffers/docs/proto3).
 
 # Hashing
 
