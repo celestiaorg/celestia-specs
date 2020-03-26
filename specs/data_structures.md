@@ -112,13 +112,19 @@ The block ID is a single Merkle root: the root of the [block header](#header)'s 
 
 ## HashDigest
 
-| name     | type       | description           |
-| -------- | ---------- | --------------------- |
-| `digest` | `byte[32]` | Raw hash digest data. |
+| name      | type       | description           |
+| --------- | ---------- | --------------------- |
+| `rawData` | `byte[32]` | Raw hash digest data. |
 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## Address
+
+| name      | type       | description       |
+| --------- | ---------- | ----------------- |
+| `rawData` | `byte[20]` | Raw address data. |
+
+Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#public-key-cryptography).
 
 ## Evidence
 
