@@ -15,6 +15,7 @@ Data Structures
   - [Address](#address)
   - [Evidence](#evidence)
   - [CommitSig](#commitsig)
+  - [PublicKey](#publickey)
   - [Vote](#vote)
   - [Signature](#signature)
 - [Serialization](#serialization)
@@ -124,15 +125,15 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 | --------- | ---------- | ----------------- |
 | `rawData` | `byte[20]` | Raw address data. |
 
-Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#public-key-cryptography).
+Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
 ## Evidence
 
-| name     | type                                  | description |
-| -------- | ------------------------------------- | ----------- |
-| `pubKey` | [PublicKey](#public-key-cryptography) |             |
-| `voteA`  | [Vote](#vote)                         |             |
-| `voteB`  | [Vote](#vote)                         |             |
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `pubKey` | [PublicKey](#publickey) |             |
+| `voteA`  | [Vote](#vote)           |             |
+| `voteB`  | [Vote](#vote)           |             |
 
 ## CommitSig
 
@@ -150,6 +151,13 @@ enum BlockIDFlag {
 | `validatorAddress` | [Address](#address)     |             |
 | `timestamp`        | [Time](#time)           |             |
 | `signature`        | [Signature](#signature) |             |
+
+## PublicKey
+
+| name | type       | description              |
+| ---- | ---------- | ------------------------ |
+| `x`  | `byte[32]` | `x` value of public key. |
+| `y`  | `byte[32]` | `y` value of public key. |
 
 ## Vote
 
@@ -173,11 +181,10 @@ enum VoteType {
 
 ## Signature
 
-| name | type       | description |
-| ---- | ---------- | ----------- |
-| `r`  | `byte[32]` |             |
-| `s`  | `byte[32]` |             |
-| `v`  | `bool`     |             |
+| name | type       | description                                                          |
+| ---- | ---------- | -------------------------------------------------------------------- |
+| `r`  | `byte[32]` | `r` value of the signature.                                          |
+| `vs` | `byte[32]` | 1-bit `v` value followed by last 255 bits of `s` value of signature. |
 
 Output of the [signing](#public-key-cryptography) process.
 
@@ -195,9 +202,13 @@ Unless otherwise indicated explicitly, objects are first [serialized](#serializa
 
 # Public-Key Cryptography
 
-Consensus-critical data is authenticated using ECDSA, with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1).
+Consensus-critical data is authenticated using [ECDSA](https://www.secg.org/sec1-v2.pdf), with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1).
 
-Only low-`s` values in signatures are valid.
+[Public key](#publickey)s are encoded in uncompressed form, as the concatenation of the `x` and `y` values. No prefix is needed as this is the only encoding supported.
+
+[Signature](#signature)s are encoded as the `r` and `s` values of the signature, with one twist. Only low-`s` values in signatures are valid (i.e. `s < secp256k1.n`); `s` can be replaced with `-s mod secp256k1.n` during the signing process if it is high. Given this, the first bit of `s` will always be `0`, and can be used to store the 1-bit `v` value.
+
+This encoding for signatures is inspired by [EIP 2098: Compact Signature Representation](https://eips.ethereum.org/EIPS/eip-2098).
 
 # Merkle Trees
 
