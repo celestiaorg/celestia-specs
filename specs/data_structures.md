@@ -7,14 +7,14 @@ Data Structures
   - [Header](#header)
   - [AvailableDataHeader](#availabledataheader)
   - [AvailableData](#availabledata)
-  - [EvidenceData](#evidencedata)
   - [Commit](#commit)
   - [Time](#time)
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
-  - [Evidence](#evidence)
+  - [EvidenceData](#evidencedata)
   - [CommitSig](#commitsig)
+  - [Evidence](#evidence)
   - [PublicKey](#publickey)
   - [Vote](#vote)
   - [Signature](#signature)
@@ -44,7 +44,6 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 | `header`              | [Header](#header)                           | Block header. Contains primarily identification info and commitments. |
 | `availableDataHeader` | [AvailableDataHeader](#availabledataheader) | Header of available data. Contains commitments to erasure-coded data. |
 | `availableData`       | [AvailableData](#availabledata)             | Data that is erasure-coded for availability.                          |
-| `evidence`            | [EvidenceData](#evidencedata)               | Evidence used for slashing conditions (e.g. equivocation).            |
 | `lastCommit`          | [Commit](#commit)                           | Previous block's Tendermint commit.                                   |
 
 ## Header
@@ -62,7 +61,6 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `validatorsRoot`     | [HashDigest](#hashdigest) | Validator set root for this block.                                 |
 | `nextValidatorsRoot` | [HashDigest](#hashdigest) | Root of the next block's validator set.                            |
 | `consensusHash`      | [HashDigest](#hashdigest) | Consensus parameters for this block.                               |
-| `evidenceRoot`       | [HashDigest](#hashdigest) | Evidence data root.                                                |
 | `availableDataRoot`  | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader). |
 | `proposerAddress`    | [Address](#address)       | Address of this block's proposer.                                  |
 
@@ -76,19 +74,12 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 Data that is [erasure-coded](#erasure-coding) for [data availability checks](https://arxiv.org/abs/1809.09044).
 
-| name                     | type                                | description                                     |
-| ------------------------ | ----------------------------------- | ----------------------------------------------- |
-| `transactionData`        | [TransactionData](#transactiondata) | Transaction data.                               |
-| `intermediateStateRoots` | [HashDigest](#hashdigest)           | Intermediate state roots used for fraud proofs. |
-| `messageData`            | [MessageData](#messagedata)         | Message data.                                   |
-
-## EvidenceData
-
-Wrapper for evidence data.
-
-| name       | type                      | description                                    |
-| ---------- | ------------------------- | ---------------------------------------------- |
-| `evidence` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
+| name                     | type                                | description                                                |
+| ------------------------ | ----------------------------------- | ---------------------------------------------------------- |
+| `transactionData`        | [TransactionData](#transactiondata) | Transaction data.                                          |
+| `intermediateStateRoots` | [HashDigest](#hashdigest)           | Intermediate state roots used for fraud proofs.            |
+| `evidenceData`           | [EvidenceData](#evidencedata)       | Evidence used for slashing conditions (e.g. equivocation). |
+| `messageData`            | [MessageData](#messagedata)         | Message data.                                              |
 
 ## Commit
 
@@ -127,13 +118,13 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
-## Evidence
+## EvidenceData
 
-| name     | type                    | description |
-| -------- | ----------------------- | ----------- |
-| `pubKey` | [PublicKey](#publickey) |             |
-| `voteA`  | [Vote](#vote)           |             |
-| `voteB`  | [Vote](#vote)           |             |
+Wrapper for evidence data.
+
+| name        | type                      | description                                    |
+| ----------- | ------------------------- | ---------------------------------------------- |
+| `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
 
 ## CommitSig
 
@@ -151,6 +142,14 @@ enum BlockIDFlag {
 | `validatorAddress` | [Address](#address)     |             |
 | `timestamp`        | [Time](#time)           |             |
 | `signature`        | [Signature](#signature) |             |
+
+## Evidence
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `pubKey` | [PublicKey](#publickey) |             |
+| `voteA`  | [Vote](#vote)           |             |
+| `voteB`  | [Vote](#vote)           |             |
 
 ## PublicKey
 
