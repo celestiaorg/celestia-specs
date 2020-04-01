@@ -138,7 +138,7 @@ Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) 
 ## CommitSig
 
 ```C++
-enum BlockIDFlag {
+enum BlockIDFlag : uint8_t {
     BlockIDFlagAbsent = 1,
     BlockIDFlagCommit = 2,
     BlockIDFlagNil = 3,
@@ -162,7 +162,7 @@ enum BlockIDFlag {
 ## Vote
 
 ```C++
-enum VoteType {
+enum VoteType : uint8_t {
     Prevote = 1,
     Precommit = 2,
 };
