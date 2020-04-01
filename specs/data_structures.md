@@ -139,9 +139,9 @@ Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) 
 
 ```C++
 enum BlockIDFlag {
-    BlockIDFlagAbsent = 0x01,
-    BlockIDFlagCommit = 0x02,
-    BlockIDFlagNil = 0x03,
+    BlockIDFlagAbsent = 1,
+    BlockIDFlagCommit = 2,
+    BlockIDFlagNil = 3,
 };
 ```
 
