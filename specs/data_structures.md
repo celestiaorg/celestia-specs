@@ -50,19 +50,18 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                 | type                      | description                                                        |
-| -------------------- | ------------------------- | ------------------------------------------------------------------ |
-| `version`            | `uint64`                  | Version of the LazyLedger chain.                                   |
-| `chainID`            | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID.                  |
-| `height`             | `uint64`                  | Block height. The genesis block is at height `1`.                  |
-| `time`               | [Time](#time)             | Timestamp of this block.                                           |
-| `lastBlockID`        | [BlockID](#blockid)       | Previous block's ID.                                               |
-| `lastCommitRoot`     | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                           |
-| `validatorsRoot`     | [HashDigest](#hashdigest) | Validator set root for this block.                                 |
-| `nextValidatorsRoot` | [HashDigest](#hashdigest) | Root of the next block's validator set.                            |
-| `consensusHash`      | [HashDigest](#hashdigest) | Consensus parameters for this block.                               |
-| `availableDataRoot`  | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader). |
-| `proposerAddress`    | [Address](#address)       | Address of this block's proposer.                                  |
+| name                | type                      | description                                                                                  |
+| ------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
+| `version`           | `uint64`                  | Version of the LazyLedger chain.                                                             |
+| `chainID`           | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID.                                            |
+| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                                            |
+| `time`              | [Time](#time)             | Timestamp of this block.                                                                     |
+| `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                                         |
+| `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                     |
+| `consensusHash`     | [HashDigest](#hashdigest) | Consensus parameters for this block.                                                         |
+| `stateCommitment`   | [HashDigest](#hashdigest) | Commitment to state root and validator set root after this block's transactions are applied. |
+| `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                           |
+| `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                                            |
 
 ## AvailableDataHeader
 
