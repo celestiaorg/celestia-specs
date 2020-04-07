@@ -26,7 +26,7 @@ digraph G {
         }
     }
 
-    struct1:f9 -> struct2;
+    struct1:f8 -> struct2;
     struct2:f0 -> struct3;
 
     edge [style = invis];
