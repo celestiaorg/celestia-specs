@@ -24,9 +24,9 @@ Data Structures
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
   - [Annotated Merkle Tree](#annotated-merkle-tree)
-  - [Sparse Merkle Tree](#sparse-merkle-tree)
-  - [Namespace Merkle Tree](#namespace-merkle-tree)
     - [Verifying Merkle Proofs](#verifying-merkle-proofs)
+  - [Namespace Merkle Tree](#namespace-merkle-tree)
+  - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
   - [TransactionData](#transactiondata)
   - [MessageData](#messagedata)
@@ -241,15 +241,17 @@ v = h(0x01, l.v, r.v)
 
 ## Annotated Merkle Tree
 
+Merkle trees can be expressed as generic annotated Merkle trees, where additional fields can be contained in each node. One of the early annotated Merkle trees is the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0), which allows for compact fraud proofs to be made of fees collected in a block.
 
 
-## Sparse Merkle Tree
+
+### Verifying Merkle Proofs
 
 
 
 ## Namespace Merkle Tree
 
-Messages in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0).
+Messages in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
 
 Construction of a NMT is similar to that of a plain binary Merkle tree, but with a different hashing method that commits to intervals of namespace IDs.
 
@@ -271,7 +273,8 @@ n_max = max(l.n_max, r.n_max)
 v = h(l, r) = h(l.min, l.max, l.v, r.min, r.max, r.v)
 ```
 
-### Verifying Merkle Proofs
+## Sparse Merkle Tree
+
 
 
 # Erasure Coding
