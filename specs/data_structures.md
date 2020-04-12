@@ -24,7 +24,7 @@ Data Structures
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
   - [Annotated Merkle Tree](#annotated-merkle-tree)
-    - [Verifying Merkle Proofs](#verifying-merkle-proofs)
+    - [Verifying Annotated Merkle Proofs](#verifying-annotated-merkle-proofs)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
@@ -241,11 +241,29 @@ v = h(l.v, r.v)
 
 ## Annotated Merkle Tree
 
-Merkle trees can be expressed as generic annotated Merkle trees, where additional fields can be contained in each node. One of the early annotated Merkle trees is the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0), which allows for compact fraud proofs to be made of fees collected in a block.
+Merkle trees can be augmented as generic annotated Merkle trees, where additional fields can be contained in each node. One of the early annotated Merkle trees is the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0), which allows for compact fraud proofs to be made of fees collected in a block.
 
+Annotated Merkle trees have extra fields and methods to compute values for those fields, i.e. `f_1, ..., f_n, v` for `n` fields (note that if `n=0`, the annotated Merkle tree is a plain [binary Merkle tree](#binary-merkle-tree)). The value of field `f_i` is computed with the method `m_i_i(height, left_child_field, right_child_field)` for internal nodes and `m_i_l(message)` for leaf nodes.
 
+For leaf node of leaf message `m`, its value `v` and fields `f_1, ..., f_n` are:
+```C++
+f_1 = m_1_l(serialize(m))
+...
+f_n = m_n_l(serialize(m))
+v = h(serialize(m))
+```
 
-### Verifying Merkle Proofs
+For internal node at height `h` with children `l` and `r`, its value `v` and fields `f_1, ..., f_n` are:
+```C++
+f_1 = m_1_i(h, l.f_1, r.f_1)
+...
+f_n = m_n_i(h, l.f_n, r.f_n)
+v = h(l.v, r.v)
+```
+
+If a compact Merkle root is needed, the root level (which consists of root fields and a root value) can be hashed once.
+
+### Verifying Annotated Merkle Proofs
 
 
 
