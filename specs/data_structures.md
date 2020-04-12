@@ -23,7 +23,8 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
-  - [Sparse Binary Merkle Tree](#sparse-binary-merkle-tree)
+  - [Annotated Merkle Tree](#annotated-merkle-tree)
+  - [Sparse Merkle Tree](#sparse-merkle-tree)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
     - [Verifying Merkle Proofs](#verifying-merkle-proofs)
 - [Erasure Coding](#erasure-coding)
@@ -224,21 +225,26 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 ## Binary Merkle Tree
 
-Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf nodes and internal nodes being the hash of the concatenation of their children. Note that when hashing leaves , `0x00` is prepended, and when hashing internal nodes, `0x01` is prepended. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack).
+Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf node values and internal node values being the hash of the concatenation of their children. Note that when hashing leaves, the `uint8` value `0x00` is prepended, and when hashing internal nodes, `0x01` is prepended. This avoids a second-preimage attack [where internal nodes are presented as leaf nodes](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack).
 
-For leaf node of message `m`:
+For leaf node of leaf message `m`, its value `v` is:
 ```C++
 v = h(0x00, serialize(m))
 ```
 
-An exceptions is made, in the case of empty leaf nodes: the value of an empty leaf node is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). Implicitly, trees are padded with empty nodes up to the next larger power of 2.
+An exception is made, in the case of empty leaves: the value of an leaf node with an empty leaf is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). Implicitly, trees are padded with empty leaves up to the smallest enclosing power of 2.
 
-For internal node with children `l` and `r`:
+For internal node with children `l` and `r`, its value `v` is:
 ```C++
-v = h(0x01, l, r) = h(0x01, l.v, r.v)
+v = h(0x01, l.v, r.v)
 ```
 
-## Sparse Binary Merkle Tree
+## Annotated Merkle Tree
+
+
+
+## Sparse Merkle Tree
+
 
 
 ## Namespace Merkle Tree
