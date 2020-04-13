@@ -265,7 +265,7 @@ If a compact Merkle root is needed, the root level (which consists of root field
 
 ### Verifying Annotated Merkle Proofs
 
-
+In addition to the root, leaf, index, and sibling values of a Merkle proof for a plain [binary Merkle tree](#binary-merkle-tree), Merkle proofs for annotated Mekle trees have the sibling field values. Proofs are verified by using the appropriate methods to compute field values.
 
 ## Namespace Merkle Tree
 
