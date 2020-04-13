@@ -232,7 +232,7 @@ For leaf node of leaf message `m`, its value `v` is:
 v = h(serialize(m))
 ```
 
-An exception is made, in the case of empty leaves: the value of an leaf node with an empty leaf is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). Implicitly, trees are padded with empty leaves up to the smallest enclosing power of 2.
+An exception is made, in the case of empty leaves: the value of a leaf node with an empty leaf is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes in order to avoid [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). Implicitly, trees are padded with empty leaves up to the smallest enclosing power of 2.
 
 For internal node with children `l` and `r`, its value `v` is:
 ```C++
