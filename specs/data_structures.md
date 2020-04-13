@@ -253,12 +253,12 @@ f_n = m_n_l(serialize(m))
 v = h(serialize(m))
 ```
 
-For internal node at height `h` with children `l` and `r`, its value `v` and fields `f_1, ..., f_n` are:
+For internal node at height `height` with children `l` and `r`, its value `v` and fields `f_1, ..., f_n` are:
 ```C++
-f_1 = m_1_i(h, l.f_1, r.f_1)
+f_1 = m_1_i(height, l.f_1, r.f_1)
 ...
-f_n = m_n_i(h, l.f_n, r.f_n)
-v = h(l.v, r.v)
+f_n = m_n_i(height, l.f_n, r.f_n)
+v = h(l.f_1, ..., l.f_n, l.v, r.f_1, ..., r.f_n, r.v)
 ```
 
 If a compact Merkle root is needed, the root level (which consists of root fields and a root value) can be hashed once.
