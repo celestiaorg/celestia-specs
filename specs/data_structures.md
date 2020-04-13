@@ -247,9 +247,9 @@ Annotated Merkle trees have extra fields and methods to compute values for those
 
 For leaf node of leaf message `m`, its value `v` and fields `f_1, ..., f_n` are:
 ```C++
-f_1 = m_1_l(serialize(m))
+f_1 = m_1_l(m)
 ...
-f_n = m_n_l(serialize(m))
+f_n = m_n_l(m)
 v = h(serialize(m))
 ```
 
@@ -271,24 +271,24 @@ If a compact Merkle root is needed, the root level (which consists of root field
 
 Messages in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
 
-Construction of a NMT is similar to that of a plain binary Merkle tree, but with a different hashing method that commits to intervals of namespace IDs.
+The NMT is an annotated Merkle tree with two additional fields and methods that indicate the range of namespace IDs in each node's subtree.
 
 For leaf node of message `m`:
 ```C++
-n_min = m.namespace_id
-n_max = m.namespace_id
+n_min = m_1_l(m) = m.namespace_id
+n_max = m_2_l(m) = m.namespace_id
 v = h(serialize(m))
 ```
 
-The `namespace_id` field is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-byte unsigned integer.
+The `namespace_id` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-byte unsigned integer.
 
-Before being hashed, the [message](#message)s are [serialized](#serialization).
+Before being hashed, the [messages](#message) are [serialized](#serialization).
 
 For internal node with children `l` and `r`:
 ```C++
-n_min = min(l.n_min, r.n_min)
-n_max = max(l.n_max, r.n_max)
-v = h(l, r) = h(l.min, l.max, l.v, r.min, r.max, r.v)
+n_min = m_1_i(height, l, r) = min(l.n_min, r.n_min)
+n_max = m_2_i(height, l, r) = max(l.n_max, r.n_max)
+v = h(l, r) = h(l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 ```
 
 ## Sparse Merkle Tree
