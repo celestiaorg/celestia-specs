@@ -263,6 +263,8 @@ v = h(l.f_1, ..., l.f_n, l.v, r.f_1, ..., r.f_n, r.v)
 
 If a compact Merkle root is needed, the root level (which consists of root fields and a root value) can be hashed once.
 
+As an example of annotation, when hashing leaves, `0x00` can be prepended, and when hashing internal nodes, `0x01` can be prepended (i.e. `m_1_l() = 0x00` and `m_1_i() = 0x01`). This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) for incomplete trees.
+
 ### Verifying Annotated Merkle Proofs
 
 In addition to the root, leaf, index, and sibling values of a Merkle proof for a plain [binary Merkle tree](#binary-merkle-tree), Merkle proofs for annotated Mekle trees have the sibling field values. Proofs are verified by using the appropriate methods to compute field values.
