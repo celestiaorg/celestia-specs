@@ -225,7 +225,7 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 ## Binary Merkle Tree
 
-Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf node values and internal node values being the hash of the concatenation of their children.
+Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf node values and internal node values being the hash of the concatenation of their children. The specific mechanism for hashing leaves for leaf nodes and children for internal nodes may be different (see: [annotated Merkle trees](#annotated-merkle-tree)), but for plain binary Merkle trees are the same.
 
 For leaf node of leaf message `m`, its value `v` is:
 ```C++
