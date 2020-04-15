@@ -301,6 +301,16 @@ SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-a
 
 For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. The lowest bit corresponds to the sibling of the leaf node, and each higher bit corresponds to the next parent. A value of `1` indicates that the next value in the list of values provided explicitly in the proof should be used, and a value of `0` indicates that the default value should be used.
 
+A proof into an SMT is structured as:
+
+| name               | type                          | description                                                                                     |
+| ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `root`             | [HashDigest](#hashdigest)     | Merkle root.                                                                                    |
+| `leaf`             | `byte[]`                      | Leaf value.                                                                                     |
+| `index`            | `byte[32]`                    | Index of the leaf.                                                                              |
+| `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                                            |
+| `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes. The lowest bit corresponds the leaf node level. |
+
 # Erasure Coding
 
 
