@@ -2,6 +2,7 @@ Data Structures
 ===
 
 - [Data Structures](#data-structures)
+- [Data Structures Overview](#data-structures-overview)
 - [Blockchain Data Structures](#blockchain-data-structures)
   - [Block](#block)
   - [Header](#header)
@@ -33,6 +34,10 @@ Data Structures
   - [Transaction](#transaction)
   - [Message](#message)
 - [State](#state)
+
+# Data Structures Overview
+
+![fig: Block data structures.](figures/block_data_structures.svg)
 
 # Blockchain Data Structures
 

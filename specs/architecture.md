@@ -15,8 +15,6 @@ Architecture
 
 # System Architecture
 
-![fig: Block data structures.](figures/block_data_structures.svg)
-
 LazyLedger has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native _transactions_, distinct from the _messages_ processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.
 
 Transactions pay fees similarly to how they would in a normal blockchain (e.g. Bitcoin), and their side effects are restricted to modifying the validator set and their balances. Transactions can additionally pay fees for the inclusion of a message (identified by a hash) in the same block. The validator set is committed to in the block header, and since the entire system state _is_ the validator set, this is the only state commitment needed in the header.
