@@ -77,7 +77,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | name                     | type                                | description                                                |
 | ------------------------ | ----------------------------------- | ---------------------------------------------------------- |
 | `transactionData`        | [TransactionData](#transactiondata) | Transaction data.                                          |
-| `intermediateStateRoots` | [HashDigest](#hashdigest)           | Intermediate state roots used for fraud proofs.            |
+| `intermediateStateRoots` | [HashDigest](#hashdigest)`[]`       | Intermediate state roots used for fraud proofs.            |
 | `evidenceData`           | [EvidenceData](#evidencedata)       | Evidence used for slashing conditions (e.g. equivocation). |
 | `messageData`            | [MessageData](#messagedata)         | Message data.                                              |
 
