@@ -345,6 +345,7 @@ A proof into an SMT is structured as:
 | name                | type                          | description                                                                                                                                                                                                                                     |
 | ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TODO                |                               |                                                                                                                                                                                                                                                 |
+| `messageSize`       | `uint64`                      | Size of message this transaction pays a fee for, in `byte`s. If this transaction does not pay a fee for a message, must be `0`.                                                                                                                 |
 | `messageShareRoots` | [HashDigest](#hashdigest)`[]` | Merkle roots of an optional message that this transaction pays a fee to be included in the current block. Messages are split into shares and committed to here. Large messages can span across rows, which requires more roots to the provided. |
 
 
