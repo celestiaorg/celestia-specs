@@ -86,7 +86,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | name                        | type                                                    | description                                                                                                     |
 | --------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `transactionData`           | [TransactionData](#transactiondata)                     | Transaction data. Transactions modify the validator set and balances, and pay fees for messages to be included. |
-| `intermediateStateRootData` | [IntermediateStateRoot](#intermediatestaterootdata)`[]` | Intermediate state roots used for fraud proofs.                                                                 |
+| `intermediateStateRootData` | [IntermediateStateRootData](#intermediatestaterootdata) | Intermediate state roots used for fraud proofs.                                                                 |
 | `evidenceData`              | [EvidenceData](#evidencedata)                           | Evidence used for slashing conditions (e.g. equivocation).                                                      |
 | `messageData`               | [MessageData](#messagedata)                             | Message data. Messages are app data.                                                                            |
 
