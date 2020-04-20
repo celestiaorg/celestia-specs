@@ -374,7 +374,9 @@ A proof into an SMT is structured as:
 
 ## Message
 
-
+| name      | type     | description        |
+| --------- | -------- | ------------------ |
+| `rawData` | `byte[]` | Raw message bytes. |
 
 # State
 
