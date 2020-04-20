@@ -30,8 +30,12 @@ Data Structures
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
   - [TransactionData](#transactiondata)
-  - [MessageData](#messagedata)
+  - [WrappedTransaction](#wrappedtransaction)
   - [Transaction](#transaction)
+  - [IntermediateStateRootData](#intermediatestaterootdata)
+  - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
+  - [IntermediateStateRoot](#intermediatestateroot)
+  - [MessageData](#messagedata)
   - [Message](#message)
 - [State](#state)
 
@@ -79,12 +83,12 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 Data that is [erasure-coded](#erasure-coding) for [data availability checks](https://arxiv.org/abs/1809.09044).
 
-| name                     | type                                | description                                                |
-| ------------------------ | ----------------------------------- | ---------------------------------------------------------- |
-| `transactionData`        | [TransactionData](#transactiondata) | Transaction data.                                          |
-| `intermediateStateRoots` | [HashDigest](#hashdigest)`[]`       | Intermediate state roots used for fraud proofs.            |
-| `evidenceData`           | [EvidenceData](#evidencedata)       | Evidence used for slashing conditions (e.g. equivocation). |
-| `messageData`            | [MessageData](#messagedata)         | Message data.                                              |
+| name                        | type                                                    | description                                                                                                     |
+| --------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `transactionData`           | [TransactionData](#transactiondata)                     | Transaction data. Transactions modify the validator set and balances, and pay fees for messages to be included. |
+| `intermediateStateRootData` | [IntermediateStateRoot](#intermediatestaterootdata)`[]` | Intermediate state roots used for fraud proofs.                                                                 |
+| `evidenceData`              | [EvidenceData](#evidencedata)                           | Evidence used for slashing conditions (e.g. equivocation).                                                      |
+| `messageData`               | [MessageData](#messagedata)                             | Message data. Messages are app data.                                                                            |
 
 ## Commit
 
@@ -324,27 +328,52 @@ A proof into an SMT is structured as:
 
 ## TransactionData
 
-Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
+| name                  | type                                          | description                   |
+| --------------------- | --------------------------------------------- | ----------------------------- |
+| `wrappedTransactions` | [WrappedTransaction](#wrappedtransaction)`[]` | List of wrapped transactions. |
 
- | name           | type                            | description           |
- | -------------- | ------------------------------- | --------------------- |
- | `transactions` | [Transaction](#transaction)`[]` | List of transactions. |
+## WrappedTransaction
 
-TODO define a Transaction format
-
-## MessageData
-
-Wrapper for message data, which is a simple list of [Message](#message)s.
-
- | name       | type                    | description       |
- | ---------- | ----------------------- | ----------------- |
- | `messages` | [Message](#message)`[]` | List of messages. |
-
-TODO define a Message format
+| name           | type          | description                                                                                     |
+| -------------- | ------------- | ----------------------------------------------------------------------------------------------- |
+| `index`        | `uint64`      | Index of this transaction in the list of wrapped transactions. This is needed for fraud proofs. |
+| `transaction`  | `Transaction` | Actual transaction.                                                                             |
+| `messageStart` | `uint64`      | _Optional_. Starting share of message this transaction pays for.                                |
 
 ## Transaction
 
+| name                | type                          | description                                                                                                                                                                                                                                     |
+| ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TODO                |                               |                                                                                                                                                                                                                                                 |
+| `messageShareRoots` | [HashDigest](#hashdigest)`[]` | Merkle roots of an optional message that this transaction pays a fee to be included in the current block. Messages are split into shares and committed to here. Large messages can span across rows, which requires more roots to the provided. |
+
+
+## IntermediateStateRootData
+
+| name                            | type                                                              | description                               |
+| ------------------------------- | ----------------------------------------------------------------- | ----------------------------------------- |
+| `wrappedIntermediateStateRoots` | [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)`[]` | List of wrapped intermediate state roots. |
+
+## WrappedIntermediateStateRoot
+
+| name                    | type         | description                                                                                                     |
+| ----------------------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
+| `index`                 | `uint64`     | Index of this intermediate state root in the list of intermediate state roots. This is needed for fraud proofs. |
+| `intermediateStateRoot` | `HashDigest` | Intermediate state root. Used for fraud proofs.                                                                 |
+
+## IntermediateStateRoot
+
+
+
+## MessageData
+
+| name       | type                    | description       |
+| ---------- | ----------------------- | ----------------- |
+| `messages` | [Message](#message)`[]` | List of messages. |
+
 ## Message
+
+
 
 # State
 
