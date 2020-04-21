@@ -25,6 +25,7 @@ Data Structures
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
+  - [Share](#share)
 - [Available Data](#available-data)
   - [TransactionData](#transactiondata)
     - [WrappedTransaction](#wrappedtransaction)
@@ -283,6 +284,12 @@ A proof into an SMT is structured as:
 # Erasure Coding
 
 
+
+## Share
+
+| name      | type               | description     |
+| --------- | ------------------ | --------------- |
+| `rawData` | `byte[SHARE_SIZE]` | Raw share data. |
 
 # Available Data
 
