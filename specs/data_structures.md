@@ -25,18 +25,19 @@ Data Structures
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
+- [Available Data](#available-data)
   - [TransactionData](#transactiondata)
-  - [WrappedTransaction](#wrappedtransaction)
-  - [Transaction](#transaction)
+    - [WrappedTransaction](#wrappedtransaction)
+    - [Transaction](#transaction)
   - [IntermediateStateRootData](#intermediatestaterootdata)
-  - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
-  - [IntermediateStateRoot](#intermediatestateroot)
+    - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
+    - [IntermediateStateRoot](#intermediatestateroot)
   - [EvidenceData](#evidencedata)
-  - [Evidence](#evidence)
-  - [PublicKey](#publickey)
-  - [Vote](#vote)
+    - [Evidence](#evidence)
+    - [PublicKey](#publickey)
+    - [Vote](#vote)
   - [MessageData](#messagedata)
-  - [Message](#message)
+    - [Message](#message)
 - [State](#state)
 
 # Data Structures Overview
@@ -283,13 +284,15 @@ A proof into an SMT is structured as:
 
 
 
+# Available Data
+
 ## TransactionData
 
 | name                  | type                                          | description                   |
 | --------------------- | --------------------------------------------- | ----------------------------- |
 | `wrappedTransactions` | [WrappedTransaction](#wrappedtransaction)`[]` | List of wrapped transactions. |
 
-## WrappedTransaction
+### WrappedTransaction
 
 | name           | type          | description                                                                                     |
 | -------------- | ------------- | ----------------------------------------------------------------------------------------------- |
@@ -297,7 +300,7 @@ A proof into an SMT is structured as:
 | `transaction`  | `Transaction` | Actual transaction.                                                                             |
 | `messageStart` | `uint64`      | _Optional_. Starting share of message this transaction pays for.                                |
 
-## Transaction
+### Transaction
 
 | name                | type                          | description                                                                                                                                                                                                                                     |
 | ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -312,14 +315,14 @@ A proof into an SMT is structured as:
 | ------------------------------- | ----------------------------------------------------------------- | ----------------------------------------- |
 | `wrappedIntermediateStateRoots` | [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)`[]` | List of wrapped intermediate state roots. |
 
-## WrappedIntermediateStateRoot
+### WrappedIntermediateStateRoot
 
 | name                    | type         | description                                                                                                     |
 | ----------------------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
 | `index`                 | `uint64`     | Index of this intermediate state root in the list of intermediate state roots. This is needed for fraud proofs. |
 | `intermediateStateRoot` | `HashDigest` | Intermediate state root. Used for fraud proofs.                                                                 |
 
-## IntermediateStateRoot
+### IntermediateStateRoot
 
 | name   | type         | description                                                                                  |
 | ------ | ------------ | -------------------------------------------------------------------------------------------- |
@@ -333,7 +336,7 @@ Wrapper for evidence data.
 | ----------- | ------------------------- | ---------------------------------------------- |
 | `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
 
-## Evidence
+### Evidence
 
 | name     | type                    | description |
 | -------- | ----------------------- | ----------- |
@@ -341,14 +344,14 @@ Wrapper for evidence data.
 | `voteA`  | [Vote](#vote)           |             |
 | `voteB`  | [Vote](#vote)           |             |
 
-## PublicKey
+### PublicKey
 
 | name | type       | description              |
 | ---- | ---------- | ------------------------ |
 | `x`  | `byte[32]` | `x` value of public key. |
 | `y`  | `byte[32]` | `y` value of public key. |
 
-## Vote
+### Vote
 
 ```C++
 enum VoteType : uint8_t {
@@ -374,7 +377,7 @@ enum VoteType : uint8_t {
 | ---------- | ----------------------- | ----------------- |
 | `messages` | [Message](#message)`[]` | List of messages. |
 
-## Message
+### Message
 
 | name      | type     | description        |
 | --------- | -------- | ------------------ |
