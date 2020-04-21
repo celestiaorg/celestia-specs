@@ -364,7 +364,9 @@ A proof into an SMT is structured as:
 
 ## IntermediateStateRoot
 
-
+| name   | type         | description                                                                                  |
+| ------ | ------------ | -------------------------------------------------------------------------------------------- |
+| `root` | `HashDigest` | Root of intermediate state, which is the composed of the global state and the validator set. |
 
 ## MessageData
 
