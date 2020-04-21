@@ -386,9 +386,10 @@ enum VoteType : uint8_t {
 
 ### Message
 
-| name      | type     | description        |
-| --------- | -------- | ------------------ |
-| `rawData` | `byte[]` | Raw message bytes. |
+| name          | type                       | description                   |
+| ------------- | -------------------------- | ----------------------------- |
+| `namespaceID` | `byte[NAMESPACE_ID_BYTES]` | Namespace ID of this message. |
+| `rawData`     | `byte[]`                   | Raw message bytes.            |
 
 # State
 
