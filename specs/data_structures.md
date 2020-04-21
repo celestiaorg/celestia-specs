@@ -13,11 +13,7 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
-  - [EvidenceData](#evidencedata)
   - [CommitSig](#commitsig)
-  - [Evidence](#evidence)
-  - [PublicKey](#publickey)
-  - [Vote](#vote)
   - [Signature](#signature)
 - [Serialization](#serialization)
 - [Hashing](#hashing)
@@ -35,6 +31,10 @@ Data Structures
   - [IntermediateStateRootData](#intermediatestaterootdata)
   - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
   - [IntermediateStateRoot](#intermediatestateroot)
+  - [EvidenceData](#evidencedata)
+  - [Evidence](#evidence)
+  - [PublicKey](#publickey)
+  - [Vote](#vote)
   - [MessageData](#messagedata)
   - [Message](#message)
 - [State](#state)
@@ -127,14 +127,6 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
-## EvidenceData
-
-Wrapper for evidence data.
-
-| name        | type                      | description                                    |
-| ----------- | ------------------------- | ---------------------------------------------- |
-| `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
-
 ## CommitSig
 
 ```C++
@@ -150,41 +142,6 @@ enum BlockIDFlag : uint8_t {
 | `blockIDFlag`      | `BlockIDFlag`           |             |
 | `validatorAddress` | [Address](#address)     |             |
 | `timestamp`        | [Time](#time)           |             |
-| `signature`        | [Signature](#signature) |             |
-
-## Evidence
-
-| name     | type                    | description |
-| -------- | ----------------------- | ----------- |
-| `pubKey` | [PublicKey](#publickey) |             |
-| `voteA`  | [Vote](#vote)           |             |
-| `voteB`  | [Vote](#vote)           |             |
-
-## PublicKey
-
-| name | type       | description              |
-| ---- | ---------- | ------------------------ |
-| `x`  | `byte[32]` | `x` value of public key. |
-| `y`  | `byte[32]` | `y` value of public key. |
-
-## Vote
-
-```C++
-enum VoteType : uint8_t {
-    Prevote = 1,
-    Precommit = 2,
-};
-```
-
-| name               | type                    | description |
-| ------------------ | ----------------------- | ----------- |
-| `type`             | `VoteType`              |             |
-| `height`           | `uint64`                |             |
-| `round`            | `uint64`                |             |
-| `blockID`          | [BlockID](#blockid)     |             |
-| `timestamp`        | [Time](#time)           |             |
-| `validatorAddress` | [Address](#address)     |             |
-| `validatorIndex`   | `uint64`                |             |
 | `signature`        | [Signature](#signature) |             |
 
 ## Signature
@@ -367,6 +324,49 @@ A proof into an SMT is structured as:
 | name   | type         | description                                                                                  |
 | ------ | ------------ | -------------------------------------------------------------------------------------------- |
 | `root` | `HashDigest` | Root of intermediate state, which is the composed of the global state and the validator set. |
+
+## EvidenceData
+
+Wrapper for evidence data.
+
+| name        | type                      | description                                    |
+| ----------- | ------------------------- | ---------------------------------------------- |
+| `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
+
+## Evidence
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `pubKey` | [PublicKey](#publickey) |             |
+| `voteA`  | [Vote](#vote)           |             |
+| `voteB`  | [Vote](#vote)           |             |
+
+## PublicKey
+
+| name | type       | description              |
+| ---- | ---------- | ------------------------ |
+| `x`  | `byte[32]` | `x` value of public key. |
+| `y`  | `byte[32]` | `y` value of public key. |
+
+## Vote
+
+```C++
+enum VoteType : uint8_t {
+    Prevote = 1,
+    Precommit = 2,
+};
+```
+
+| name               | type                    | description |
+| ------------------ | ----------------------- | ----------- |
+| `type`             | `VoteType`              |             |
+| `height`           | `uint64`                |             |
+| `round`            | `uint64`                |             |
+| `blockID`          | [BlockID](#blockid)     |             |
+| `timestamp`        | [Time](#time)           |             |
+| `validatorAddress` | [Address](#address)     |             |
+| `validatorIndex`   | `uint64`                |             |
+| `signature`        | [Signature](#signature) |             |
 
 ## MessageData
 
