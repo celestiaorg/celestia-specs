@@ -5,9 +5,9 @@ digraph G {
     subgraph cluster_block {
         label = "block";
 
-        subgraph cluster_lastcommit {
-            label = "lastCommit";
-            struct4 [label = "{lastCommit}"];
+        subgraph cluster_availableheader {
+            label = "availableDataHeader";
+            struct4 [label = "{<f0> availableDataCommitments}"];
         }
 
         subgraph cluster_body {
@@ -15,19 +15,20 @@ digraph G {
             struct3 [label = "{ | { transactionData | intermediateStateRoots | evidenceData | messageData } }"];
         }
 
-        subgraph cluster_availableheader {
-            label = "availableDataHeader";
-            struct2 [label = "{<f0> availableDataCommitments}"];
+        subgraph cluster_lastcommit {
+            label = "lastCommit";
+            struct2 [label = "{lastCommit}"];
         }
 
         subgraph cluster_header {
             label = "header";
-            struct1 [label = "version | chainID | height | time | lastBlockID | lastCommitRoot | consensusHash | stateCommitment | <f8> availableDataRoot | proposerAddress"];
+            struct1 [label = "version | chainID | height | time | lastBlockID | <f5> lastCommitRoot | consensusHash | stateCommitment | <f8> availableDataRoot | proposerAddress"];
         }
     }
 
-    struct1:f8 -> struct2;
-    struct2:f0 -> struct3 [label = "NMT commitments to\nerasure-coded data"];
+    struct1:f5 -> struct2;
+    struct1:f8 -> struct4;
+    struct4:f0 -> struct3 [label = "NMT commitments to\nerasure-coded data"];
 
     edge [style = invis];
     struct1 -> struct3;
