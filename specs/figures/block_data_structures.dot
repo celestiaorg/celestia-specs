@@ -27,7 +27,7 @@ digraph G {
     }
 
     struct1:f8 -> struct2;
-    struct2:f0 -> struct3;
+    struct2:f0 -> struct3 [label = "NMT commitments to\nerasure-coded data"];
 
     edge [style = invis];
     struct1 -> struct3;
