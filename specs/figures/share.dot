@@ -1,6 +1,5 @@
 digraph G {
-    rankdir = "LR";
-    node [shape = record];
+    node [shape = record, penwidth = 0];
 
     share [label=<
     <table border="0" cellborder="1" cellspacing="0">
