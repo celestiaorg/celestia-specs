@@ -25,7 +25,10 @@ Data Structures
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
+  - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
+  - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
   - [Share](#share)
+  - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
   - [TransactionData](#transactiondata)
     - [WrappedTransaction](#wrappedtransaction)
@@ -283,13 +286,31 @@ A proof into an SMT is structured as:
 
 # Erasure Coding
 
+In order to enable trust-minimized light clients (i.e. light clients that do not rely on an honest majority of validating state assumption), it is critical that light clients can determine whether the data in each block is _available_ or not, without downloading the whole block itself. The technique used here was formally described in the paper [Fraud and Data Availability Proofs: Maximising Light Client Security and Scaling Blockchains with Dishonest Majorities](https://arxiv.org/abs/1809.09044).
+
+The remainder of the subsections below specify the [2D Reed-Solomon erasure coding scheme](#2d-reed-solomon-encoding-scheme) used, along with the format of [shares](#share) and how [available data](#available-data) is arranged into shares.
+
+## Reed-Solomon Erasure Coding
+
+TODO specify specifically
+
+## 2D Reed-Solomon Encoding Scheme
+
 
 
 ## Share
 
+A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
+
 | name      | type               | description     |
 | --------- | ------------------ | --------------- |
 | `rawData` | `byte[SHARE_SIZE]` | Raw share data. |
+
+An example layout of the share's internal bytes is shown below. For shares _with a reserved namespace_, the first byte (`*`) is the starting byte of the first request in the share, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_, the first byte has no special meaning and is simply used to store data like all the other bytes in the share.
+
+![fig: Reserved share.](figures/share.svg)
+
+## Arranging Available Data Into Shares
 
 # Available Data
 

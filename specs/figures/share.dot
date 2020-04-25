@@ -1,0 +1,22 @@
+digraph G {
+    rankdir = "LR";
+    node [shape = record];
+
+    share [label=<
+    <table border="0" cellborder="1" cellspacing="0">
+        <tr>
+            <td width="1" align="left" border="0" cellpadding="0">0</td>
+            <td width="79" align="left" border="0" cellpadding="0">1</td>
+            <td width="70" align="left" border="0" cellpadding="0">80</td>
+            <td width="106" align="left" border="0" cellpadding="0">150</td>
+            <td align="left" border="0" cellpadding="0">256</td>
+        </tr>
+        <tr>
+            <td width="1" cellpadding="4">*</td>
+            <td width="79" cellpadding="4">end of tx2</td>
+            <td width="70" cellpadding="4">tx3</td>
+            <td width="106" cellpadding="4">zero-padding</td>
+        </tr>
+    </table>
+    >];
+}
