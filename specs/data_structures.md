@@ -298,6 +298,9 @@ TODO specify specifically
 
 ![fig: RS2D encoding.](figures/rs2d.svg)
 
+
+![fig: Available data root.](figures/data_root.svg)
+
 ## Share
 
 A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
