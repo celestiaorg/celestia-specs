@@ -310,7 +310,7 @@ An example layout of the share's internal bytes is shown below. For non-parity s
 
 ![fig: Reserved share.](figures/share.svg)
 
-For non-parity shares shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
+For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
 
 ## Arranging Available Data Into Shares
 
