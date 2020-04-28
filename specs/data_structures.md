@@ -296,7 +296,7 @@ TODO specify specifically
 
 ## 2D Reed-Solomon Encoding Scheme
 
-![fig: RS2D encoding.](figures/rs2d.svg)
+![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
 
 
 ![fig: Available data root.](figures/data_root.svg)
