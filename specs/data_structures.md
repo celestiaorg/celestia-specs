@@ -296,6 +296,8 @@ TODO specify specifically
 
 ## 2D Reed-Solomon Encoding Scheme
 
+![fig: RS2D encoding: data quadrants.](figures/rs2d_quadrants.svg)
+
 ![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
 
 
