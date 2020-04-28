@@ -307,7 +307,7 @@ The data of `Q0` is the original data, and the remaining quadrants are parity da
 
 ![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
 
-As an example, the parity data in the second column of `Q2` (in striped purple) is computed by [extending](#reed-solomon-erasure-coding) the original data in the second column of `Q0`.
+As an example, the parity data in the second column of `Q2` (in striped purple) is computed by [extending](#reed-solomon-erasure-coding) the original data in the second column of `Q0` (in solid blue).
 
 ![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
 
