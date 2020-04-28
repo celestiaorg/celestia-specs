@@ -88,7 +88,6 @@
     <rect fill="#B0B0B0" stroke="#808080" x="-64" y="160" width="32" height="32"/>
     <rect fill="#B0B0B0" stroke="#808080" x="-64" y="192" width="32" height="32"/>
     <rect fill="#B0B0B0" stroke="#808080" x="-64" y="224" width="32" height="32"/>
-    <text text-anchor="middle" font-size="24" stroke="#000000" x="-48" y="128" style="writing-mode: tb;">row roots</text>
 
     <rect fill="#B0B0B0" stroke="#808080" x="0"   y="-64" width="32" height="32"/>
     <rect fill="#B0B0B0" stroke="#808080" x="32"  y="-64" width="32" height="32"/>
@@ -98,7 +97,6 @@
     <rect fill="#B0B0B0" stroke="#808080" x="160" y="-64" width="32" height="32"/>
     <rect fill="#B0B0B0" stroke="#808080" x="192" y="-64" width="32" height="32"/>
     <rect fill="#B0B0B0" stroke="#808080" x="224" y="-64" width="32" height="32"/>
-    <text text-anchor="middle" font-size="24" stroke="#000000" x="128" y="-40">col roots</text>
 
     <defs>
         <marker id="arrowhead" viewBox="0 0 32 32" markerWidth="32" marketHeight="32" refX="0" refY="16" orient="auto">
