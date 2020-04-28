@@ -300,7 +300,9 @@ TODO specify specifically
 
 ![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
 
-![fig: RS2D encoding: row root.](figures/rs2d_row.svg)
+![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
+
+![fig: RS2D encoding: a row root.](figures/rs2d_row.svg)
 
 ![fig: Available data root.](figures/data_root.svg)
 
