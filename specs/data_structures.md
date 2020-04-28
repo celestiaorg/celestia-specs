@@ -296,13 +296,26 @@ TODO specify specifically
 
 ## 2D Reed-Solomon Encoding Scheme
 
+The 2-dimensional data layout is described in this section. Data is arranged in `k * k` matrix. The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data, `Q0` to `Q3` must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
+
 ![fig: RS2D encoding: data quadrants.](figures/rs2d_quadrants.svg)
+
+The data of `Q0` is the original data, and the remaining quadrants are parity data. Where `A -> B` indicates that `B` is computed using [erasure coding](#reed-solomon-erasure-coding) from `A`:
+- `Q0 -> Q1` for each row in `Q0` and `Q1`
+- `Q0 -> Q2` for each column in `Q0` and `Q2`
+- `Q2 -> Q3` for each row in `Q2` and `Q3`
 
 ![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
 
+As an example, the parity data in the second column of `Q2` (in striped purple) is computed by [extending](#reed-solomon-erasure-coding) the original data in the second column of `Q0`.
+
 ![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
 
+Now that all four quadrants are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)).
+
 ![fig: RS2D encoding: a row root.](figures/rs2d_row.svg)
+
+Finally, the `availableDataRoot` of the block [Header](#header) is computed as the Merkle root of the [binary Merkle tree](#binary-merkle-tree) with the row and column roots as leaves.
 
 ![fig: Available data root.](figures/data_root.svg)
 
