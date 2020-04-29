@@ -311,7 +311,7 @@ As an example, the parity data in the second column of `Q2` (in striped purple) 
 
 ![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
 
-Now that all four quadrants are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)).
+Now that all four quadrants are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
 
 ![fig: RS2D encoding: a row root.](figures/rs2d_row.svg)
 
