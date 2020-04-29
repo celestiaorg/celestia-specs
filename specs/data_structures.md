@@ -327,7 +327,7 @@ A share is a fixed-size data chunk that will be erasure-coded and committed to i
 | --------- | ------------------ | --------------- |
 | `rawData` | `byte[SHARE_SIZE]` | Raw share data. |
 
-An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first byte (`*` in the figure) is the starting byte of the first request in the share, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first byte has no special meaning and is simply used to store data like all the other bytes in the share.
+An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first `SHARE_RESERVED_BYTES` bytes (`*` in the figure) is the starting byte of the first request in the share as an unsigned integer, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first `SHARE_RESERVED_BYTES` bytes have no special meaning and are simply used to store data like all the other bytes in the share.
 
 ![fig: Reserved share.](figures/share.svg)
 
