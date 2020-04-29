@@ -351,6 +351,8 @@ In the example below, two messages (of padded sizes 2 and 1) are placed followin
 
 ![fig: Original data: messages.](figures/rs2d_originaldata_message.svg)
 
+By construction, this gives a useful property: transactions [can commit to a commitment to a list of roots](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs.
+
 # Available Data
 
 ## TransactionData
