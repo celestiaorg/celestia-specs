@@ -1,20 +1,11 @@
 <svg viewBox="-32 -32 192 192" style="background-color:white" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <pattern id="pattern_striped1" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="translate(2) rotate(45)">
-            <line stroke="#855FEB" stroke-width="8" y2="8"/>
-        </pattern>
-        <pattern id="pattern_striped2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="translate(2) rotate(-45)">
-            <line stroke="#232B4D" stroke-width="8" y2="8"/>
-        </pattern>
-    </defs>
-
     <rect fill="#2344CA" stroke="#808080" x="0"   y="0"   width="32" height="32"/>
     <rect fill="#2344CA" stroke="#808080" x="32"  y="0"   width="32" height="32"/>
     <rect fill="#2344CA" stroke="#808080" x="64"  y="0"   width="32" height="32"/>
     <rect fill="#ffffff" stroke="#808080" x="96"  y="0"   width="32" height="32"/>
-    <rect fill="url(#pattern_striped1)" stroke="#808080" x="0"   y="32"  width="32" height="32"/>
-    <rect fill="url(#pattern_striped1)" stroke="#808080" x="32"  y="32"  width="32" height="32"/>
-    <rect fill="url(#pattern_striped2)" stroke="#808080" x="64"  y="32"  width="32" height="32"/>
+    <rect fill="#855FEB" stroke="#808080" x="0"   y="32"  width="32" height="32"/>
+    <rect fill="#855FEB" stroke="#808080" x="32"  y="32"  width="32" height="32"/>
+    <rect fill="#232B4D" stroke="#808080" x="64"  y="32"  width="32" height="32"/>
     <rect fill="#ffffff" stroke="#808080" x="96"  y="32"  width="32" height="32"/>
     <rect fill="#ffffff" stroke="#808080" x="0"   y="64"  width="32" height="32"/>
     <rect fill="#ffffff" stroke="#808080" x="32"  y="64"  width="32" height="32"/>
@@ -32,4 +23,12 @@
 
     <text text-anchor="middle" font-size="14" x="16" y="-10">c<tspan font-size="10" baseline-shift = "sub">1</tspan></text>
     <text text-anchor="middle" font-size="14" x="112" y="-10">c<tspan font-size="10" baseline-shift = "sub">k</tspan></text>
+
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="16" y="20">TXs</text>
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="48" y="20">ISRs</text>
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="80" y="20">evi.</text>
+
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="16" y="52">msg1</text>
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="48" y="52">msg1</text>
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="80" y="52">msg2</text>
 </svg>

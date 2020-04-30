@@ -23,4 +23,8 @@
 
     <text text-anchor="middle" font-size="14" x="16" y="-10">c<tspan font-size="10" baseline-shift = "sub">1</tspan></text>
     <text text-anchor="middle" font-size="14" x="112" y="-10">c<tspan font-size="10" baseline-shift = "sub">k</tspan></text>
+
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="16" y="20">TXs</text>
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="48" y="20">ISRs</text>
+    <text text-anchor="middle" font-size="12" fill="#FFFFFF" x="80" y="20">evi.</text>
 </svg>
