@@ -292,7 +292,13 @@ The remainder of the subsections below specify the [2D Reed-Solomon erasure codi
 
 ## Reed-Solomon Erasure Coding
 
-TODO specify specifically
+Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
+- 16-bit Galois field
+- 1:1 original:parity pieces
+- `AVAILABLE_DATA_MATRIX_SIZE` original pieces (i.e `AVAILABLE_DATA_MATRIX_SIZE*2` total pieces)
+- `SHARE_SIZE` bytes per piece
+
+[Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
 
 ## 2D Reed-Solomon Encoding Scheme
 
