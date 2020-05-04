@@ -304,11 +304,13 @@ Reed-Solomon erasure coding is used as the underlying coding scheme. The paramet
 
 ## 2D Reed-Solomon Encoding Scheme
 
-The 2-dimensional data layout is described in this section. Original data is arranged in `k * k` matrix (as per [the previous section](#reed-solomon-erasure-coding), `k = AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`). The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data, `Q0` to `Q3` must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
+The 2-dimensional data layout is described in this section. The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data in a `2k * 2k` matrix of shares, `Q0` to `Q3` (shown below), must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
 
 ![fig: RS2D encoding: data quadrants.](figures/rs2d_quadrants.svg)
 
-The data of `Q0` is the original data, and the remaining quadrants are parity data. Where `A -> B` indicates that `B` is computed using [erasure coding](#reed-solomon-erasure-coding) from `A`:
+The data of `Q0` is the original data, and the remaining quadrants are parity data. Setting `k = AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, the original data first must be [split into shares](#share) and [arranged into a `k * k` matrix](#arranging-available-data-into-shares). Then the parity data can be computed.
+
+Where `A -> B` indicates that `B` is computed using [erasure coding](#reed-solomon-erasure-coding) from `A`:
 - `Q0 -> Q1` for each row in `Q0` and `Q1`
 - `Q0 -> Q2` for each column in `Q0` and `Q2`
 - `Q2 -> Q3` for each row in `Q2` and `Q3`
@@ -319,7 +321,7 @@ As an example, the parity data in the second column of `Q2` (in striped purple) 
 
 ![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
 
-Now that all four quadrants are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
+Now that all four quadrants of the `2k * 2k` matrix are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
 
 ![fig: RS2D encoding: a row root.](figures/rs2d_row.svg)
 
@@ -343,7 +345,7 @@ For non-parity shares, if there is insufficient request data to fill the share, 
 
 ## Arranging Available Data Into Shares
 
-The previous sections described how some original data, arranged into a `k * k` matrix, can be extended and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
+The previous sections described how some original data, arranged into a `k * k` matrix, can be extended into a `2k * 2k` matrix and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
 
  First, for each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization) the data and split it up into `SHARE_SIZE-SHARE_RESERVED_BYTES`-byte [shares](#share). This data has a _reserved_ namespace ID, and as such the first `SHARE_RESERVED_BYTES` bytes for these shares has special meaning. Then, concatenate the lists of shares in the order: transactions, intermediate state roots, evidence. Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
 
