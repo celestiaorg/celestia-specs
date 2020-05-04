@@ -292,10 +292,12 @@ The remainder of the subsections below specify the [2D Reed-Solomon erasure codi
 
 ## Reed-Solomon Erasure Coding
 
+Note that while data is laid out in a two-dimensional square, rows and columns are erasure coded using a standard one-dimensional encoding.
+
 Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
 - 16-bit Galois field
-- 1:1 original:parity pieces
-- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` original pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` total pieces)
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` original pieces
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` parity pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` total pieces), for an erasure efficiency of 50%
 - `SHARE_SIZE` bytes per piece
 
 [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
