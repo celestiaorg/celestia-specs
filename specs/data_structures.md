@@ -295,7 +295,7 @@ The remainder of the subsections below specify the [2D Reed-Solomon erasure codi
 Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
 - 16-bit Galois field
 - 1:1 original:parity pieces
-- `AVAILABLE_DATA_MATRIX_HALFSIZE` original pieces (i.e `AVAILABLE_DATA_MATRIX_HALFSIZE*2` total pieces)
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` original pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` total pieces)
 - `SHARE_SIZE` bytes per piece
 
 [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
@@ -345,7 +345,7 @@ The previous sections described how some original data, arranged into a `k * k` 
 
  First, for each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization) the data and split it up into `SHARE_SIZE-SHARE_RESERVED_BYTES`-byte [shares](#share). This data has a _reserved_ namespace ID, and as such the first `SHARE_RESERVED_BYTES` bytes for these shares has special meaning. Then, concatenate the lists of shares in the order: transactions, intermediate state roots, evidence. Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
 
-These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-scheme) (`Q0`) of the `AVAILABLE_DATA_MATRIX_HALFSIZE*2 * AVAILABLE_DATA_MATRIX_HALFSIZE*2` available data matrix in _row-major_ order. In the example below, each reserved data element takes up exactly one share.
+These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-scheme) (`Q0`) of the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2 * AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` available data matrix in _row-major_ order. In the example below, each reserved data element takes up exactly one share.
 
 ![fig: Original data: reserved.](figures/rs2d_originaldata_reserved.svg)
 
