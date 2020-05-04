@@ -27,14 +27,14 @@ Consensus Rules
 
 ## Constants
 
-| name                                  | type     | value   | unit    | description                                                                                  |
-| ------------------------------------- | -------- | ------- | ------- | -------------------------------------------------------------------------------------------- |
-| `NAMESPACE_ID_BYTES`                  | `uint64` | `32`    | `byte`  | Size of namespace ID, in bytes.                                                              |
-| `NAMESPACE_ID_RESERVED_BYTES`         | `uint64` | `2`     | `byte`  | Size of reserved namespace ID range, in bytes.                                               |
-| `SHARE_SIZE`                          | `uint64` | `256`   | `byte`  | Size of transaction and message shares, in bytes.                                            |
-| `SHARE_RESERVED_BYTES`                | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each share. Must be sufficient to represent `SHARE_SIZE`. |
-| `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` | `uint64` |         | `share` | Number of rows/columns of the original data shares in square layout.                         |
-| `GENESIS_COIN_COUNT`                  | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                  |
+| name                                  | type     | value   | unit    | description                                                                                                                                                 |
+| ------------------------------------- | -------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NAMESPACE_ID_BYTES`                  | `uint64` | `32`    | `byte`  | Size of namespace ID, in bytes.                                                                                                                             |
+| `NAMESPACE_ID_RESERVED_BYTES`         | `uint64` | `2`     | `byte`  | Size of reserved namespace ID range, in bytes.                                                                                                              |
+| `SHARE_SIZE`                          | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                               |
+| `SHARE_RESERVED_BYTES`                | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                    |
+| `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` | `uint64` |         | `share` | Number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
+| `GENESIS_COIN_COUNT`                  | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                 |
 
 ## Types
 
