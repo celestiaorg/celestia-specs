@@ -29,7 +29,7 @@ Consensus Rules
 
 | name                             | type     | value   | unit    | description                                                                                                          |
 | -------------------------------- | -------- | ------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
-| `NAMESPACE_ID_BYTES`             | `uint64` | `64`    | `byte`  | Size of namespace ID, in bytes.                                                                                      |
+| `NAMESPACE_ID_BYTES`             | `uint64` | `32`    | `byte`  | Size of namespace ID, in bytes.                                                                                      |
 | `NAMESPACE_ID_RESERVED_BYTES`    | `uint64` | `2`     | `byte`  | Size of reserved namespace ID range, in bytes.                                                                       |
 | `SHARE_SIZE`                     | `uint64` | `256`   | `byte`  | Size of transaction and message shares, in bytes.                                                                    |
 | `SHARE_RESERVED_BYTES`           | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each share. Must be sufficient to represent `SHARE_SIZE`.                         |
