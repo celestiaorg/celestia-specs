@@ -373,11 +373,11 @@ By construction, this gives a useful property: transactions [can commit to a com
 
 ### WrappedTransaction
 
-| name           | type          | description                                                                                       |
-| -------------- | ------------- | ------------------------------------------------------------------------------------------------- |
-| `index`        | `uint64`      | Index of this transaction in the list of wrapped transactions. This is needed for fraud proofs.   |
-| `transaction`  | `Transaction` | Actual transaction.                                                                               |
-| `messageStart` | `uint64`      | _Optional_. Share index (in row-major order) of first share of message this transaction pays for. |
+| name                | type          | description                                                                                       |
+| ------------------- | ------------- | ------------------------------------------------------------------------------------------------- |
+| `index`             | `uint64`      | Index of this transaction in the list of wrapped transactions. This is needed for fraud proofs.   |
+| `transaction`       | `Transaction` | Actual transaction.                                                                               |
+| `messageStartIndex` | `uint64`      | _Optional_. Share index (in row-major order) of first share of message this transaction pays for. |
 
 ### Transaction
 
