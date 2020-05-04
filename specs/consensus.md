@@ -44,12 +44,12 @@ Consensus Rules
 
 ## Reserved Namespace IDs
 
-| name                                   | type          | value                |
-| -------------------------------------- | ------------- | -------------------- |
-| `TRANSACTION_NAMESPACE_ID`             | `NamespaceID` | `0x0000000000000001` |
-| `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000002` |
-| `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000003` |
-| `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFF` |
+| name                                   | type          | value                                                                |
+| -------------------------------------- | ------------- | -------------------------------------------------------------------- |
+| `TRANSACTION_NAMESPACE_ID`             | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000001` |
+| `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000002` |
+| `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000003` |
+| `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 ## Rewards and Penalties
 
