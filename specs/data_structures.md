@@ -297,14 +297,14 @@ Note that while data is laid out in a two-dimensional square, rows and columns a
 Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
 - 16-bit Galois field
 - `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` original pieces
-- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` parity pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` total pieces), for an erasure efficiency of 50%
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` parity pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE * 2` total pieces), for an erasure efficiency of 50%
 - `SHARE_SIZE` bytes per piece
 
 [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
 
 ## 2D Reed-Solomon Encoding Scheme
 
-The 2-dimensional data layout is described in this section. Data is arranged in `k * k` matrix. The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data, `Q0` to `Q3` must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
+The 2-dimensional data layout is described in this section. Original data is arranged in `k * k` matrix (as per [the previous section](#reed-solomon-erasure-coding), `k = AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`). The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data, `Q0` to `Q3` must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
 
 ![fig: RS2D encoding: data quadrants.](figures/rs2d_quadrants.svg)
 
