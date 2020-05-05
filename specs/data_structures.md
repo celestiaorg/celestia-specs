@@ -373,11 +373,13 @@ By construction, this gives a useful property: transactions [can commit to a Mer
 
 ### WrappedTransaction
 
-| name                | type          | description                                                                                       |
-| ------------------- | ------------- | ------------------------------------------------------------------------------------------------- |
-| `index`             | `uint64`      | Index of this transaction in the list of wrapped transactions. This is needed for fraud proofs.   |
-| `transaction`       | `Transaction` | Actual transaction.                                                                               |
-| `messageStartIndex` | `uint64`      | _Optional_. Share index (in row-major order) of first share of message this transaction pays for. |
+Wrapped transactions include additional metadata by the block proposer that is committed to in the [available data matrix](#arranging-available-data-into-shares).
+
+| name                | type          | description                                                                                                                                                                                                                                                                                                |
+| ------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`             | `uint64`      | Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking a transaction to an [intermediate state root](#wrappedintermediatestateroot). |
+| `transaction`       | `Transaction` | Actual transaction.                                                                                                                                                                                                                                                                                        |
+| `messageStartIndex` | `uint64`      | _Optional, only used if transaction pays for a message_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                                  |
 
 ### Transaction
 
@@ -396,10 +398,10 @@ By construction, this gives a useful property: transactions [can commit to a Mer
 
 ### WrappedIntermediateStateRoot
 
-| name                    | type         | description                                                                                                     |
-| ----------------------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
-| `index`                 | `uint64`     | Index of this intermediate state root in the list of intermediate state roots. This is needed for fraud proofs. |
-| `intermediateStateRoot` | `HashDigest` | Intermediate state root. Used for fraud proofs.                                                                 |
+| name                    | type         | description                                                                                                                                                                                                                                                                                                                  |
+| ----------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`                 | `uint64`     | Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a [transaction](#wrappedtransaction). |
+| `intermediateStateRoot` | `HashDigest` | Intermediate state root. Used for fraud proofs.                                                                                                                                                                                                                                                                              |
 
 ### IntermediateStateRoot
 
