@@ -297,7 +297,7 @@ Note that while data is laid out in a two-dimensional square, rows and columns a
 Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
 - 16-bit Galois field
 - `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` original pieces
-- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` parity pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE * 2` total pieces), for an erasure efficiency of 50%
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` parity pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE * 2` total pieces), for an erasure efficiency of 50%. In other words, any 50% of the pieces from the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE * 2` total pieces are enough to recover the original data.
 - `SHARE_SIZE` bytes per piece
 
 [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
