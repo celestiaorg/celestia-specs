@@ -13,11 +13,7 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
-  - [EvidenceData](#evidencedata)
   - [CommitSig](#commitsig)
-  - [Evidence](#evidence)
-  - [PublicKey](#publickey)
-  - [Vote](#vote)
   - [Signature](#signature)
 - [Serialization](#serialization)
 - [Hashing](#hashing)
@@ -29,10 +25,23 @@ Data Structures
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
+  - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
+  - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
+  - [Share](#share)
+  - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
+- [Available Data](#available-data)
   - [TransactionData](#transactiondata)
+    - [WrappedTransaction](#wrappedtransaction)
+    - [Transaction](#transaction)
+  - [IntermediateStateRootData](#intermediatestaterootdata)
+    - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
+    - [IntermediateStateRoot](#intermediatestateroot)
+  - [EvidenceData](#evidencedata)
+    - [Evidence](#evidence)
+    - [PublicKey](#publickey)
+    - [Vote](#vote)
   - [MessageData](#messagedata)
-  - [Transaction](#transaction)
-  - [Message](#message)
+    - [Message](#message)
 - [State](#state)
 
 # Data Structures Overview
@@ -79,12 +88,12 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 Data that is [erasure-coded](#erasure-coding) for [data availability checks](https://arxiv.org/abs/1809.09044).
 
-| name                     | type                                | description                                                |
-| ------------------------ | ----------------------------------- | ---------------------------------------------------------- |
-| `transactionData`        | [TransactionData](#transactiondata) | Transaction data.                                          |
-| `intermediateStateRoots` | [HashDigest](#hashdigest)`[]`       | Intermediate state roots used for fraud proofs.            |
-| `evidenceData`           | [EvidenceData](#evidencedata)       | Evidence used for slashing conditions (e.g. equivocation). |
-| `messageData`            | [MessageData](#messagedata)         | Message data.                                              |
+| name                        | type                                                    | description                                                                                                     |
+| --------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `transactionData`           | [TransactionData](#transactiondata)                     | Transaction data. Transactions modify the validator set and balances, and pay fees for messages to be included. |
+| `intermediateStateRootData` | [IntermediateStateRootData](#intermediatestaterootdata) | Intermediate state roots used for fraud proofs.                                                                 |
+| `evidenceData`              | [EvidenceData](#evidencedata)                           | Evidence used for slashing conditions (e.g. equivocation).                                                      |
+| `messageData`               | [MessageData](#messagedata)                             | Message data. Messages are app data.                                                                            |
 
 ## Commit
 
@@ -123,14 +132,6 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
-## EvidenceData
-
-Wrapper for evidence data.
-
-| name        | type                      | description                                    |
-| ----------- | ------------------------- | ---------------------------------------------- |
-| `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
-
 ## CommitSig
 
 ```C++
@@ -146,41 +147,6 @@ enum BlockIDFlag : uint8_t {
 | `blockIDFlag`      | `BlockIDFlag`           |             |
 | `validatorAddress` | [Address](#address)     |             |
 | `timestamp`        | [Time](#time)           |             |
-| `signature`        | [Signature](#signature) |             |
-
-## Evidence
-
-| name     | type                    | description |
-| -------- | ----------------------- | ----------- |
-| `pubKey` | [PublicKey](#publickey) |             |
-| `voteA`  | [Vote](#vote)           |             |
-| `voteB`  | [Vote](#vote)           |             |
-
-## PublicKey
-
-| name | type       | description              |
-| ---- | ---------- | ------------------------ |
-| `x`  | `byte[32]` | `x` value of public key. |
-| `y`  | `byte[32]` | `y` value of public key. |
-
-## Vote
-
-```C++
-enum VoteType : uint8_t {
-    Prevote = 1,
-    Precommit = 2,
-};
-```
-
-| name               | type                    | description |
-| ------------------ | ----------------------- | ----------- |
-| `type`             | `VoteType`              |             |
-| `height`           | `uint64`                |             |
-| `round`            | `uint64`                |             |
-| `blockID`          | [BlockID](#blockid)     |             |
-| `timestamp`        | [Time](#time)           |             |
-| `validatorAddress` | [Address](#address)     |             |
-| `validatorIndex`   | `uint64`                |             |
 | `signature`        | [Signature](#signature) |             |
 
 ## Signature
@@ -320,31 +286,188 @@ A proof into an SMT is structured as:
 
 # Erasure Coding
 
+In order to enable trust-minimized light clients (i.e. light clients that do not rely on an honest majority of validating state assumption), it is critical that light clients can determine whether the data in each block is _available_ or not, without downloading the whole block itself. The technique used here was formally described in the paper [Fraud and Data Availability Proofs: Maximising Light Client Security and Scaling Blockchains with Dishonest Majorities](https://arxiv.org/abs/1809.09044).
 
+The remainder of the subsections below specify the [2D Reed-Solomon erasure coding scheme](#2d-reed-solomon-encoding-scheme) used, along with the format of [shares](#share) and how [available data](#available-data) is arranged into shares.
+
+## Reed-Solomon Erasure Coding
+
+Note that while data is laid out in a two-dimensional square, rows and columns are erasure coded using a standard one-dimensional encoding.
+
+Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
+- 16-bit Galois field
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` original pieces
+- `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` parity pieces (i.e `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE * 2` total pieces), for an erasure efficiency of 50%. In other words, any 50% of the pieces from the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE * 2` total pieces are enough to recover the original data.
+- `SHARE_SIZE` bytes per piece
+
+[Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
+
+## 2D Reed-Solomon Encoding Scheme
+
+The 2-dimensional data layout is described in this section. The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data in a `2k * 2k` matrix of shares, `Q0` to `Q3` (shown below), must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
+
+![fig: RS2D encoding: data quadrants.](figures/rs2d_quadrants.svg)
+
+The data of `Q0` is the original data, and the remaining quadrants are parity data. Setting `k = AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, the original data first must be [split into shares](#share) and [arranged into a `k * k` matrix](#arranging-available-data-into-shares). Then the parity data can be computed.
+
+Where `A -> B` indicates that `B` is computed using [erasure coding](#reed-solomon-erasure-coding) from `A`:
+- `Q0 -> Q1` for each row in `Q0` and `Q1`
+- `Q0 -> Q2` for each column in `Q0` and `Q2`
+- `Q2 -> Q3` for each row in `Q2` and `Q3`
+
+![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
+
+As an example, the parity data in the second column of `Q2` (in striped purple) is computed by [extending](#reed-solomon-erasure-coding) the original data in the second column of `Q0` (in solid blue).
+
+![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
+
+Now that all four quadrants of the `2k * 2k` matrix are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
+
+![fig: RS2D encoding: a row root.](figures/rs2d_row.svg)
+
+Finally, the `availableDataRoot` of the block [Header](#header) is computed as the Merkle root of the [binary Merkle tree](#binary-merkle-tree) with the row and column roots as leaves.
+
+![fig: Available data root.](figures/data_root.svg)
+
+## Share
+
+A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
+
+| name      | type               | description     |
+| --------- | ------------------ | --------------- |
+| `rawData` | `byte[SHARE_SIZE]` | Raw share data. |
+
+An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first `SHARE_RESERVED_BYTES` bytes (`*` in the figure) is the starting byte of the first request in the share as an unsigned integer, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first `SHARE_RESERVED_BYTES` bytes have no special meaning and are simply used to store data like all the other bytes in the share.
+
+![fig: Reserved share.](figures/share.svg)
+
+For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
+
+## Arranging Available Data Into Shares
+
+The previous sections described how some original data, arranged into a `k * k` matrix, can be extended into a `2k * 2k` matrix and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
+
+ First, for each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization) the data and split it up into `SHARE_SIZE-SHARE_RESERVED_BYTES`-byte [shares](#share). This data has a _reserved_ namespace ID, and as such the first `SHARE_RESERVED_BYTES` bytes for these shares has special meaning. Then, concatenate the lists of shares in the order: transactions, intermediate state roots, evidence. Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
+
+These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-scheme) (`Q0`) of the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2 * AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` available data matrix in _row-major_ order. In the example below, each reserved data element takes up exactly one share.
+
+![fig: Original data: reserved.](figures/rs2d_originaldata_reserved.svg)
+
+Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. Then each message with size `msg_size` is padded by appending zero-shares (i.e. `SHARE_SIZE` bytes of `0x00`) with the following rules:
+1. If `msg_size <= AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad until the smallest enclosing power of 2 (e.g. a message that fits into three shares is padded to four shares).
+2. If `msg_size > AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, compute `remainder_size = msg_size % AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad the remainder to the smallest enclosing power of 2 (e.g. if the number of columns is 8 and the message fits into 11 shares, it is padded to 8+4=12 shares.).
+
+For each padded message, the following algorithm is used to place it in the available data matrix, with row-major order:
+1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the number of padded shares (i.e. if there are four padded shares, then only every fourth location can be used to start), then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
+1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose size is greater than `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` will be placed in this way.
+
+In the example below, two messages (of padded sizes 2 and 1) are placed following the aforementioned rules.
+
+![fig: Original data: messages.](figures/rs2d_originaldata_message.svg)
+
+By construction, this gives a useful property: transactions [can commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs.
+
+# Available Data
 
 ## TransactionData
 
-Wrapper for transaction data, which is a simple list of [Transaction](#transaction)s.
+| name                  | type                                          | description                   |
+| --------------------- | --------------------------------------------- | ----------------------------- |
+| `wrappedTransactions` | [WrappedTransaction](#wrappedtransaction)`[]` | List of wrapped transactions. |
 
- | name           | type                            | description           |
- | -------------- | ------------------------------- | --------------------- |
- | `transactions` | [Transaction](#transaction)`[]` | List of transactions. |
+### WrappedTransaction
 
-TODO define a Transaction format
+Wrapped transactions include additional metadata by the block proposer that is committed to in the [available data matrix](#arranging-available-data-into-shares).
+
+| name                | type          | description                                                                                                                                                                                                                                                                                                |
+| ------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`             | `uint64`      | Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking a transaction to an [intermediate state root](#wrappedintermediatestateroot). |
+| `transaction`       | `Transaction` | Actual transaction.                                                                                                                                                                                                                                                                                        |
+| `messageStartIndex` | `uint64`      | _Optional, only used if transaction pays for a message_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                                  |
+
+### Transaction
+
+| name                    | type                      | description                                                                                                                                                                                                                                                           |
+| ----------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TODO                    |                           |                                                                                                                                                                                                                                                                       |
+| `messageSize`           | `uint64`                  | Size of message this transaction pays a fee for, in `byte`s. If this transaction does not pay a fee for a message, must be `0`.                                                                                                                                       |
+| `messageShareRootsRoot` | [HashDigest](#hashdigest) | Merkle root of message share roots of an optional message that this transaction pays a fee to be included in the current block. Messages are split into shares and committed to here. Large messages can span across rows, which requires more roots to the provided. |
+
+
+## IntermediateStateRootData
+
+| name                            | type                                                              | description                               |
+| ------------------------------- | ----------------------------------------------------------------- | ----------------------------------------- |
+| `wrappedIntermediateStateRoots` | [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)`[]` | List of wrapped intermediate state roots. |
+
+### WrappedIntermediateStateRoot
+
+| name                    | type         | description                                                                                                                                                                                                                                                                                                                  |
+| ----------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`                 | `uint64`     | Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a [transaction](#wrappedtransaction). |
+| `intermediateStateRoot` | `HashDigest` | Intermediate state root. Used for fraud proofs.                                                                                                                                                                                                                                                                              |
+
+### IntermediateStateRoot
+
+| name   | type         | description                                                                              |
+| ------ | ------------ | ---------------------------------------------------------------------------------------- |
+| `root` | `HashDigest` | Root of intermediate state, which is composed of the global state and the validator set. |
+
+## EvidenceData
+
+Wrapper for evidence data.
+
+| name        | type                      | description                                    |
+| ----------- | ------------------------- | ---------------------------------------------- |
+| `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
+
+### Evidence
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `pubKey` | [PublicKey](#publickey) |             |
+| `voteA`  | [Vote](#vote)           |             |
+| `voteB`  | [Vote](#vote)           |             |
+
+### PublicKey
+
+| name | type       | description              |
+| ---- | ---------- | ------------------------ |
+| `x`  | `byte[32]` | `x` value of public key. |
+| `y`  | `byte[32]` | `y` value of public key. |
+
+### Vote
+
+```C++
+enum VoteType : uint8_t {
+    Prevote = 1,
+    Precommit = 2,
+};
+```
+
+| name               | type                    | description |
+| ------------------ | ----------------------- | ----------- |
+| `type`             | `VoteType`              |             |
+| `height`           | `uint64`                |             |
+| `round`            | `uint64`                |             |
+| `blockID`          | [BlockID](#blockid)     |             |
+| `timestamp`        | [Time](#time)           |             |
+| `validatorAddress` | [Address](#address)     |             |
+| `validatorIndex`   | `uint64`                |             |
+| `signature`        | [Signature](#signature) |             |
 
 ## MessageData
 
-Wrapper for message data, which is a simple list of [Message](#message)s.
+| name       | type                    | description       |
+| ---------- | ----------------------- | ----------------- |
+| `messages` | [Message](#message)`[]` | List of messages. |
 
- | name       | type                    | description       |
- | ---------- | ----------------------- | ----------------- |
- | `messages` | [Message](#message)`[]` | List of messages. |
+### Message
 
-TODO define a Message format
-
-## Transaction
-
-## Message
+| name          | type                       | description                   |
+| ------------- | -------------------------- | ----------------------------- |
+| `namespaceID` | `byte[NAMESPACE_ID_BYTES]` | Namespace ID of this message. |
+| `rawData`     | `byte[]`                   | Raw message bytes.            |
 
 # State
 
