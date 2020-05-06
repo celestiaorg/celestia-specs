@@ -353,9 +353,13 @@ These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-sche
 
 ![fig: Original data: reserved.](figures/rs2d_originaldata_reserved.svg)
 
-Each message in the list `messageData` is independently serialized and split into `SHARE_SIZE` shares. Then each message is padded by appending zero-shares (i.e. `SHARE_SIZE` bytes of `0x00`) until the smallest enclosing power of 2 (e.g. a message that fits into three shares is padded to four shares). For each message, the following algorithm is used to place it in the available data matrix, with row-major order:
-1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the number of padded shares (i.e. if there are four padded shares, then only every fourth location can be used to start) **unless** there are insufficient unused locations in the row. Then place the remaining shares in the following locations.
-1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations.
+Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. Then each message with size `msg_size` is padded by appending zero-shares (i.e. `SHARE_SIZE` bytes of `0x00`) with the following rules:
+1. If `msg_size <= AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad until the smallest enclosing power of 2 (e.g. a message that fits into three shares is padded to four shares).
+2. If `msg_size > AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, compute `remainder_size = msg_size % AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad the remainder to the smallest enclosing power of 2 (e.g. if the number of columns is 8 and the message fits into 11 shares, it is padded to 8+4=12 shares.).
+
+For each padded message, the following algorithm is used to place it in the available data matrix, with row-major order:
+1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the number of padded shares (i.e. if there are four padded shares, then only every fourth location can be used to start), then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
+1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose size is greater than `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` will be placed in this way.
 
 In the example below, two messages (of padded sizes 2 and 1) are placed following the aforementioned rules.
 
