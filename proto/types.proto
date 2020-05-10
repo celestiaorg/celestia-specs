@@ -1,0 +1,140 @@
+syntax = "proto3";
+package lazyledger.proto;
+
+import "google/protobuf/timestamp.proto";
+
+message Block {
+  Header header = 1;
+  AvailableDataHeader availableDataHeader = 2;
+  AvailableData availableData = 3;
+  Commit lastCommit = 4;
+}
+
+message Header {
+  uint64 version = 1;
+  uint64 chainID = 2;
+  uint64 height = 3;
+  google.protobuf.Timestamp time = 4;
+  BlockID lastBlockID = 5;
+  HashDigest lastCommitRoot = 6;
+  HashDigest consensusHash = 7;
+  HashDigest stateCommitment = 8;
+  HashDigest availableDataRoot = 9;
+  Address proposerAddress = 10;
+}
+
+message AvailableDataHeader {
+  repeated HashDigest availableDataCommitments = 1;
+}
+
+message AvailableData {
+  TransactionData transactionData = 1;
+  IntermediateStateRootData intermediateStateRootData = 2;
+  EvidenceData evidenceData = 3;
+  MessageData messageData = 4;
+}
+
+message Commit {
+  uint64 height = 1;
+  uint64 round = 2;
+  BlockID blockID = 3;
+  repeated CommitSig signatures = 4;
+}
+
+message BlockID {
+  HashDigest headerRoot = 1;
+}
+
+message HashDigest {
+  bytes rawData = 1;
+}
+
+message Address {
+  bytes rawData = 1;
+}
+
+message CommitSig {
+  enum BlockIDFlag {
+    BLOCK_ID_FLAG_UNSPECIFIED = 0;
+    BLOCK_ID_FLAG_ABSENT = 1;
+    BLOCK_ID_FLAG_COMMIT = 2;
+    BLOCK_ID_FLAG_NIL = 3;
+  }
+  BlockIDFlag blockIDFlag = 1;
+  Address validatorAddress = 2;
+  google.protobuf.Timestamp Timestamp = 3;
+  Signature signature = 4;
+}
+
+message Signature {
+  bytes r = 1;
+  bytes vs = 2;
+}
+
+message TransactionData {
+  repeated WrappedTransaction wrappedTransactions = 1;
+}
+
+message WrappedTransaction {
+  uint64 index = 1;
+  Transaction transaction = 2;
+  uint64 messageStartIndex = 3;
+}
+
+message Transaction {
+  uint64 messageSize = 1;
+  HashDigest messageShareRootsRoot = 2;
+}
+
+message IntermediateStateRootData {
+  repeated WrappedIntermediateStateRoot wrappedIntermediateStateRoots = 1;
+}
+
+message WrappedIntermediateStateRoot {
+  uint64 index = 1;
+  IntermediateStateRoot intermediateStateRoot = 2;
+}
+
+message IntermediateStateRoot {
+  HashDigest root = 1;
+}
+
+message EvidenceData {
+  repeated Evidence evidences = 1;
+}
+
+message Evidence {
+  PublicKey pubKey = 1;
+  Vote voteA = 2;
+  Vote voteB = 3;
+}
+
+message PublicKey {
+  bytes x = 1;
+  bytes y = 2;
+}
+
+message Vote {
+  enum VoteType {
+    VOTE_UNSPECIFIED = 0;
+    VOTE_PREVOTE = 1;
+    VOTE_PRECOMMIT = 2;
+  }
+  VoteType type = 1;
+  uint64 height = 2;
+  uint64 round = 3;
+  BlockID blockID = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  Address validatorAddress = 6;
+  uint64 validatorIndex = 7;
+  Signature signature = 8;
+}
+
+message MessageData {
+  repeated Message messages = 1;
+}
+
+message Message {
+  bytes namespaceID = 1;
+  bytes rawData = 2;
+}
