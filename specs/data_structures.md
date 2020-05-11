@@ -476,7 +476,10 @@ TODO validator set repr
 
 Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
 
-| name      | type     | description                                                                                |
-| --------- | -------- | ------------------------------------------------------------------------------------------ |
-| `version` | `uint64` | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter. |
-| `chainID` | `uint64` | Chain ID. Each chain assigns itself a (unique) ID.                                         |
+| name                              | type     | description                                |
+| --------------------------------- | -------- | ------------------------------------------ |
+| `version`                         | `uint64` | The `VERSION`.                             |
+| `chainID`                         | `uint64` | The `CHAIN_ID`.                            |
+| `shareSize`                       | `uint64` | The `SHARE_SIZE`.                          |
+| `shareReservedBytes`              | `uint64` | The `SHARE_RESERVED_BYTES`.                |
+| `availableDataOriginalSquareSize` | `uint64` | The `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`. |

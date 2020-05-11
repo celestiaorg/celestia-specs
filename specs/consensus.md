@@ -29,6 +29,8 @@ Consensus Rules
 
 | name                                  | type     | value   | unit    | description                                                                                                                                                 |
 | ------------------------------------- | -------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VERSION`                             | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                  |
+| `CHAIN_ID`                            | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                          |
 | `NAMESPACE_ID_BYTES`                  | `uint64` | `32`    | `byte`  | Size of namespace ID, in bytes.                                                                                                                             |
 | `NAMESPACE_ID_RESERVED_BYTES`         | `uint64` | `2`     | `byte`  | Size of reserved namespace ID range, in bytes.                                                                                                              |
 | `SHARE_SIZE`                          | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                               |
