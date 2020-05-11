@@ -43,6 +43,7 @@ Data Structures
   - [MessageData](#messagedata)
     - [Message](#message)
 - [State](#state)
+- [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
 
@@ -73,7 +74,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `time`              | [Time](#time)             | Timestamp of this block.                                                                     |
 | `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                                         |
 | `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                     |
-| `consensusHash`     | [HashDigest](#hashdigest) | Consensus parameters for this block.                                                         |
+| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                 |
 | `stateCommitment`   | [HashDigest](#hashdigest) | Commitment to state root and validator set root after this block's transactions are applied. |
 | `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                           |
 | `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                                            |
@@ -472,3 +473,5 @@ enum VoteType : uint8_t {
 # State
 
 TODO validator set repr
+
+# Consensus Parameters
