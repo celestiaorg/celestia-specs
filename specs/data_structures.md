@@ -68,8 +68,6 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 | name                | type                      | description                                                                                  |
 | ------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
-| `version`           | `uint64`                  | Version of the LazyLedger chain.                                                             |
-| `chainID`           | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID.                                            |
 | `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                                            |
 | `time`              | [Time](#time)             | Timestamp of this block.                                                                     |
 | `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                                         |
@@ -475,3 +473,10 @@ enum VoteType : uint8_t {
 TODO validator set repr
 
 # Consensus Parameters
+
+Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
+
+| name      | type     | description                                                                                |
+| --------- | -------- | ------------------------------------------------------------------------------------------ |
+| `version` | `uint64` | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter. |
+| `chainID` | `uint64` | Chain ID. Each chain assigns itself a (unique) ID.                                         |
