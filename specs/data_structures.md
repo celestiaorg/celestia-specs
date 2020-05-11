@@ -483,3 +483,5 @@ Various [consensus parameters](consensus.md#system-parameters) are committed to 
 | `shareSize`                       | `uint64` | The `SHARE_SIZE`.                          |
 | `shareReservedBytes`              | `uint64` | The `SHARE_RESERVED_BYTES`.                |
 | `availableDataOriginalSquareSize` | `uint64` | The `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`. |
+
+In order to compute the `consensusRoot` field in the [block header](#header), the above list of parameters is Merkleized in a plain [binary Merkle tree](#binary-merkle-tree), whose root is assigned to the `consensusRoot`.
