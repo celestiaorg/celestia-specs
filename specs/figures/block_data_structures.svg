@@ -84,7 +84,7 @@
 <polyline fill="none" stroke="#000000" points="24,-149 144.1838,-149 "/>
 <text text-anchor="middle" x="84.0919" y="-132.4" font-family="Times,serif" font-size="14.00" fill="#000000">lastCommitRoot</text>
 <polyline fill="none" stroke="#000000" points="24,-124.2 144.1838,-124.2 "/>
-<text text-anchor="middle" x="84.0919" y="-107.6" font-family="Times,serif" font-size="14.00" fill="#000000">consensusHash</text>
+<text text-anchor="middle" x="84.0919" y="-107.6" font-family="Times,serif" font-size="14.00" fill="#000000">consensusRoot</text>
 <polyline fill="none" stroke="#000000" points="24,-99.4 144.1838,-99.4 "/>
 <text text-anchor="middle" x="84.0919" y="-82.8" font-family="Times,serif" font-size="14.00" fill="#000000">stateCommitment</text>
 <polyline fill="none" stroke="#000000" points="24,-74.6 144.1838,-74.6 "/>

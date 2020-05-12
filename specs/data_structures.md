@@ -43,6 +43,7 @@ Data Structures
   - [MessageData](#messagedata)
     - [Message](#message)
 - [State](#state)
+- [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
 
@@ -67,13 +68,11 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 | name                | type                      | description                                                                                  |
 | ------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
-| `version`           | `uint64`                  | Version of the LazyLedger chain.                                                             |
-| `chainID`           | `uint64`                  | Chain ID. Each fork assigns itself a (unique) ID.                                            |
 | `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                                            |
 | `time`              | [Time](#time)             | Timestamp of this block.                                                                     |
 | `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                                         |
 | `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                     |
-| `consensusHash`     | [HashDigest](#hashdigest) | Consensus parameters for this block.                                                         |
+| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                 |
 | `stateCommitment`   | [HashDigest](#hashdigest) | Commitment to state root and validator set root after this block's transactions are applied. |
 | `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                           |
 | `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                                            |
@@ -472,3 +471,17 @@ enum VoteType : uint8_t {
 # State
 
 TODO validator set repr
+
+# Consensus Parameters
+
+Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
+
+| name                              | type     | description                                |
+| --------------------------------- | -------- | ------------------------------------------ |
+| `version`                         | `uint64` | The `VERSION`.                             |
+| `chainID`                         | `uint64` | The `CHAIN_ID`.                            |
+| `shareSize`                       | `uint64` | The `SHARE_SIZE`.                          |
+| `shareReservedBytes`              | `uint64` | The `SHARE_RESERVED_BYTES`.                |
+| `availableDataOriginalSquareSize` | `uint64` | The `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`. |
+
+In order to compute the `consensusRoot` field in the [block header](#header), the above list of parameters is Merkleized in a plain [binary Merkle tree](#binary-merkle-tree), whose root is assigned to the `consensusRoot`.

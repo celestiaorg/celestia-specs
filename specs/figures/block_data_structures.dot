@@ -22,7 +22,7 @@ digraph G {
 
         subgraph cluster_header {
             label = "header";
-            struct1 [label = "version | chainID | height | time | lastBlockID | <f5> lastCommitRoot | consensusHash | stateCommitment | <f8> availableDataRoot | proposerAddress"];
+            struct1 [label = "version | chainID | height | time | lastBlockID | <f5> lastCommitRoot | consensusRoot | stateCommitment | <f8> availableDataRoot | proposerAddress"];
         }
     }
 
