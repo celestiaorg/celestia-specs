@@ -5,9 +5,9 @@ import "google/protobuf/timestamp.proto";
 
 message Block {
   Header header = 1;
-  AvailableDataHeader availableDataHeader = 2;
-  AvailableData availableData = 3;
-  Commit lastCommit = 4;
+  AvailableDataHeader available_data_header = 2;
+  AvailableData available_data = 3;
+  Commit last_commit = 4;
 }
 
 message Header {
@@ -126,7 +126,7 @@ message Vote {
   BlockID block_id = 4;
   google.protobuf.Timestamp timestamp = 5;
   Address validator_address = 6;
-  uint64 validatorIndex = 7;
+  uint64 validator_index = 7;
   Signature signature = 8;
 }
 
