@@ -278,10 +278,10 @@ A proof into an SMT is structured as:
 | name               | type                          | description                                                                                     |
 | ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------- |
 | `root`             | [HashDigest](#hashdigest)     | Merkle root.                                                                                    |
-| `leaf`             | `byte[]`                      | Leaf value.                                                                                     |
 | `index`            | `byte[32]`                    | Index of the leaf.                                                                              |
 | `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                                            |
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes. The lowest bit corresponds the leaf node level. |
+| `leaf`             | `byte[]`                      | Leaf value.                                                                                     |
 
 # Erasure Coding
 
