@@ -273,12 +273,17 @@ SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-a
 
 For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. The lowest bit corresponds to the sibling of the leaf node, and each higher bit corresponds to the next parent. A value of `1` indicates that the next value in the list of values provided explicitly in the proof should be used, and a value of `0` indicates that the default value should be used.
 
+Finally, the number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
+
+This creates an imbalanced tree with leaf nodes at different heights, so leaves and nodes must be hashed differently to avoid a second-preimage attack [where internal nodes are presented as leaf nodes](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack). When hashing leaves, the `uint8` value `0x00` is prepended to the leaf value, and when hashing nodes, `0x01` is prepended to the hash value.
+
 A proof into an SMT is structured as:
 
 | name               | type                          | description                                                                                     |
 | ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------- |
 | `root`             | [HashDigest](#hashdigest)     | Merkle root.                                                                                    |
 | `index`            | `byte[32]`                    | Index of the leaf.                                                                              |
+| `depth`            | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`.                        |
 | `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                                            |
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes. The lowest bit corresponds the leaf node level. |
 | `leaf`             | `byte[]`                      | Leaf value.                                                                                     |
