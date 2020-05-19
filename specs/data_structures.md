@@ -43,6 +43,8 @@ Data Structures
   - [MessageData](#messagedata)
     - [Message](#message)
 - [State](#state)
+  - [Account](#account)
+  - [Validator](#validator)
 - [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
@@ -475,7 +477,28 @@ enum VoteType : uint8_t {
 
 # State
 
-TODO validator set repr
+The state of the LazyLedger chain contains only account balances and the validator set (which is really just extra metadata on top of the account balances).
+
+Two [Sparse Merkle Trees](#sparse-merkle-tree) are maintained: one of [accounts](#account) and one of [validators](#validator). The state root is computed as the [hash](#hashdigest) of concatenation of the account tree root and the validator tree root.
+
+## Account
+
+| name                 | type                | description                                                                              |
+| -------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
+| `balance`            | `uint64`            | Coin balance.                                                                            |
+| `isDelegating`       | `bool`              | Whether this account is delegating its stake or not.                                     |
+| `delegatedValidator` | [Address](#address) | _Optional._ The validator this is account is delegating to.                              |
+| `delegatedCount`     | `uint32`            | Number of accounts delegating to this validator. `0` is this account is not a validator. |
+
+In the account tree, accounts are keyed by the [hash](#hashdigest) of their [address](#address).
+
+## Validator
+
+| name          | type      | description     |
+| ------------- | --------- | --------------- |
+| `votingPower` | `uint256` | Voting balance. |
+
+In the validator tree, validators are keyed by their [address](#address).
 
 # Consensus Parameters
 
