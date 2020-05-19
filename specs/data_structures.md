@@ -494,9 +494,9 @@ In the account tree, accounts are keyed by the [hash](#hashdigest) of their [add
 
 ## Validator
 
-| name          | type      | description     |
-| ------------- | --------- | --------------- |
-| `votingPower` | `uint256` | Voting balance. |
+| name          | type     | description     |
+| ------------- | -------- | --------------- |
+| `votingPower` | `uint64` | Voting balance. |
 
 In the validator tree, validators are keyed by their [address](#address).
 
