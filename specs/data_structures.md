@@ -486,8 +486,9 @@ Two [Sparse Merkle Trees](#sparse-merkle-tree) are maintained: one of [accounts]
 | name                 | type                | description                                                                              |
 | -------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
 | `balance`            | `uint64`            | Coin balance.                                                                            |
+| `nonce`              | `uint64`            | Account nonce. Every outgoing transaction from this account increments the nonce.        |
 | `isDelegating`       | `bool`              | Whether this account is delegating its stake or not.                                     |
-| `delegatedValidator` | [Address](#address) | _Optional._ The validator this account is delegating to.                              |
+| `delegatedValidator` | [Address](#address) | _Optional._ The validator this account is delegating to.                                 |
 | `delegatedCount`     | `uint32`            | Number of accounts delegating to this validator. `0` is this account is not a validator. |
 
 In the account tree, accounts are keyed by the [hash](#hashdigest) of their [address](#address).
