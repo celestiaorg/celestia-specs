@@ -277,12 +277,24 @@ Finally, the number of hashing operations can be reduced to be logarithmic in th
 
 This creates an imbalanced tree with leaf nodes at different heights, so leaves and nodes must be hashed differently to avoid a second-preimage attack [where internal nodes are presented as leaf nodes](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack). When hashing leaves, the `uint8` value `0x00` is prepended to the leaf value, and when hashing nodes, `0x01` is prepended to the hash value.
 
+Additionally, the key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
+
+For leaf node of leaf message `m` with key `k`, its value `v` is:
+```C++
+v = h(`0x00`, k, serialize(m))
+```
+
+For internal node with children `l` and `r`, its value `v` is:
+```C++
+v = h(`0x01`, l.v, r.v)
+```
+
 A proof into an SMT is structured as:
 
 | name               | type                          | description                                                                                     |
 | ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------- |
 | `root`             | [HashDigest](#hashdigest)     | Merkle root.                                                                                    |
-| `index`            | `byte[32]`                    | Index of the leaf.                                                                              |
+| `key`              | `byte[32]`                    | Key (i.e. index) of the leaf.                                                                   |
 | `depth`            | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`.                        |
 | `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                                            |
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes. The lowest bit corresponds the leaf node level. |
