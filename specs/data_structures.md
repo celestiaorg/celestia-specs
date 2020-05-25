@@ -44,7 +44,6 @@ Data Structures
     - [Message](#message)
 - [State](#state)
   - [Account](#account)
-  - [Validator](#validator)
 - [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
@@ -477,9 +476,14 @@ enum VoteType : uint8_t {
 
 # State
 
-The state of the LazyLedger chain contains only account balances and the validator set (which is really just extra metadata on top of the account balances).
+| name              | type                      | description                  |
+| ----------------- | ------------------------- | ---------------------------- |
+| `accountTrieRoot` | [HashDigest](#hashdigest) | Merkle root of account trie. |
+| `numValidators`   | `uint32`                  | Number of active validators  |
 
-Two [Sparse Merkle Trees](#sparse-merkle-tree) are maintained: one of [accounts](#account) and one of [validators](#validator). The state root is computed as the [hash](#hashdigest) of concatenation of the account tree root and the validator tree root.
+The state of the LazyLedger chain contains only account balances and the validator set (which is extra metadata on top of the plain account balances).
+
+One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both account account balances and validator metadata, the _account trie_. The state root is computed as the [hash](#hashdigest) of the serialized account trie root and number of active validators. The latter is necessary to ensure light nodes can determine the entire validator set from a single state root commitment.
 
 ## Account
 
@@ -490,16 +494,9 @@ Two [Sparse Merkle Trees](#sparse-merkle-tree) are maintained: one of [accounts]
 | `isDelegating`       | `bool`              | Whether this account is delegating its stake or not.                                     |
 | `delegatedValidator` | [Address](#address) | _Optional._ The validator this account is delegating to.                                 |
 | `delegatedCount`     | `uint32`            | Number of accounts delegating to this validator. `0` is this account is not a validator. |
+| `votingPower`        | `uint64`            | Voting balance.                                                                          |
 
-In the account tree, accounts are keyed by the [hash](#hashdigest) of their [address](#address).
-
-## Validator
-
-| name          | type     | description     |
-| ------------- | -------- | --------------- |
-| `votingPower` | `uint64` | Voting balance. |
-
-In the validator tree, validators are keyed by their [address](#address).
+In the account trie, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
 
 # Consensus Parameters
 
