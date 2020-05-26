@@ -37,6 +37,8 @@ Consensus Rules
 | `SHARE_RESERVED_BYTES`                | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                    |
 | `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` | `uint64` |         | `share` | Number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
 | `GENESIS_COIN_COUNT`                  | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                 |
+| `UNBONDING_DURATION`                  | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                               |
+| `MAX_VALIDATORS`                      | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                        |
 
 ## Types
 
