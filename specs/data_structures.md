@@ -44,6 +44,8 @@ Data Structures
     - [Message](#message)
 - [State](#state)
   - [Account](#account)
+  - [Validator](#validator)
+  - [Delegation](#delegation)
 - [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
@@ -479,7 +481,7 @@ enum VoteType : uint8_t {
 | name              | type                      | description                  |
 | ----------------- | ------------------------- | ---------------------------- |
 | `accountTrieRoot` | [HashDigest](#hashdigest) | Merkle root of account trie. |
-| `numValidators`   | `uint32`                  | Number of active validators  |
+| `numValidators`   | `uint32`                  | Number of active validators. |
 
 The state of the LazyLedger chain contains only account balances and the validator set (which is extra metadata on top of the plain account balances).
 
@@ -487,16 +489,39 @@ One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both ac
 
 ## Account
 
-| name                 | type                | description                                                                              |
-| -------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
-| `balance`            | `uint64`            | Coin balance.                                                                            |
-| `nonce`              | `uint64`            | Account nonce. Every outgoing transaction from this account increments the nonce.        |
-| `isDelegating`       | `bool`              | Whether this account is delegating its stake or not.                                     |
-| `delegatedValidator` | [Address](#address) | _Optional._ The validator this account is delegating to.                                 |
-| `delegatedCount`     | `uint32`            | Number of accounts delegating to this validator. `0` is this account is not a validator. |
-| `votingPower`        | `uint64`            | Voting balance.                                                                          |
+| name             | type                      | description                                                                       |
+| ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| `balance`        | `uint64`                  | Coin balance.                                                                     |
+| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
+| `validatorInfo`  | [Validator](#validator)   | _Optional_, only if `isValidator` is set. Validator info.                         |
+| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
+| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
 
 In the account trie, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
+
+## Validator
+
+```C++
+enum ValidatorStatus : uint8_t {
+    Queued = 1,
+    Bonded = 2,
+    Unbonding = 3,
+    Unbonded = 4,
+};
+```
+
+| name             | type              | description                                      |
+| ---------------- | ----------------- | ------------------------------------------------ |
+| `status`         | `ValidatorStatus` | Status of this validator.                        |
+| `delegatedCount` | `uint32`          | Number of accounts delegating to this validator. |
+| `votingPower`    | `uint64`          | Voting balance.                                  |
+
+## Delegation
+
+| name                 | type                | description                           |
+| -------------------- | ------------------- | ------------------------------------- |
+| `delegatedValidator` | [Address](#address) | The validator being is delegating to. |
 
 # Consensus Parameters
 
