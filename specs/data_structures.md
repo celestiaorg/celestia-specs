@@ -46,6 +46,7 @@ Data Structures
   - [Account](#account)
   - [Validator](#validator)
   - [Delegation](#delegation)
+  - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
@@ -489,14 +490,14 @@ One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both ac
 
 ## Account
 
-| name             | type                      | description                                                                       |
-| ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
-| `balance`        | `uint64`                  | Coin balance.                                                                     |
-| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
-| `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
-| `validatorInfo`  | [Validator](#validator)   | _Optional_, only if `isValidator` is set. Validator info.                         |
-| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
-| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
+| name             | type                      | description                                                                                 |
+| ---------------- | ------------------------- | ------------------------------------------------------------------------------------------- |
+| `balance`        | `uint64`                  | Coin balance.                                                                               |
+| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce.           |
+| `isValidator`    | `bool`                    | Whether this account is a validator or not. Mutually exclusive with `isDelegating`.         |
+| `validatorInfo`  | [Validator](#validator)   | _Optional_, only if `isValidator` is set. Validator info.                                   |
+| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not. Mutually exclusive with `isValidator`. |
+| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                                 |
 
 In the account trie, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
 
@@ -511,17 +512,24 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name             | type              | description                                      |
-| ---------------- | ----------------- | ------------------------------------------------ |
-| `status`         | `ValidatorStatus` | Status of this validator.                        |
-| `delegatedCount` | `uint32`          | Number of accounts delegating to this validator. |
-| `votingPower`    | `uint64`          | Voting balance.                                  |
+| name              | type                | description                                      |
+| ----------------- | ------------------- | ------------------------------------------------ |
+| `status`          | `ValidatorStatus`   | Status of this validator.                        |
+| `delegatedCount`  | `uint32`            | Number of accounts delegating to this validator. |
+| `votingPower`     | `uint64`            | Voting balance.                                  |
+| `unbondingHeight` | `uint64`            | Block height validator began unbonding.          |
+| `commissionRate`  | [Decimal](#decimal) | Commission rate.                                 |
 
 ## Delegation
 
-| name                 | type                | description                           |
-| -------------------- | ------------------- | ------------------------------------- |
-| `delegatedValidator` | [Address](#address) | The validator being is delegating to. |
+| name        | type                | description                           |
+| ----------- | ------------------- | ------------------------------------- |
+| `validator` | [Address](#address) | The validator being is delegating to. |
+| `start`     | `uint64`            | Start block.                          |
+
+## Decimal
+
+TODO define a format for numbers in the range `[0,1]`
 
 # Consensus Parameters
 
