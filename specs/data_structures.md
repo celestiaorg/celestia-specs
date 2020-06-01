@@ -512,18 +512,20 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name              | type                | description                                      |
-| ----------------- | ------------------- | ------------------------------------------------ |
-| `status`          | `ValidatorStatus`   | Status of this validator.                        |
-| `delegatedCount`  | `uint32`            | Number of accounts delegating to this validator. |
-| `votingPower`     | `uint64`            | Voting balance.                                  |
-| `unbondingHeight` | `uint64`            | Block height validator began unbonding.          |
-| `commissionRate`  | [Decimal](#decimal) | Commission rate.                                 |
+| name              | type                | description                                                                            |
+| ----------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `status`          | `ValidatorStatus`   | Status of this validator.                                                              |
+| `delegatedCount`  | `uint32`            | Number of accounts delegating to this validator.                                       |
+| `votingPower`     | `uint64`            | Voting balance.                                                                        |
+| `unbondingHeight` | `uint64`            | Block height validator began unbonding.                                                |
+| `commissionRate`  | [Decimal](#decimal) | Commission rate.                                                                       |
+| `isSlashed`       | `bool`              | If this validator has been slashed or not.                                             |
+| `slashRate`       | [Decimal](#decimal) | _Optional._ Only if `isSlashed` is set. Rate at which this validator has been slashed. |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
 1. `Bonded`: This validator is active and bonded. It can propose new blocks and vote on proposed blocks. Once bonded, an active validator must go through an unbonding process until its stake can be freed.
-1. `Unbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) to forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
+1. `Unbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
 1. `Unbonded`: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until `delegatedCount` reaches zero, at which point it is destroyed.
 
 ## Delegation
