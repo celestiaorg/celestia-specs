@@ -541,6 +541,10 @@ enum DelegationStatus : uint8_t {
 | `validator`   | [Address](#address) | The validator being delegating to.  |
 | `startHeight` | `uint64`            | Block height when delegation began. |
 
+Delegation objects represent a delegation. They have two statuses:
+1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
+1. `Unbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
+
 ## Decimal
 
 TODO define a format for numbers in the range `[0,1]`
