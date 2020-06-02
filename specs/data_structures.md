@@ -519,7 +519,7 @@ enum ValidatorStatus : uint8_t {
 | `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake, in `4u`.                       |
 | `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                   |
 | `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn.                                                   |
-| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks. TODO too few bits?                               |
+| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks.                                                  |
 | `unbondingHeight`               | `uint64`            | Block height validator began unbonding.                                                |
 | `commissionRate`                | [Decimal](#decimal) | Commission rate.                                                                       |
 | `isSlashed`                     | `bool`              | If this validator has been slashed or not.                                             |
