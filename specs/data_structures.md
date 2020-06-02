@@ -512,15 +512,18 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name              | type                | description                                                                            |
-| ----------------- | ------------------- | -------------------------------------------------------------------------------------- |
-| `status`          | `ValidatorStatus`   | Status of this validator.                                                              |
-| `delegatedCount`  | `uint32`            | Number of accounts delegating to this validator.                                       |
-| `votingPower`     | `uint64`            | Voting balance.                                                                        |
-| `unbondingHeight` | `uint64`            | Block height validator began unbonding.                                                |
-| `commissionRate`  | [Decimal](#decimal) | Commission rate.                                                                       |
-| `isSlashed`       | `bool`              | If this validator has been slashed or not.                                             |
-| `slashRate`       | [Decimal](#decimal) | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| name                            | type                | description                                                                            |
+| ------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `status`                        | `ValidatorStatus`   | Status of this validator.                                                              |
+| `delegatedCount`                | `uint32`            | Number of accounts delegating to this validator.                                       |
+| `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake.                                |
+| `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                   |
+| `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn.                                                   |
+| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks. TODO too few bits?                               |
+| `unbondingHeight`               | `uint64`            | Block height validator began unbonding.                                                |
+| `commissionRate`                | [Decimal](#decimal) | Commission rate.                                                                       |
+| `isSlashed`                     | `bool`              | If this validator has been slashed or not.                                             |
+| `slashRate`                     | [Decimal](#decimal) | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
@@ -537,11 +540,13 @@ enum DelegationStatus : uint8_t {
 };
 ```
 
-| name          | type                | description                         |
-| ------------- | ------------------- | ----------------------------------- |
-| `status`      | `DelegationStatus`  | Status of this delegation.          |
-| `validator`   | [Address](#address) | The validator being delegating to.  |
-| `startHeight` | `uint64`            | Block height when delegation began. |
+| name                  | type                | description                                        |
+| --------------------- | ------------------- | -------------------------------------------------- |
+| `status`              | `DelegationStatus`  | Status of this delegation.                         |
+| `validator`           | [Address](#address) | The validator being delegating to.                 |
+| `votingPower`         | `uint64`            | Delegated stake.                                   |
+| `startHeight`         | `uint64`            | Block height when delegation began.                |
+| `startPendingRewards` | `uint64`            | Validator's pending rewards when delegation began. |
 
 Delegation objects represent a delegation. They have two statuses:
 1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
