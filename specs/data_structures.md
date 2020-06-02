@@ -516,7 +516,7 @@ enum ValidatorStatus : uint8_t {
 | ------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
 | `status`                        | `ValidatorStatus`   | Status of this validator.                                                              |
 | `delegatedCount`                | `uint32`            | Number of accounts delegating to this validator.                                       |
-| `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake.                                |
+| `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake, in `4u`.                       |
 | `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                   |
 | `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn.                                                   |
 | `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks. TODO too few bits?                               |
@@ -544,7 +544,7 @@ enum DelegationStatus : uint8_t {
 | --------------------- | ------------------- | -------------------------------------------------- |
 | `status`              | `DelegationStatus`  | Status of this delegation.                         |
 | `validator`           | [Address](#address) | The validator being delegating to.                 |
-| `votingPower`         | `uint64`            | Delegated stake.                                   |
+| `votingPower`         | `uint64`            | Delegated stake, in `4u`.                          |
 | `startHeight`         | `uint64`            | Block height when delegation began.                |
 | `startPendingRewards` | `uint64`            | Validator's pending rewards when delegation began. |
 
