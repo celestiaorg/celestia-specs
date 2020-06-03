@@ -123,6 +123,7 @@ A transactions `tx` that requests a new delegation first updates the target vali
 | ---------------- | ----------------------------- |
 | `delegatedCount` | `old.delegatedCount + 1`      |
 | `votingPower`    | `old.votingPower + tx.amount` |
+
 then initializes the [Delegation](data_structures.md#delegation) field of that account as follows:
 | name              | value                     |
 | ----------------- | ------------------------- |
@@ -139,6 +140,7 @@ A transaction `tx` that requests withdrawing a delegation first updates the dele
 | `status`          | `DelegationStatus.Unbonding`                                                                    |
 | `unbondingHeight` | `block.height + 1`                                                                              |
 | `pendingRewards`  | `calculatedReward` (Calculated in [rewards and penalties](#calculating-rewards-and-penalties).) |
+
 then updates the target validator's voting power:
 | name                     | value                                                                                                                                        |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
