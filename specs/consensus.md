@@ -155,10 +155,11 @@ Due to the requirement that all incorrect state transitions be provable with a c
 F1 requires iterating over (potentially) a large number of blocks, but avoids needing to iterate over every delegation, all while being approximation-free. As such, it cannot be used for LazyLedger directly. The scheme presented here requires no iterations at all, but is not approximation-free. The intuition is that rewards of a delegation (or validator) are simply proportional to the accumulated voting power contributed by that delegation (or validator's stake) and the remaining accumulated voting power. This has the effect of "smoothing out" rewards, hence the lack of approximation-freeness.
 
 Rewards with penalties for validators:
-
 ```
 calculatedAccumulatedVotingPower = (block.height - validator.startHeight) * validator.stakedBalance
 calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
+if (validator.status != ValidatorStatus.Unbonded)
+    calculatedReward -= calculatedReward * validator.commissionRate
 if (validator.isSlashed)
     calculatedReward *= validator.slashRate
 ```
@@ -167,6 +168,7 @@ Rewards with penalties for delegations:
 ```
 calculatedAccumulatedVotingPower = (block.height - delegation.startHeight) * delegation.votingPower
 calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
+calculatedReward += validator.pendingRewards * validator.commissionRate
 if (validator.isSlashed)
     calculatedReward *= validator.slashRate
 ```
