@@ -160,8 +160,7 @@ Rewards with penalties for validators:
 ```
 calculatedAccumulatedVotingPower = (block.height - validator.startHeight) * validator.stakedBalance
 calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
-if (validator.status != ValidatorStatus.Unbonded)
-    calculatedReward -= calculatedReward * validator.commissionRate
+calculatedReward += validator.pendingRewards * validator.commissionRate
 if (validator.isSlashed)
     calculatedReward *= validator.slashRate
 ```
@@ -170,7 +169,8 @@ Rewards with penalties for delegations:
 ```
 calculatedAccumulatedVotingPower = (block.height - delegation.startHeight) * delegation.votingPower
 calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
-calculatedReward += validator.pendingRewards * validator.commissionRate
+if (validator.status != ValidatorStatus.Unbonded)
+    calculatedReward -= calculatedReward * validator.commissionRate
 if (validator.isSlashed)
     calculatedReward *= validator.slashRate
 ```
