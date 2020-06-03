@@ -512,20 +512,20 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name                            | type                | description                                                                                  |
-| ------------------------------- | ------------------- | -------------------------------------------------------------------------------------------- |
-| `status`                        | `ValidatorStatus`   | Status of this validator.                                                                    |
-| `delegatedCount`                | `uint32`            | Number of accounts delegating to this validator.                                             |
-| `stakedBalance`                 | `uint64`            | Validator's personal staked balance, in `4u`.                                                |
-| `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake, in `4u`.                             |
-| `startHeight`                   | `uint64`            | Block height when validator became bonded. `0` if not bonded or in the process of unbonding. |
-| `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                         |
-| `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn, in `1u`.                                                |
-| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks.                                                        |
-| `unbondingHeight`               | `uint64`            | Block height validator began unbonding.                                                      |
-| `commissionRate`                | [Decimal](#decimal) | Commission rate.                                                                             |
-| `isSlashed`                     | `bool`              | If this validator has been slashed or not.                                                   |
-| `slashRate`                     | [Decimal](#decimal) | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed.       |
+| name                            | type                | description                                                                            |
+| ------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `status`                        | `ValidatorStatus`   | Status of this validator.                                                              |
+| `delegatedCount`                | `uint32`            | Number of accounts delegating to this validator.                                       |
+| `stakedBalance`                 | `uint64`            | Validator's personal staked balance, in `4u`.                                          |
+| `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `startHeight`                   | `uint64`            | Block height when validator became bonded. `0` if not bonded.                          |
+| `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                   |
+| `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn, in `1u`.                                          |
+| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks.                                                  |
+| `unbondingHeight`               | `uint64`            | Block height validator began unbonding.                                                |
+| `commissionRate`                | [Decimal](#decimal) | Commission rate.                                                                       |
+| `isSlashed`                     | `bool`              | If this validator has been slashed or not.                                             |
+| `slashRate`                     | [Decimal](#decimal) | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
