@@ -521,7 +521,7 @@ enum ValidatorStatus : uint8_t {
 | `startHeight`                   | `uint64`            | Block height when validator became bonded. `0` if not bonded.                          |
 | `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                   |
 | `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn, in `1u`.                                          |
-| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks.                                                  |
+| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks, in `4u`.                                         |
 | `unbondingHeight`               | `uint64`            | Block height validator began unbonding.                                                |
 | `commissionRate`                | [Decimal](#decimal) | Commission rate.                                                                       |
 | `isSlashed`                     | `bool`              | If this validator has been slashed or not.                                             |
