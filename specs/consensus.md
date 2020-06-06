@@ -13,7 +13,7 @@ Consensus Rules
 - [Block Validity](#block-validity)
   - [State Transitions](#state-transitions)
     - [Validators and Delegations](#validators-and-delegations)
-    - [Calculating Rewards and Penalties](#calculating-rewards-and-penalties)
+    - [Distributing Rewards and Penalties](#distributing-rewards-and-penalties)
   - [Formatting](#formatting)
   - [Availability](#availability)
 
@@ -104,13 +104,13 @@ For validators that were bonded but are no longer (either by being outside the t
 | `unbondingHeight` | `block.height + 1`          |
 
 Once an unbonding validator has waited at least `UNBONDING_DURATION` blocks, they can be unbonded, collecting their reward:
-| name                     | value                                                                                                                                        |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `status`                 | `ValidatorStatus.Unbonded`                                                                                                                   |
-| `stakedBalance`          | `0`                                                                                                                                          |
-| `votingPower`            | `old.votingPower - old.stakedBalance`                                                                                                        |
-| `pendingRewards`         | `old.pendingRewards - calculatedReward` (Calculated in [rewards and penalties](#calculating-rewards-and-penalties).)                         |
-| `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated in [rewards and penalties](#calculating-rewards-and-penalties).) |
+| name                     | value                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `status`                 | `ValidatorStatus.Unbonded`                                                                                                |
+| `stakedBalance`          | `0`                                                                                                                       |
+| `votingPower`            | `old.votingPower - old.stakedBalance`                                                                                     |
+| `pendingRewards`         | `old.pendingRewards - calculatedReward` (Calculated [here](#distributing-rewards-and-penalties).)                         |
+| `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated [here](#distributing-rewards-and-penalties).) |
 
 Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rate at which accumulated voting power grows also changes. Intuitively, this "accumulated voting power" is similar to "coin days," but measures voting power over a number of blocks instead of coins over a number of days. The height of the last time the voting power of this validator was changed is updated to the current block height and the accumulated voting power is increased.
 | name                            | value                                                                                               |
@@ -135,22 +135,22 @@ then initializes the [Delegation](data_structures.md#delegation) field of that a
 | `pendingRewards`  | `0`                       |
 
 A transaction `tx` that requests withdrawing a delegation first updates the delegation field:
-| name              | value                                                                                           |
-| ----------------- | ----------------------------------------------------------------------------------------------- |
-| `status`          | `DelegationStatus.Unbonding`                                                                    |
-| `unbondingHeight` | `block.height + 1`                                                                              |
-| `pendingRewards`  | `calculatedReward` (Calculated in [rewards and penalties](#calculating-rewards-and-penalties).) |
+| name              | value                                                                        |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `status`          | `DelegationStatus.Unbonding`                                                 |
+| `unbondingHeight` | `block.height + 1`                                                           |
+| `pendingRewards`  | `calculatedReward` (Calculated [here](#distributing-rewards-and-penalties).) |
 
 then updates the target validator's voting power:
-| name                     | value                                                                                                                                        |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `delegatedCount`         | `old.delegatedCount - 1`                                                                                                                     |
-| `votingPower`            | `old.votingPower - delegation.votingPower`                                                                                                   |
-| `pendingRewards`         | `old.pendingRewards - calculatedReward` (Same as above.)                                                                                     |
-| `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated in [rewards and penalties](#calculating-rewards-and-penalties).) |
+| name                     | value                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `delegatedCount`         | `old.delegatedCount - 1`                                                                                                  |
+| `votingPower`            | `old.votingPower - delegation.votingPower`                                                                                |
+| `pendingRewards`         | `old.pendingRewards - calculatedReward` (Same as above.)                                                                  |
+| `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated [here](#distributing-rewards-and-penalties).) |
 
 
-### Calculating Rewards and Penalties
+### Distributing Rewards and Penalties
 
 Due to the requirement that all incorrect state transitions be provable with a compact fraud proof that is cheap enough to verify within a smart contract on a remote chain, computing rewards and penalties must involve minimal or no iterations. The scheme presented here is inspired by Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/_proposals/f1-fee-distribution/f1_fee_distr.pdf) and the concept of "[coin days](https://bitcointalk.org/index.php?topic=6172.msg90789#msg90789)."
 
