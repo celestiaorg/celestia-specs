@@ -157,7 +157,7 @@ Rewards with penalties for validators:
 ```
 calculatedAccumulatedVotingPower = (block.height - validator.startHeight) * validator.stakedBalance
 calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
-calculatedReward += validator.pendingRewards * validator.commissionRate
+calculatedReward += (validator.pendingRewards - calculatedReward) * validator.commissionRate
 if (validator.isSlashed)
     calculatedReward *= validator.slashRate
 ```
