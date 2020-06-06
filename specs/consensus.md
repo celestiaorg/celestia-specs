@@ -149,7 +149,6 @@ then updates the target validator's voting power:
 | `pendingRewards`         | `old.pendingRewards - calculatedReward` (Same as above.)                                                                  |
 | `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated [here](#distributing-rewards-and-penalties).) |
 
-
 ### Distributing Rewards and Penalties
 
 Due to the requirement that all incorrect state transitions be provable with a compact fraud proof that is cheap enough to verify within a smart contract on a remote chain, computing rewards and penalties must involve minimal or no iterations. The scheme presented here is inspired by Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/_proposals/f1-fee-distribution/f1_fee_distr.pdf) and the concept of "[coin days](https://bitcointalk.org/index.php?topic=6172.msg90789#msg90789)."
