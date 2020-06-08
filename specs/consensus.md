@@ -112,7 +112,7 @@ Once an unbonding validator has waited at least `UNBONDING_DURATION` blocks, the
 | `pendingRewards`         | `old.pendingRewards - calculatedReward` (Calculated [here](#distributing-rewards-and-penalties).)                         |
 | `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated [here](#distributing-rewards-and-penalties).) |
 
-Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rate at which accumulated voting power grows also changes. Intuitively, this "accumulated voting power" is similar to "coin days," but measures voting power over a number of blocks instead of coins over a number of days. The height of the last time the voting power of this validator was changed is updated to the current block height and the accumulated voting power is increased.
+Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rate at which accumulated voting power grows also changes. The height of the last time the voting power of this validator was changed is updated to the current block height and the accumulated voting power to date is calculated.
 | name                            | value                                                                                               |
 | ------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `heightOfLastVotingPowerChange` | `block.height`                                                                                      |
