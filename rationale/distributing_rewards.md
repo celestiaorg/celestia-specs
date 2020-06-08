@@ -18,12 +18,12 @@ This forms the primary motivation of the reward distribution scheme presented in
 
 # Background
 
+The scheme presented here is inspired by Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/_proposals/f1-fee-distribution/f1_fee_distr.pdf) and the concept of "[coin days](https://bitcointalk.org/index.php?topic=6172.msg90789#msg90789)."
+
 F1 requires iterating over (potentially) a large number of blocks, but avoids needing to iterate over every delegation, all while being approximation-free. As such, it cannot be used for LazyLedger directly.
 
 # Distribution Scheme
 
- The scheme presented here is inspired by Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/_proposals/f1-fee-distribution/f1_fee_distr.pdf) and the concept of "[coin days](https://bitcointalk.org/index.php?topic=6172.msg90789#msg90789)."
-
- The scheme presented here requires no iterations at all, but is not approximation-free. The intuition is that rewards of a delegation (or validator) are simply proportional to the accumulated voting power contributed by that delegation (or validator's stake) and the remaining accumulated voting power. This has the effect of "smoothing out" rewards, hence the lack of approximation-freeness.
+The scheme presented here requires no iterations at all, but is not approximation-free. The intuition is that rewards of a delegation (or validator) are simply proportional to the accumulated voting power contributed by that delegation (or validator's stake) and the remaining accumulated voting power. This has the effect of "smoothing out" rewards, hence the lack of approximation-freeness.
 
 Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rate at which accumulated voting power grows also changes. Intuitively, this "accumulated voting power" is similar to "coin days," but measures voting power over a number of blocks instead of coins over a number of days. The height of the last time the voting power of this validator was changed is updated to the current block height and the accumulated voting power is increased.
