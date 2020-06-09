@@ -530,7 +530,6 @@ enum ValidatorStatus : uint8_t {
 | `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
 | `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
 | `commissionRate`  | [Decimal](#decimal)         | Commission rate.                                                                       |
-| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when validator bonding began.                                                    |
 | `endEntry`        | [PeriodEntry](#periodentry) | Entry when validator bonding ended (i.e. began unbonding).                             |
 | `unbondingHeight` | `uint64`                    | Block height validator began unbonding.                                                |
 | `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
