@@ -44,6 +44,7 @@ Data Structures
     - [Message](#message)
 - [State](#state)
   - [Account](#account)
+  - [PeriodEntry](#periodentry)
   - [Validator](#validator)
   - [Delegation](#delegation)
   - [Decimal](#decimal)
@@ -501,6 +502,14 @@ One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both ac
 
 In the account trie, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
 
+## PeriodEntry
+
+| name         | type     | description                                                   |
+| ------------ | -------- | ------------------------------------------------------------- |
+| `rewardRate` | `uint64` | Rewards per unit of voting power accumulated so far, in `1u`. |
+
+For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
+
 ## Validator
 
 ```C++
@@ -512,20 +521,20 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name                            | type                | description                                                                            |
-| ------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
-| `status`                        | `ValidatorStatus`   | Status of this validator.                                                              |
-| `delegatedCount`                | `uint32`            | Number of accounts delegating to this validator.                                       |
-| `stakedBalance`                 | `uint64`            | Validator's personal staked balance, in `4u`.                                          |
-| `votingPower`                   | `uint64`            | Total voting power as staked balance + delegated stake, in `4u`.                       |
-| `startHeight`                   | `uint64`            | Block height when validator became bonded. `0` if not bonded.                          |
-| `heightOfLastVotingPowerChange` | `uint64`            | Block height of the last time this validator's voting power changed.                   |
-| `pendingRewards`                | `uint64`            | Rewards collected but not withdrawn, in `1u`.                                          |
-| `accumulatedVotingPower`        | `uint64`            | Accumulated voting power over blocks, in `4u`.                                         |
-| `unbondingHeight`               | `uint64`            | Block height validator began unbonding.                                                |
-| `commissionRate`                | [Decimal](#decimal) | Commission rate.                                                                       |
-| `isSlashed`                     | `bool`              | If this validator has been slashed or not.                                             |
-| `slashRate`                     | [Decimal](#decimal) | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| name              | type                        | description                                                                            |
+| ----------------- | --------------------------- | -------------------------------------------------------------------------------------- |
+| `status`          | `ValidatorStatus`           | Status of this validator.                                                              |
+| `delegatedCount`  | `uint32`                    | Number of accounts delegating to this validator.                                       |
+| `stakedBalance`   | `uint64`                    | Validator's personal staked balance, in `4u`.                                          |
+| `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
+| `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
+| `commissionRate`  | [Decimal](#decimal)         | Commission rate.                                                                       |
+| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when validator bonding began.                                                    |
+| `endEntry`        | [PeriodEntry](#periodentry) | Entry when validator bonding ended (i.e. began unbonding).                             |
+| `unbondingHeight` | `uint64`                    | Block height validator began unbonding.                                                |
+| `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
+| `slashRate`       | [Decimal](#decimal)         | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
@@ -542,14 +551,14 @@ enum DelegationStatus : uint8_t {
 };
 ```
 
-| name              | type                | description                                    |
-| ----------------- | ------------------- | ---------------------------------------------- |
-| `status`          | `DelegationStatus`  | Status of this delegation.                     |
-| `validator`       | [Address](#address) | The validator being delegating to.             |
-| `votingPower`     | `uint64`            | Delegated stake, in `4u`.                      |
-| `startHeight`     | `uint64`            | Block height when delegation began.            |
-| `unbondingHeight` | `uint64`            | Block height delegation began unbonding.       |
-| `pendingRewards`  | `uint64`            | Pending rewards when delegation ends, in `1u`. |
+| name              | type                        | description                                         |
+| ----------------- | --------------------------- | --------------------------------------------------- |
+| `status`          | `DelegationStatus`          | Status of this delegation.                          |
+| `validator`       | [Address](#address)         | The validator being delegating to.                  |
+| `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
+| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
+| `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
+| `unbondingHeight` | `uint64`                    | Block height delegation began unbonding.            |
 
 Delegation objects represent a delegation. They have two statuses:
 1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
