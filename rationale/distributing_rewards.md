@@ -18,8 +18,6 @@ This forms the primary motivation of the scheme discussed here: a mechanism for 
 
 # Distribution Scheme
 
-store first entry in delegation on creation?
-
 The scheme presented here is an incarnation of Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/_proposals/f1-fee-distribution/f1_fee_distr.pdf). F1 has the nice property of being approximation-free and, with proper implementation details, can be highly efficient with state usage and completely iteration-free in all cases.
 
 Naively, when considering a single block, the reward that should be given to a delegator with stake $x$, who's delegating to a validator with total voting power $n$, whose reward in that block is $T$, is:
