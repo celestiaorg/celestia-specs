@@ -13,7 +13,6 @@ Consensus Rules
 - [Block Validity](#block-validity)
   - [State Transitions](#state-transitions)
     - [Validators and Delegations](#validators-and-delegations)
-    - [Distributing Rewards and Penalties](#distributing-rewards-and-penalties)
   - [Formatting](#formatting)
   - [Availability](#availability)
 
@@ -76,26 +75,22 @@ Consensus Rules
 ### Validators and Delegations
 
 A transaction `tx` that requests a new validator initializes the [Validator](data_structures.md#validator) field of that account as follows:
-| name                            | value                    |
-| ------------------------------- | ------------------------ |
-| `status`                        | `ValidatorStatus.Queued` |
-| `delegatedCount`                | `0`                      |
-| `stakedBalance`                 | `tx.amount`              |
-| `votingPower`                   | `tx.amount`              |
-| `startHeight`                   | `0`                      |
-| `heightOfLastVotingPowerChange` | `0`                      |
-| `pendingRewards`                | `0`                      |
-| `accumulatedVotingPower`        | `0`                      |
-| `unbondingHeight`               | `0`                      |
-| `commissionRate`                | `tx.commissionRate`      |
-| `isSlashed`                     | `false`                  |
+| name              | value                    |
+| ----------------- | ------------------------ |
+| `status`          | `ValidatorStatus.Queued` |
+| `stakedBalance`   | `tx.amount`              |
+| `commissionRate`  | `tx.commissionRate`      |
+| `delegatedCount`  | `0`                      |
+| `votingPower`     | `tx.amount`              |
+| `pendingRewards`  | `0`                      |
+| `latestEntry`     | `PeriodEntry(0)`         |
+| `unbondingHeight` | `0`                      |
+| `isSlashed`       | `false`                  |
 
 At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validators by voting power are or become active. For newly-bonded validators, their status is changed to bonded and height values initialized.
-| name                            | value                    |
-| ------------------------------- | ------------------------ |
-| `status`                        | `ValidatorStatus.Bonded` |
-| `startHeight`                   | `block.height + 1`       |
-| `heightOfLastVotingPowerChange` | `block.height + 1`       |
+| name     | value                    |
+| -------- | ------------------------ |
+| `status` | `ValidatorStatus.Bonded` |
 
 For validators that were bonded but are no longer (either by being outside the top validators or through a transaction that requests unbonding), they begin unbonding.
 | name              | value                       |
@@ -104,21 +99,19 @@ For validators that were bonded but are no longer (either by being outside the t
 | `unbondingHeight` | `block.height + 1`          |
 
 Once an unbonding validator has waited at least `UNBONDING_DURATION` blocks, they can be unbonded, collecting their reward:
-| name                     | value                                                                                                                     |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `status`                 | `ValidatorStatus.Unbonded`                                                                                                |
-| `stakedBalance`          | `0`                                                                                                                       |
-| `votingPower`            | `old.votingPower - old.stakedBalance`                                                                                     |
-| `pendingRewards`         | `old.pendingRewards - calculatedReward` (Calculated [here](#distributing-rewards-and-penalties).)                         |
-| `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated [here](#distributing-rewards-and-penalties).) |
+| name            | value                                 |
+| --------------- | ------------------------------------- |
+| `status`        | `ValidatorStatus.Unbonded`            |
+| `stakedBalance` | `0`                                   |
+| `votingPower`   | `old.votingPower - old.stakedBalance` |
 
-Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rate at which accumulated voting power grows also changes. The height of the last time the voting power of this validator was changed is updated to the current block height and the accumulated voting power to date is calculated.
-| name                            | value                                                                                               |
-| ------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `heightOfLastVotingPowerChange` | `block.height`                                                                                      |
-| `accumulatedVotingPower`        | `old.accumulatedVotingPower + old.votingPower * (block.height - old.heightOfLastVotingPowerChange)` |
+Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rewards per unit of voting power accumulated so far are calculated:
+| name             | value                                                    |
+| ---------------- | -------------------------------------------------------- |
+| `pendingRewards` | `0`                                                      |
+| `latestEntry`    | `old.latestEntry + old.pendingRewards / old.votingPower` |
 
-A transactions `tx` that requests a new delegation first updates the target validator's voting power:
+A transaction `tx` that requests a new delegation first updates the target validator's voting power:
 | name             | value                         |
 | ---------------- | ----------------------------- |
 | `delegatedCount` | `old.delegatedCount + 1`      |
@@ -129,48 +122,23 @@ then initializes the [Delegation](data_structures.md#delegation) field of that a
 | ----------------- | ------------------------- |
 | `status`          | `DelegationStatus.Bonded` |
 | `validator`       | `tx.validator`            |
-| `votingPower`     | `tx.amount`               |
-| `startHeight`     | `block.height + 1`        |
+| `stakedBalance`   | `tx.amount`               |
+| `beginEntry`      | `validator.latestEntry`   |
+| `endEntry`        | `PeriodEntry(0)`          |
 | `unbondingHeight` | `0`                       |
-| `pendingRewards`  | `0`                       |
 
 A transaction `tx` that requests withdrawing a delegation first updates the delegation field:
-| name              | value                                                                        |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `status`          | `DelegationStatus.Unbonding`                                                 |
-| `unbondingHeight` | `block.height + 1`                                                           |
-| `pendingRewards`  | `calculatedReward` (Calculated [here](#distributing-rewards-and-penalties).) |
+| name              | value                        |
+| ----------------- | ---------------------------- |
+| `status`          | `DelegationStatus.Unbonding` |
+| `endEntry`        | `validator.latestEntry`      |
+| `unbondingHeight` | `block.height + 1`           |
 
 then updates the target validator's voting power:
-| name                     | value                                                                                                                     |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `delegatedCount`         | `old.delegatedCount - 1`                                                                                                  |
-| `votingPower`            | `old.votingPower - delegation.votingPower`                                                                                |
-| `pendingRewards`         | `old.pendingRewards - calculatedReward` (Same as above.)                                                                  |
-| `accumulatedVotingPower` | `old.accumulatedVotingPower - calculatedAccumulatedVotingPower` (Calculated [here](#distributing-rewards-and-penalties).) |
-
-### Distributing Rewards and Penalties
-
-For rationale behind the distribution scheme for rewards and penalties, see [rationale document](../rationale/distributing_rewards.md).
-
-Rewards with penalties for validators:
-```
-calculatedAccumulatedVotingPower = (block.height - validator.startHeight) * validator.stakedBalance
-calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
-calculatedReward += (validator.pendingRewards - calculatedReward) * validator.commissionRate
-if (validator.isSlashed)
-    calculatedReward *= validator.slashRate
-```
-
-Rewards with penalties for delegations:
-```
-calculatedAccumulatedVotingPower = (block.height - delegation.startHeight) * delegation.votingPower
-calculatedReward = validator.pendingRewards * calculatedAccumulatedVotingPower / validator.accumulatedVotingPower
-if (validator.status != ValidatorStatus.Unbonded)
-    calculatedReward -= calculatedReward * validator.commissionRate
-if (validator.isSlashed)
-    calculatedReward *= validator.slashRate
-```
+| name             | value                                      |
+| ---------------- | ------------------------------------------ |
+| `delegatedCount` | `old.delegatedCount - 1`                   |
+| `votingPower`    | `old.votingPower - delegation.votingPower` |
 
 ## Formatting
 
