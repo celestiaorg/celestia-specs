@@ -74,7 +74,7 @@ Consensus Rules
 
 ### Validators and Delegations
 
-A transaction `tx` that requests a new validator initializes the [Validator](data_structures.md#validator) field of that account as follows:
+A transaction `tx` that requests a new validator initializes the [Validator](data_structures.md#validator) fields of that account as follows:
 | name              | value                    |
 | ----------------- | ------------------------ |
 | `status`          | `ValidatorStatus.Queued` |
