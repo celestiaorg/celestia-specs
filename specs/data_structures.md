@@ -524,13 +524,12 @@ enum ValidatorStatus : uint8_t {
 | name              | type                        | description                                                                            |
 | ----------------- | --------------------------- | -------------------------------------------------------------------------------------- |
 | `status`          | `ValidatorStatus`           | Status of this validator.                                                              |
-| `delegatedCount`  | `uint32`                    | Number of accounts delegating to this validator.                                       |
 | `stakedBalance`   | `uint64`                    | Validator's personal staked balance, in `4u`.                                          |
-| `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
-| `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
-| `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
 | `commissionRate`  | [Decimal](#decimal)         | Commission rate.                                                                       |
-| `endEntry`        | [PeriodEntry](#periodentry) | Entry when validator bonding ended (i.e. began unbonding).                             |
+| `delegatedCount`  | `uint32`                    | Number of accounts delegating to this validator.                                       |
+| `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
+| `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
 | `unbondingHeight` | `uint64`                    | Block height validator began unbonding.                                                |
 | `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
 | `slashRate`       | [Decimal](#decimal)         | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
