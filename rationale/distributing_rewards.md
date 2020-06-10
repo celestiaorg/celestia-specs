@@ -47,7 +47,7 @@ This raw reward can be scaled by additional factors, such as commissions or slas
 
 ## State-Efficient Implementation
 
-The F1 paper doesn't specify where entries are stored in state, but the understanding is that they are placed in independent state elements. This has the downside of requiring multiple Merkle branches to prove the inclusion of entries for e.g. fraud proofs. We can improve on this by leveraging a specific property of entries, namely that each entry is only used in exactly two cases:
+The F1 paper does not specify where entries are stored in state, but the understanding is that they are placed in independent state elements. This has the downside of requiring multiple Merkle branches to prove the inclusion of entries for e.g. fraud proofs. We can improve on this by leveraging a specific property of entries, namely that each entry is only used in exactly two cases:
 1. To compute the next entry.
 1. To compute the reward of a delegator.
 
