@@ -480,14 +480,14 @@ enum VoteType : uint8_t {
 
 # State
 
-| name              | type                      | description                  |
-| ----------------- | ------------------------- | ---------------------------- |
-| `accountTrieRoot` | [HashDigest](#hashdigest) | Merkle root of account trie. |
-| `numValidators`   | `uint32`                  | Number of active validators. |
+| name            | type                      | description                  |
+| --------------- | ------------------------- | ---------------------------- |
+| `accountsRoot`  | [HashDigest](#hashdigest) | Merkle root of account tree. |
+| `numValidators` | `uint32`                  | Number of active validators. |
 
 The state of the LazyLedger chain contains only account balances and the validator set (which is extra metadata on top of the plain account balances).
 
-One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both account account balances and validator metadata, the _account trie_. The state root is computed as the [hash](#hashdigest) of the serialized account trie root and number of active validators. The latter is necessary to ensure light nodes can determine the entire validator set from a single state root commitment.
+One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both account account balances and validator metadata, the _accounts tree_. The final state root is computed as the [hash](#hashdigest) of the accounts tree root and number of active validators. The latter is necessary to ensure light nodes can determine the entire validator set from a single state root commitment.
 
 ## Account
 
@@ -500,7 +500,7 @@ One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both ac
 | `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not. Mutually exclusive with `isValidator`. |
 | `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                                 |
 
-In the account trie, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
+In the accounts tree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
 
 ## PeriodEntry
 
