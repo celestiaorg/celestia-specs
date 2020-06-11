@@ -72,16 +72,16 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                | type                      | description                                                                                  |
-| ------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
-| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                                            |
-| `time`              | [Time](#time)             | Timestamp of this block.                                                                     |
-| `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                                         |
-| `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                     |
-| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                 |
-| `stateCommitment`   | [HashDigest](#hashdigest) | Commitment to state root and validator set root after this block's transactions are applied. |
-| `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                           |
-| `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                                            |
+| name                | type                      | description                                                                  |
+| ------------------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                            |
+| `time`              | [Time](#time)             | Timestamp of this block.                                                     |
+| `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                         |
+| `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                     |
+| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block. |
+| `stateCommitment`   | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.        |
+| `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).           |
+| `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                            |
 
 ## AvailableDataHeader
 
@@ -481,11 +481,7 @@ enum VoteType : uint8_t {
 
 # State
 
-| name        | type                      | description                |
-| ----------- | ------------------------- | -------------------------- |
-| `stateRoot` | [HashDigest](#hashdigest) | Merkle root of state tree. |
-
-The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified [Sparse Merkle Tree](#sparse-merkle-tree) is maintained for the entire chain state, the _state tree_.
+The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified [Sparse Merkle Tree](#sparse-merkle-tree) is maintained for the entire chain state, the _state tree_. The root of this tree is committed to in the [block header](#header).
 
 The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
 
