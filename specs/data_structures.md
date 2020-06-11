@@ -492,13 +492,12 @@ Three subtrees are maintained:
 
 ## Account
 
-| name             | type                      | description                                                                                 |
-| ---------------- | ------------------------- | ------------------------------------------------------------------------------------------- |
-| `balance`        | `uint64`                  | Coin balance.                                                                               |
-| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce.           |
-| `isValidator`    | `bool`                    | Whether this account is a validator or not. Mutually exclusive with `isDelegating`.         |
-| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not. Mutually exclusive with `isValidator`. |
-| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                                 |
+| name             | type                      | description                                                                       |
+| ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| `balance`        | `uint64`                  | Coin balance.                                                                     |
+| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
+| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
 
 In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACCOUNTS_SUBTREE_ID`.
 
