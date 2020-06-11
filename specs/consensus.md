@@ -105,7 +105,7 @@ At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validator
 validator.status = ValidatorStatus.Bonded
 ```
 
-For validators that were bonded but are no longer (either by being outside the top `MAX_VALIDATORS` validators or through a transaction that requests unbonding), the validator object is moved to the inactive validators subtree they begin unbonding.
+For validators that were bonded but are no longer (either by being outside the top `MAX_VALIDATORS` validators, through a transaction that requests unbonding, or being by slashing), the validator object is moved to the inactive validators subtree and they begin unbonding.
 ```
 validator.status = ValidatorStatus.Unbonding
 validator.unbondingHeight = block.height + 1
