@@ -142,8 +142,9 @@ message Message {
 message Account {
   uint64 balance = 1;
   uint64 nonce = 2;
-  bool isDelegating = 3;
-  Delegation delegationInfo = 4;
+  bool isValidator = 3;
+  bool isDelegating = 4;
+  Delegation delegationInfo = 5;
 }
 
 message Delegation {

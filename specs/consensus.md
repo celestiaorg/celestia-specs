@@ -62,11 +62,13 @@ Consensus Rules
 
 ## Reserved State Subtree IDs
 
-| name                         | type             | value  |
-| ---------------------------- | ---------------- | ------ |
-| `ACCOUNTS_SUBTREE_ID`        | `StateSubtreeID` | `0x01` |
-| `VALIDATORS_SUBTREE_ID`      | `StateSubtreeID` | `0x02` |
-| `VALIDATOR_COUNT_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
+| name                                | type             | value  |
+| ----------------------------------- | ---------------- | ------ |
+| `ACCOUNTS_SUBTREE_ID`               | `StateSubtreeID` | `0x01` |
+| `ACTIVE_VALIDATORS_SUBTREE_ID`      | `StateSubtreeID` | `0x02` |
+| `ACTIVE_VALIDATOR_COUNT_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
+| `INACTIVE_VALIDATORS_SUBTREE_ID`    | `StateSubtreeID` | `0x04` |
+
 
 ## Rewards and Penalties
 
@@ -85,7 +87,7 @@ Consensus Rules
 
 ### Validators and Delegations
 
-A transaction `tx` that requests a new validator initializes the [Validator](data_structures.md#validator) fields of that account as follows:
+A transaction `tx` that requests a new validator initializes a new [Validator](data_structures.md#validator) leaf in the inactive validators subtree for that account as follows:
 ```
 validator.status = ValidatorStatus.Queued
 validator.stakedBalance = tx.amount
@@ -98,12 +100,12 @@ validator.unbondingHeight = 0
 validator.isSlashed = false
 ```
 
-At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validators by voting power are or become active. For newly-bonded validators, their status is changed to bonded and height values initialized.
+At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
 ```
 validator.status = ValidatorStatus.Bonded
 ```
 
-For validators that were bonded but are no longer (either by being outside the top validators or through a transaction that requests unbonding), they begin unbonding.
+For validators that were bonded but are no longer (either by being outside the top `MAX_VALIDATORS` validators or through a transaction that requests unbonding), the validator object is moved to the inactive validators subtree they begin unbonding.
 ```
 validator.status = ValidatorStatus.Unbonding
 validator.unbondingHeight = block.height + 1

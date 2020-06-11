@@ -485,10 +485,11 @@ The state of the LazyLedger chain is intentionally restricted to containing only
 
 The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
 
-Three subtrees are maintained:
+Four subtrees are maintained:
 1. [Accounts](#account)
 1. [Active validator set](#validator)
 1. [Active validator count](#activevalidatorcount)
+1. [Inactive validator set](#validator)
 
 ## Account
 
@@ -496,6 +497,7 @@ Three subtrees are maintained:
 | ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
 | `balance`        | `uint64`                  | Coin balance.                                                                     |
 | `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
 | `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
 | `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
 
@@ -553,7 +555,7 @@ Validator objects represent all the information needed to be keep track of a val
 1. `Unbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
 1. `Unbonded`: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until `delegatedCount` reaches zero, at which point it is destroyed.
 
-In the validators subtree, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `VALIDATORS_SUBTREE_ID`. By construction, the validators subtree will be a subset of a mirror of the [accounts subtree](#account).
+In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACTIVE_VALIDATORS_SUBTREE_ID` for the active validator set or `INACTIVE_VALIDATORS_SUBTREE_ID` for the inactive validator set. Active validators are `Bonded`, while inactive validators are not `Bonded`. By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
 
 ## ActiveValidatorCount
 
@@ -561,7 +563,7 @@ In the validators subtree, validators are keyed by the [hash](#hashdigest) of th
 | --------------- | -------- | ---------------------------- |
 | `numValidators` | `uint32` | Number of active validators. |
 
-Since the [validator set](#validator) is stored in a Sparse Merkle Tree, there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. There is only a single leaf in the active validator count subtree, which is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), and the first byte replaced with `VALIDATOR_COUNT_SUBTREE_ID`.
+Since the [active validator set](#validator) is stored in a Sparse Merkle Tree, there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. There is only a single leaf in the active validator count subtree, which is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), and the first byte replaced with `VALIDATOR_COUNT_SUBTREE_ID`.
 
 ## PeriodEntry
 
