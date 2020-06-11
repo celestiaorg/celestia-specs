@@ -7,6 +7,7 @@ Consensus Rules
   - [Constants](#constants)
   - [Types](#types)
   - [Reserved Namespace IDs](#reserved-namespace-ids)
+  - [Reserved State Subtree IDs](#reserved-state-subtree-ids)
   - [Rewards and Penalties](#rewards-and-penalties)
 - [Leader Selection](#leader-selection)
 - [Fork Choice](#fork-choice)
@@ -41,12 +42,14 @@ Consensus Rules
 | `GENESIS_COIN_COUNT`                  | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                 |
 | `UNBONDING_DURATION`                  | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                               |
 | `MAX_VALIDATORS`                      | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                        |
+| `STATE_SUBTREE_RESERVED_BYTES`        | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                        |
 
 ## Types
 
-| name          | type     |
-| ------------- | -------- |
-| `NamespaceID` | `uint64` |
+| name             | type     |
+| ---------------- | -------- |
+| `NamespaceID`    | `uint64` |
+| `StateSubtreeID` | `byte`   |
 
 ## Reserved Namespace IDs
 
@@ -56,6 +59,14 @@ Consensus Rules
 | `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000002` |
 | `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000003` |
 | `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+
+## Reserved State Subtree IDs
+
+| name                         | type             | value  |
+| ---------------------------- | ---------------- | ------ |
+| `ACCOUNTS_SUBTREE_ID`        | `StateSubtreeID` | `0x01` |
+| `VALIDATORS_SUBTREE_ID`      | `StateSubtreeID` | `0x02` |
+| `VALIDATOR_COUNT_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
 
 ## Rewards and Penalties
 

@@ -44,9 +44,10 @@ Data Structures
     - [Message](#message)
 - [State](#state)
   - [Account](#account)
-  - [PeriodEntry](#periodentry)
-  - [Validator](#validator)
   - [Delegation](#delegation)
+  - [Validator](#validator)
+  - [ActiveValidatorCount](#activevalidatorcount)
+  - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
 
@@ -480,14 +481,18 @@ enum VoteType : uint8_t {
 
 # State
 
-| name            | type                      | description                  |
-| --------------- | ------------------------- | ---------------------------- |
-| `accountsRoot`  | [HashDigest](#hashdigest) | Merkle root of account tree. |
-| `numValidators` | `uint32`                  | Number of active validators. |
+| name        | type                      | description                |
+| ----------- | ------------------------- | -------------------------- |
+| `stateRoot` | [HashDigest](#hashdigest) | Merkle root of state tree. |
 
-The state of the LazyLedger chain contains only account balances and the validator set (which is extra metadata on top of the plain account balances).
+The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for the entire chain state, the _state tree_.
 
-One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both account account balances and validator metadata, the _accounts tree_. The final state root is computed as the [hash](#hashdigest) of the accounts tree root and number of active validators. The latter is necessary to ensure light nodes can determine the entire validator set from a single state root commitment.
+The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
+
+Three subtrees are maintained:
+1. [Accounts](#account)
+1. [Active validator set](#validator)
+1. [Active validator count](#activevalidatorcount)
 
 ## Account
 
@@ -496,19 +501,32 @@ One unified [Sparse Merkle Trees](#sparse-merkle-tree) is maintained for both ac
 | `balance`        | `uint64`                  | Coin balance.                                                                               |
 | `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce.           |
 | `isValidator`    | `bool`                    | Whether this account is a validator or not. Mutually exclusive with `isDelegating`.         |
-| `validatorInfo`  | [Validator](#validator)   | _Optional_, only if `isValidator` is set. Validator info.                                   |
 | `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not. Mutually exclusive with `isValidator`. |
 | `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                                 |
 
-In the accounts tree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address).
+In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACCOUNTS_SUBTREE_ID`.
 
-## PeriodEntry
+## Delegation
 
-| name         | type     | description                                                   |
-| ------------ | -------- | ------------------------------------------------------------- |
-| `rewardRate` | `uint64` | Rewards per unit of voting power accumulated so far, in `1u`. |
+```C++
+enum DelegationStatus : uint8_t {
+    Bonded = 1,
+    Unbonding = 2,
+};
+```
 
-For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
+| name              | type                        | description                                         |
+| ----------------- | --------------------------- | --------------------------------------------------- |
+| `status`          | `DelegationStatus`          | Status of this delegation.                          |
+| `validator`       | [Address](#address)         | The validator being delegating to.                  |
+| `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
+| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
+| `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
+| `unbondingHeight` | `uint64`                    | Block height delegation began unbonding.            |
+
+Delegation objects represent a delegation. They have two statuses:
+1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
+1. `Unbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
 
 ## Validator
 
@@ -540,27 +558,23 @@ Validator objects represent all the information needed to be keep track of a val
 1. `Unbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
 1. `Unbonded`: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until `delegatedCount` reaches zero, at which point it is destroyed.
 
-## Delegation
+In the validators subtree, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `VALIDATORS_SUBTREE_ID`. By construction, the validators subtree will be a subset of a mirror of the [accounts subtree](#account).
 
-```C++
-enum DelegationStatus : uint8_t {
-    Bonded = 1,
-    Unbonding = 2,
-};
-```
+## ActiveValidatorCount
 
-| name              | type                        | description                                         |
-| ----------------- | --------------------------- | --------------------------------------------------- |
-| `status`          | `DelegationStatus`          | Status of this delegation.                          |
-| `validator`       | [Address](#address)         | The validator being delegating to.                  |
-| `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
-| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
-| `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
-| `unbondingHeight` | `uint64`                    | Block height delegation began unbonding.            |
+| name            | type     | description                  |
+| --------------- | -------- | ---------------------------- |
+| `numValidators` | `uint32` | Number of active validators. |
 
-Delegation objects represent a delegation. They have two statuses:
-1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
-1. `Unbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
+Since the [validator set](#validator) is stored in a Sparse Merkle Tree, there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. There is only a single leaf in the active validator count subtree, which is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), and the first byte replaced with `VALIDATOR_COUNT_SUBTREE_ID`.
+
+## PeriodEntry
+
+| name         | type     | description                                                   |
+| ------------ | -------- | ------------------------------------------------------------- |
+| `rewardRate` | `uint64` | Rewards per unit of voting power accumulated so far, in `1u`. |
+
+For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
 
 ## Decimal
 
