@@ -62,12 +62,11 @@ Consensus Rules
 
 ## Reserved State Subtree IDs
 
-| name                                | type             | value  |
-| ----------------------------------- | ---------------- | ------ |
-| `ACCOUNTS_SUBTREE_ID`               | `StateSubtreeID` | `0x01` |
-| `ACTIVE_VALIDATORS_SUBTREE_ID`      | `StateSubtreeID` | `0x02` |
-| `ACTIVE_VALIDATOR_COUNT_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
-| `INACTIVE_VALIDATORS_SUBTREE_ID`    | `StateSubtreeID` | `0x04` |
+| name                             | type             | value  |
+| -------------------------------- | ---------------- | ------ |
+| `ACCOUNTS_SUBTREE_ID`            | `StateSubtreeID` | `0x01` |
+| `ACTIVE_VALIDATORS_SUBTREE_ID`   | `StateSubtreeID` | `0x02` |
+| `INACTIVE_VALIDATORS_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
 
 
 ## Rewards and Penalties

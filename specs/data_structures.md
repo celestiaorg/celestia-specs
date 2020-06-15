@@ -485,10 +485,9 @@ The state of the LazyLedger chain is intentionally restricted to containing only
 
 The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
 
-Four subtrees are maintained:
+Three subtrees are maintained:
 1. [Accounts](#account)
 1. [Active validator set](#validator)
-1. [Active validator count](#activevalidatorcount)
 1. [Inactive validator set](#validator)
 
 ## Account
@@ -563,7 +562,7 @@ In the validators subtrees, validators are keyed by the [hash](#hashdigest) of t
 | --------------- | -------- | ---------------------------- |
 | `numValidators` | `uint32` | Number of active validators. |
 
-Since the [active validator set](#validator) is stored in a Sparse Merkle Tree, there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. There is only a single leaf in the active validator count subtree, which is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), and the first byte replaced with `VALIDATOR_COUNT_SUBTREE_ID`.
+Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
 ## PeriodEntry
 
