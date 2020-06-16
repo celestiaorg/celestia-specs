@@ -138,3 +138,57 @@ message Message {
   bytes namespace_id = 1;
   bytes raw_data = 2;
 }
+
+message Account {
+  uint64 balance = 1;
+  uint64 nonce = 2;
+  bool isValidator = 3;
+  bool isDelegating = 4;
+  Delegation delegationInfo = 5;
+}
+
+message Delegation {
+  enum DelegationStatus {
+    DELEGATION_STATUS_UNSPECIFIED = 0;
+    DELEGATION_STATUS_BONDED = 1;
+    DELEGATION_STATUS_UNBONDING = 2;
+  }
+
+  DelegationStatus status = 1;
+  Address validator = 2;
+  uint64 stakedBalance = 3;
+  PeriodEntry beginEntry = 4;
+  PeriodEntry endEntry = 5;
+  uint64 unbondingHeight = 6;
+}
+
+message Validator {
+  enum ValidatorStatus {
+    VALIDATOR_STATUS_UNSPECIFIED = 0;
+    VALIDATOR_STATUS_QUEUED = 1;
+    VALIDATOR_STATUS_BONDED = 2;
+    VALIDATOR_STATUS_UNBONDING = 3;
+    VALIDATOR_STATUS_UNBONDED = 4;
+  }
+
+  ValidatorStatus status = 1;
+  uint64 stakedBalance = 2;
+  Decimal commissionRate = 3;
+  uint32 delegatedCount = 4;
+  uint64 votingPower = 5;
+  uint64 pendingRewards = 6;
+  PeriodEntry latestEntry = 7;
+  uint64 unbondingHeight = 8;
+  bool isSlashed = 9;
+  Decimal slashRate = 10;
+}
+
+message ActiveValidatorCount {
+  uint32 numValidators = 1;
+}
+
+message PeriodEntry {
+  uint64 rewardRate = 1;
+}
+
+message Decimal {}

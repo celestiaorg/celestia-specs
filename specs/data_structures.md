@@ -43,6 +43,12 @@ Data Structures
   - [MessageData](#messagedata)
     - [Message](#message)
 - [State](#state)
+  - [Account](#account)
+  - [Delegation](#delegation)
+  - [Validator](#validator)
+  - [ActiveValidatorCount](#activevalidatorcount)
+  - [PeriodEntry](#periodentry)
+  - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
 
 # Data Structures Overview
@@ -66,16 +72,16 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                | type                      | description                                                                                  |
-| ------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
-| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                                            |
-| `time`              | [Time](#time)             | Timestamp of this block.                                                                     |
-| `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                                         |
-| `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                     |
-| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                 |
-| `stateCommitment`   | [HashDigest](#hashdigest) | Commitment to state root and validator set root after this block's transactions are applied. |
-| `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                           |
-| `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                                            |
+| name                | type                      | description                                                                  |
+| ------------------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                            |
+| `time`              | [Time](#time)             | Timestamp of this block.                                                     |
+| `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                         |
+| `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                     |
+| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block. |
+| `stateCommitment`   | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.        |
+| `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).           |
+| `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                            |
 
 ## AvailableDataHeader
 
@@ -487,7 +493,100 @@ enum VoteType : uint8_t {
 
 # State
 
-TODO validator set repr
+The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified [Sparse Merkle Tree](#sparse-merkle-tree) is maintained for the entire chain state, the _state tree_. The root of this tree is committed to in the [block header](#header).
+
+The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
+
+Three subtrees are maintained:
+1. [Accounts](#account)
+1. [Active validator set](#validator)
+1. [Inactive validator set](#validator)
+
+## Account
+
+| name             | type                      | description                                                                       |
+| ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| `balance`        | `uint64`                  | Coin balance.                                                                     |
+| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
+| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
+| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
+
+In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACCOUNTS_SUBTREE_ID`.
+
+## Delegation
+
+```C++
+enum DelegationStatus : uint8_t {
+    Bonded = 1,
+    Unbonding = 2,
+};
+```
+
+| name              | type                        | description                                         |
+| ----------------- | --------------------------- | --------------------------------------------------- |
+| `status`          | `DelegationStatus`          | Status of this delegation.                          |
+| `validator`       | [Address](#address)         | The validator being delegating to.                  |
+| `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
+| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
+| `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
+| `unbondingHeight` | `uint64`                    | Block height delegation began unbonding.            |
+
+Delegation objects represent a delegation. They have two statuses:
+1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
+1. `Unbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
+
+## Validator
+
+```C++
+enum ValidatorStatus : uint8_t {
+    Queued = 1,
+    Bonded = 2,
+    Unbonding = 3,
+    Unbonded = 4,
+};
+```
+
+| name              | type                        | description                                                                            |
+| ----------------- | --------------------------- | -------------------------------------------------------------------------------------- |
+| `status`          | `ValidatorStatus`           | Status of this validator.                                                              |
+| `stakedBalance`   | `uint64`                    | Validator's personal staked balance, in `4u`.                                          |
+| `commissionRate`  | [Decimal](#decimal)         | Commission rate.                                                                       |
+| `delegatedCount`  | `uint32`                    | Number of accounts delegating to this validator.                                       |
+| `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
+| `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
+| `unbondingHeight` | `uint64`                    | Block height validator began unbonding.                                                |
+| `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
+| `slashRate`       | [Decimal](#decimal)         | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+
+Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
+1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
+1. `Bonded`: This validator is active and bonded. It can propose new blocks and vote on proposed blocks. Once bonded, an active validator must go through an unbonding process until its stake can be freed.
+1. `Unbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
+1. `Unbonded`: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until `delegatedCount` reaches zero, at which point it is destroyed.
+
+In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACTIVE_VALIDATORS_SUBTREE_ID` for the active validator set or `INACTIVE_VALIDATORS_SUBTREE_ID` for the inactive validator set. Active validators are `Bonded`, while inactive validators are not `Bonded`. By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
+
+## ActiveValidatorCount
+
+| name            | type     | description                  |
+| --------------- | -------- | ---------------------------- |
+| `numValidators` | `uint32` | Number of active validators. |
+
+Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+## PeriodEntry
+
+| name         | type     | description                                                   |
+| ------------ | -------- | ------------------------------------------------------------- |
+| `rewardRate` | `uint64` | Rewards per unit of voting power accumulated so far, in `1u`. |
+
+For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
+
+## Decimal
+
+TODO define a format for numbers in the range `[0,1]`
 
 # Consensus Parameters
 
