@@ -381,7 +381,7 @@ In the example below, two messages (of padded sizes 2 and 1) are placed followin
 
 ![fig: Original data: messages.](figures/rs2d_originaldata_message.svg)
 
-By construction, this gives a useful property: transactions [can commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs.
+By construction, this gives a useful property: transactions [can commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs. For additional info, see [the rationale document](../rationale/message_block_layout.md) for this section.
 
 # Available Data
 
