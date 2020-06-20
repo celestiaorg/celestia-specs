@@ -4,6 +4,7 @@ Message Layout
 - [Message Layout](#message-layout)
 - [Preamble](#preamble)
 - [Message Layout Rationale](#message-layout-rationale)
+  - [Caveats](#caveats)
 
 # Preamble
 
@@ -39,3 +40,7 @@ With the above constraints, we can compute subtree roots deterministically easil
 This is similar to [Merkle Mountain Ranges](https://www.usenix.org/legacy/event/sec09/tech/full_papers/crosby.pdf), though with the largest subtree bounded by `k` rather than being unbounded.
 
 The last piece of the puzzle is determining _which_ row the message is placed at (or, more specifically, the starting location). This is needed to keep the block producer accountable. To this end, the block producer simply augments each fee-paying transaction with some metadata: the starting location of the message the transaction pays for.
+
+## Caveats
+
+Unfortunately, the message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that cannot be placed adjacent to each other do not have a natural namespace they belong to. Assigning these shares a fixed namespace ID disrupts the strict ordering of all shares by namespace ID, but should not meaningfully affect proof sizes into the data NMTs, and so is an acceptable tradeoff.
