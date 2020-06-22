@@ -4,6 +4,7 @@ Message Layout
 - [Message Layout](#message-layout)
 - [Preamble](#preamble)
 - [Message Layout Rationale](#message-layout-rationale)
+  - [Non-Interactive Default Rules](#non-interactive-default-rules)
   - [Caveats](#caveats)
 
 # Preamble
@@ -28,10 +29,13 @@ To that end, we impose some additional rules onto _messages only_: messages must
 1. The transaction sender must pay sufficient fees for message inclusion.
 1. The block proposer cannot claim that a message was included when it was not (which implies that a transaction and the message it pays for must be included in the same block).
 
-We note a nice property: if the transaction sender knows 1) `k`, the size of the matrix, 2) the starting location of their message in a row, and 3) the length of the message (they know this since they are sending the message), then they can actually compute a sequence of roots to _subtrees in the row NMTs_. More importantly, anyone can compute this, and can compute _the simple Merkle root of these subtree roots_.
+Specifically, messages must begin at a new share, unlike non-message data which can span multiple shares. We note a nice property from this rule: if the transaction sender knows 1) `k`, the size of the matrix, 2) the starting location of their message in a row, and 3) the length of the message (they know this since they are sending the message), then they can actually compute a sequence of roots to _subtrees in the row NMTs_. More importantly, anyone can compute this, and can compute _the simple Merkle root of these subtree roots_.
 
-All transaction senders knowing the exact starting location of their message is unrealistic however, as that would require interaction between the block producer and transaction senders. We can impose some additional rules on message placement to make the possible starting locations of messages sufficiently predictable and constrained such that users can deterministically compute subtree roots without interaction:
-1. Messages begin at a new share, unlike non-message data which can span multiple shares.
+This, however, requires the block producer to interact with the transaction sender to provide them the starting location of their message. This can be done selectively, but is not ideal as a default for e.g. end-user wallets.
+
+## Non-Interactive Default Rules
+
+As a non-consensus-critical default, we can impose some additional rules on message placement to make the possible starting locations of messages sufficiently predictable and constrained such that users can deterministically compute subtree roots without interaction:
 1. Messages that span multiple rows must begin at the start of a row (this can occur if a message is longer than `k` shares _or_ if the block producer decides to start a message partway through a row and it cannot fit).
 1. Messages begin at a location aligned with the largest power of 2 that is not larger than the message length or `k`.
 
@@ -43,4 +47,4 @@ The last piece of the puzzle is determining _which_ row the message is placed at
 
 ## Caveats
 
-Unfortunately, the message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that cannot be placed adjacent to each other do not have a natural namespace they belong to. Assigning these shares a fixed namespace ID disrupts the strict ordering of all shares by namespace ID, but should not meaningfully affect proof sizes into the data NMTs, and so is an acceptable tradeoff.
+The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by having special transactions the block producer includes that specify a range a zero-padding shares for a given namespace ID (which must be between the namespace IDs of the surrounding real shares, inclusive).
