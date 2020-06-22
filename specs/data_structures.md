@@ -53,7 +53,7 @@ Data Structures
 
 # Data Structures Overview
 
-![fig: Block data structures.](figures/block_data_structures.svg)
+![fig: Block data structures.](./figures/block_data_structures.svg)
 
 # Blockchain Data Structures
 
@@ -328,7 +328,7 @@ Reed-Solomon erasure coding is used as the underlying coding scheme. The paramet
 
 The 2-dimensional data layout is described in this section. The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data in a `2k * 2k` matrix of shares, `Q0` to `Q3` (shown below), must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
 
-![fig: RS2D encoding: data quadrants.](figures/rs2d_quadrants.svg)
+![fig: RS2D encoding: data quadrants.](./figures/rs2d_quadrants.svg)
 
 The data of `Q0` is the original data, and the remaining quadrants are parity data. Setting `k = AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, the original data first must be [split into shares](#share) and [arranged into a `k * k` matrix](#arranging-available-data-into-shares). Then the parity data can be computed.
 
@@ -337,19 +337,19 @@ Where `A -> B` indicates that `B` is computed using [erasure coding](#reed-solom
 - `Q0 -> Q2` for each column in `Q0` and `Q2`
 - `Q2 -> Q3` for each row in `Q2` and `Q3`
 
-![fig: RS2D encoding: extending data.](figures/rs2d_extending.svg)
+![fig: RS2D encoding: extending data.](./figures/rs2d_extending.svg)
 
 As an example, the parity data in the second column of `Q2` (in striped purple) is computed by [extending](#reed-solomon-erasure-coding) the original data in the second column of `Q0` (in solid blue).
 
-![fig: RS2D encoding: extending a column.](figures/rs2d_extend.svg)
+![fig: RS2D encoding: extending a column.](./figures/rs2d_extend.svg)
 
 Now that all four quadrants of the `2k * 2k` matrix are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
 
-![fig: RS2D encoding: a row root.](figures/rs2d_row.svg)
+![fig: RS2D encoding: a row root.](./figures/rs2d_row.svg)
 
 Finally, the `availableDataRoot` of the block [Header](#header) is computed as the Merkle root of the [binary Merkle tree](#binary-merkle-tree) with the row and column roots as leaves.
 
-![fig: Available data root.](figures/data_root.svg)
+![fig: Available data root.](./figures/data_root.svg)
 
 ## Share
 
@@ -361,7 +361,7 @@ A share is a fixed-size data chunk that will be erasure-coded and committed to i
 
 An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first `SHARE_RESERVED_BYTES` bytes (`*` in the figure) is the starting byte of the first request in the share as an unsigned integer, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first `SHARE_RESERVED_BYTES` bytes have no special meaning and are simply used to store data like all the other bytes in the share.
 
-![fig: Reserved share.](figures/share.svg)
+![fig: Reserved share.](./figures/share.svg)
 
 For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
 
@@ -373,7 +373,7 @@ The previous sections described how some original data, arranged into a `k * k` 
 
 These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-scheme) (`Q0`) of the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2 * AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` available data matrix in _row-major_ order. In the example below, each reserved data element takes up exactly one share.
 
-![fig: Original data: reserved.](figures/rs2d_originaldata_reserved.svg)
+![fig: Original data: reserved.](./figures/rs2d_originaldata_reserved.svg)
 
 Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. Then each message with size `msg_size` is padded by appending zero-shares (i.e. `SHARE_SIZE` bytes of `0x00`) with the following rules:
 1. If `msg_size <= AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad until the smallest enclosing power of 2 (e.g. a message that fits into three shares is padded to four shares).
@@ -385,7 +385,7 @@ For each padded message, the following algorithm is used to place it in the avai
 
 In the example below, two messages (of padded sizes 2 and 1) are placed following the aforementioned rules.
 
-![fig: Original data: messages.](figures/rs2d_originaldata_message.svg)
+![fig: Original data: messages.](./figures/rs2d_originaldata_message.svg)
 
 By construction, this gives a useful property: transactions [can commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs.
 
