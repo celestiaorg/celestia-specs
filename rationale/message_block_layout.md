@@ -20,7 +20,7 @@ First, we impose some ground rules:
 1. Data must be ordered by namespace ID. This makes queries into a NMT commitment of that data more efficient.
 1. Since non-message data are not naturally intended for particular namespaces, we assign reserved namespaces for them. A range of namespaces is reserved for this purpose, starting from the lowest possible namespace ID.
 1. By construction, the above two rules mean that non-message data always precedes message data in the row-major matrix, even when considering single rows or columns.
-1. Data with different namespaces must not be in the same share. This might cause a small amount of wasted block space, but makes the NMT easier to reason about in general since leaves are guaranteed to belong to a single namespace, which will be an important property shorty.
+1. Data with different namespaces must not be in the same share. This might cause a small amount of wasted block space, but makes the NMT easier to reason about in general since leaves are guaranteed to belong to a single namespace.
 
 Transactions can pay fees for a message to be included in the same block as the transaction itself. However, we do not want serialized transactions to include the entire message they pay for (which is the case in other blockchains with native execution, e.g. calldata in Ethereum transactions or OP_RETURN data in Bitcoin transactions), otherwise every node that validates the sanctity of the LazyLedger coin would need to download all message data. Transactions must therefore only include a commitment to the message they pay fees for, which can lead to a data availability problem if implemented naively (e.g. with a simple hash of the message, or a simple binary Merkle tree root of the message).
 
