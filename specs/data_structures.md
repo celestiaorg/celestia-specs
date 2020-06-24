@@ -375,19 +375,20 @@ These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-sche
 
 ![fig: Original data: reserved.](./figures/rs2d_originaldata_reserved.svg)
 
-Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. Then each message with size `msg_size` is padded by appending zero-shares (i.e. `SHARE_SIZE` bytes of `0x00`) with the following rules:
-1. If `msg_size <= AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad until the smallest enclosing power of 2 (e.g. a message that fits into three shares is padded to four shares).
-2. If `msg_size > AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, compute `remainder_size = msg_size % AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then pad the remainder to the smallest enclosing power of 2 (e.g. if the number of columns is 8 and the message fits into 11 shares, it is padded to 8+4=12 shares.).
+Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. For each message, it is placed in the available data matrix, with row-major order, as follows:
+1. Place the first share of the message at the next unused location in the matrix, then place the remaining shares in the following locations.
 
-For each padded message, the following algorithm is used to place it in the available data matrix, with row-major order:
-1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the number of padded shares (i.e. if there are four padded shares, then only every fourth location can be used to start), then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
-1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose size is greater than `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` will be placed in this way.
+Transactions [must commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs. For additional info, see [the rationale document](../rationale/message_block_layout.md) for this section.
 
-In the example below, two messages (of padded sizes 2 and 1) are placed following the aforementioned rules.
+However, with only the rule above, interaction between the block producer and transaction sender is required to compute a commitment to the message the transaction sender can sign over. To remove interaction, messages can also be laid out using a non-interactive default:
+1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the largest power of 2 that is not larger than the message length or `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
+1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose length is greater than `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` will be placed in this way.
+
+In the example below, two messages (of lengths 2 and 1, respectively) are placed using the aforementioned default non-interactive rules.
 
 ![fig: Original data: messages.](./figures/rs2d_originaldata_message.svg)
 
-By construction, this gives a useful property: transactions [can commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs.
+The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#transaction).
 
 # Available Data
 
