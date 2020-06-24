@@ -111,7 +111,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 
 ## Time
 
-LazyLedger uses the [Google Protobuf Timestamp](https://developers.google.com/protocol-buffers/docs/reference/csharp/class/google/protobuf/well-known-types/timestamp) format for timestamps, which represents time as seconds in UTC Epoch Time and nanoseconds.
+LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
 
 ## BlockID
 
