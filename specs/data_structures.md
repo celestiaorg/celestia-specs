@@ -165,7 +165,7 @@ Output of the [signing](#public-key-cryptography) process.
 
 # Serialization
 
-Unless otherwise indicated explicitly, objects are serialized using [protobuf3](https://developers.google.com/protocol-buffers/docs/proto3).
+Objects that are committed to or signed over require a canonical serialization. This is done using TODO.
 
 # Hashing
 

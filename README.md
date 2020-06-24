@@ -10,7 +10,6 @@ LazyLedger Specifications
 
 - [Architecture](specs/architecture.md)
 - [Data Structures](specs/data_structures.md)
-  - [Types in Protobuf3](proto/)
 - [Consensus](specs/consensus.md)
 - [Block Proposer](specs/block_proposer.md)
 - [Networking](specs/networking.md)
