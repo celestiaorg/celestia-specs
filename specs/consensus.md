@@ -138,7 +138,7 @@ validator.votingPower += tx.amount
 then initializes the [Delegation](data_structures.md#delegation) field of that account as follows:
 ```
 delegation.status = DelegationStatus.Bonded
-delegation.validator = tx.validator
+delegation.validator = tx.to
 delegation.stakedBalance = tx.amount
 delegation.beginEntry = validator.latestEntry
 delegation.endEntry = PeriodEntry(0)
