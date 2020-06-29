@@ -502,12 +502,13 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 #### SignedTransactionData: CreateValidator
 
-| name         | type              | description |
-| ------------ | ----------------- | ----------- |
-| `type`       | `TransactionType` |             |
-| `amount`     | `uint64`          |             |
-| `maxFeeRate` | `uint64`          |             |
-| `nonce`      | `uint64`          |             |
+| name             | type                | description |
+| ---------------- | ------------------- | ----------- |
+| `type`           | `TransactionType`   |             |
+| `amount`         | `uint64`            |             |
+| `maxFeeRate`     | `uint64`            |             |
+| `nonce`          | `uint64`            |             |
+| `commissionRate` | [Decimal](#decimal) |             |
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
