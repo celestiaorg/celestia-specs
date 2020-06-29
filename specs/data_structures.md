@@ -33,6 +33,16 @@ Data Structures
   - [TransactionData](#transactiondata)
     - [WrappedTransaction](#wrappedtransaction)
     - [Transaction](#transaction)
+    - [SignedTransactionData](#signedtransactiondata)
+      - [SignedTransactionData: Transfer](#signedtransactiondata-transfer)
+      - [SignedTransactionData: PayForMessage](#signedtransactiondata-payformessage)
+      - [SignedTransactionData: PayForPadding](#signedtransactiondata-payforpadding)
+      - [SignedTransactionData: CreateValidator](#signedtransactiondata-createvalidator)
+      - [SignedTransactionData: BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
+      - [SignedTransactionData: UnbondValidator](#signedtransactiondata-unbondvalidator)
+      - [SignedTransactionData: CreateDelegation](#signedtransactiondata-createdelegation)
+      - [SignedTransactionData: BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
+      - [SignedTransactionData: UnbondDelegation](#signedtransactiondata-unbonddelegation)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -410,12 +420,94 @@ Wrapped transactions include additional metadata by the block proposer that is c
 
 ### Transaction
 
-| name                    | type                      | description                                                                                                                                                                                                                                                           |
-| ----------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TODO                    |                           |                                                                                                                                                                                                                                                                       |
-| `messageSize`           | `uint64`                  | Size of message this transaction pays a fee for, in `byte`s. If this transaction does not pay a fee for a message, must be `0`.                                                                                                                                       |
-| `messageShareRootsRoot` | [HashDigest](#hashdigest) | Merkle root of message share roots of an optional message that this transaction pays a fee to be included in the current block. Messages are split into shares and committed to here. Large messages can span across rows, which requires more roots to the provided. |
+| name                    | type                                            | description                       |
+| ----------------------- | ----------------------------------------------- | --------------------------------- |
+| `signedTransactionData` | [SignedTransactionData](#signedtransactiondata) | Data payload that is signed over. |
+| `signature`             | [Signature](#signature)                         | Signature.                        |
 
+### SignedTransactionData
+
+```C++
+enum TransactionType : uint8_t {
+    Transfer = 1,
+    PayForMessage = 2,
+    PayForPadding = 3,
+    CreateValidator = 4,
+    BeginUnbondingValidator = 5,
+    UnbondValidator = 6,
+    CreateDelegation = 7,
+    BeginUnbondingDelegation = 8,
+    UnbondDelegation = 9,
+};
+```
+
+Signed transaction data comes in a number of types:
+1. [Transfer](#signedtransactiondata-transfer)
+1. [PayForMessage](#signedtransactiondata-payformessage)
+1. [PayForPadding](#signedtransactiondata-payforpadding)
+1. [CreateValidator](#signedtransactiondata-createvalidator)
+1. [BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
+1. [UnbondValidator](#signedtransactiondata-unbondvalidator)
+1. [CreateDelegation](#signedtransactiondata-createdelegation)
+1. [BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
+1. [UnbondDelegation](#signedtransactiondata-unbonddelegation)
+
+Common fields are denoted here to avoid repeating descriptions:
+
+| name     | type                | description                                                                |
+| -------- | ------------------- | -------------------------------------------------------------------------- |
+| `type`   | `TransactionType`   | Type of the transaction. Each type indicates a different state transition. |
+| `amount` | `uint64`            | Amount of coins to send, in `1u`.                                          |
+| `to`     | [Address](#address) | Recipient's address.                                                       |
+
+
+#### SignedTransactionData: Transfer
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: PayForMessage
+
+| name                    | type                                       | description                                                                                                                                                                                                                                                          |
+| ----------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `messageNamespaceID`    | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of message this transaction pays a fee for.                                                                                                                                                                                                             |
+| `messageSize`           | `uint64`                                   | Size of message this transaction pays a fee for, in `byte`s. If this transaction does not pay a fee for a message, must be `0`.                                                                                                                                      |
+| `messageShareRootsRoot` | [HashDigest](#hashdigest)                  | Merkle root of message share roots of an optional message that this transaction pays a fee to be included in the current block. Messages are split into shares and committed to here. Large messages can span across rows, which requires more roots to be provided. |
+
+#### SignedTransactionData: PayForPadding
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: CreateValidator
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: BeginUnbondingValidator
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: UnbondValidator
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: CreateDelegation
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: BeginUnbondingDelegation
+
+| name | type | description |
+| ---- | ---- | ----------- |
+
+#### SignedTransactionData: UnbondDelegation
+
+| name | type | description |
+| ---- | ---- | ----------- |
 
 ## IntermediateStateRootData
 
