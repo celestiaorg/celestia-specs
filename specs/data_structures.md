@@ -465,13 +465,13 @@ Common fields are denoted here to avoid repeating descriptions:
 
 #### SignedTransactionData: Transfer
 
-| name         | type                | description |
-| ------------ | ------------------- | ----------- |
-| `type`       | `TransactionType`   |             |
-| `amount`     | `uint64`            |             |
-| `to`         | [Address](#address) |             |
-| `maxFeeRate` | `uint64`            |             |
-| `nonce`      | `uint64`            |             |
+| name         | type                | description                         |
+| ------------ | ------------------- | ----------------------------------- |
+| `type`       | `TransactionType`   | Must be `TransactionType.Transfer`. |
+| `amount`     | `uint64`            |                                     |
+| `to`         | [Address](#address) |                                     |
+| `maxFeeRate` | `uint64`            |                                     |
+| `nonce`      | `uint64`            |                                     |
 
 Transfers `amount` coins to `to`.
 
@@ -479,7 +479,7 @@ Transfers `amount` coins to `to`.
 
 | name                     | type                                       | description                                                  |
 | ------------------------ | ------------------------------------------ | ------------------------------------------------------------ |
-| `type`                   | `TransactionType`                          |                                                              |
+| `type`                   | `TransactionType`                          | Must be `TransactionType.PayForMessage`.                     |
 | `maxFeeRate`             | `uint64`                                   |                                                              |
 | `nonce`                  | `uint64`                                   |                                                              |
 | `messageNamespaceID`     | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
@@ -494,7 +494,7 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 | name                 | type                                       | description                                                  |
 | -------------------- | ------------------------------------------ | ------------------------------------------------------------ |
-| `type`               | `TransactionType`                          |                                                              |
+| `type`               | `TransactionType`                          | Must be `TransactionType.PayForPadding`.                     |
 | `messageNamespaceID` | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
 | `messageSize`        | `uint64`                                   | Size of padding this transaction pays a fee for, in `byte`s. |
 
@@ -502,65 +502,65 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 #### SignedTransactionData: CreateValidator
 
-| name             | type                | description |
-| ---------------- | ------------------- | ----------- |
-| `type`           | `TransactionType`   |             |
-| `amount`         | `uint64`            |             |
-| `maxFeeRate`     | `uint64`            |             |
-| `nonce`          | `uint64`            |             |
-| `commissionRate` | [Decimal](#decimal) |             |
+| name             | type                | description                                |
+| ---------------- | ------------------- | ------------------------------------------ |
+| `type`           | `TransactionType`   | Must be `TransactionType.CreateValidator`. |
+| `amount`         | `uint64`            |                                            |
+| `maxFeeRate`     | `uint64`            |                                            |
+| `nonce`          | `uint64`            |                                            |
+| `commissionRate` | [Decimal](#decimal) |                                            |
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
 #### SignedTransactionData: BeginUnbondingValidator
 
-| name         | type              | description |
-| ------------ | ----------------- | ----------- |
-| `type`       | `TransactionType` |             |
-| `maxFeeRate` | `uint64`          |             |
-| `nonce`      | `uint64`          |             |
+| name         | type              | description                                        |
+| ------------ | ----------------- | -------------------------------------------------- |
+| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingValidator`. |
+| `maxFeeRate` | `uint64`          |                                                    |
+| `nonce`      | `uint64`          |                                                    |
 
 Begin unbonding the [Validator](#validator) at this address.
 
 #### SignedTransactionData: UnbondValidator
 
-| name         | type              | description |
-| ------------ | ----------------- | ----------- |
-| `type`       | `TransactionType` |             |
-| `maxFeeRate` | `uint64`          |             |
-| `nonce`      | `uint64`          |             |
+| name         | type              | description                                |
+| ------------ | ----------------- | ------------------------------------------ |
+| `type`       | `TransactionType` | Must be `TransactionType.UnbondValidator`. |
+| `maxFeeRate` | `uint64`          |                                            |
+| `nonce`      | `uint64`          |                                            |
 
 Finish unbonding the [Validator](#validator) at this address.
 
 #### SignedTransactionData: CreateDelegation
 
-| name         | type                | description |
-| ------------ | ------------------- | ----------- |
-| `type`       | `TransactionType`   |             |
-| `amount`     | `uint64`            |             |
-| `to`         | [Address](#address) |             |
-| `maxFeeRate` | `uint64`            |             |
-| `nonce`      | `uint64`            |             |
+| name         | type                | description                                 |
+| ------------ | ------------------- | ------------------------------------------- |
+| `type`       | `TransactionType`   | Must be `TransactionType.CreateDelegation`. |
+| `amount`     | `uint64`            |                                             |
+| `to`         | [Address](#address) |                                             |
+| `maxFeeRate` | `uint64`            |                                             |
+| `nonce`      | `uint64`            |                                             |
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
 #### SignedTransactionData: BeginUnbondingDelegation
 
-| name         | type              | description |
-| ------------ | ----------------- | ----------- |
-| `type`       | `TransactionType` |             |
-| `maxFeeRate` | `uint64`          |             |
-| `nonce`      | `uint64`          |             |
+| name         | type              | description                                         |
+| ------------ | ----------------- | --------------------------------------------------- |
+| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingDelegation`. |
+| `maxFeeRate` | `uint64`          |                                                     |
+| `nonce`      | `uint64`          |                                                     |
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
 #### SignedTransactionData: UnbondDelegation
 
-| name         | type              | description |
-| ------------ | ----------------- | ----------- |
-| `type`       | `TransactionType` |             |
-| `maxFeeRate` | `uint64`          |             |
-| `nonce`      | `uint64`          |             |
+| name         | type              | description                                 |
+| ------------ | ----------------- | ------------------------------------------- |
+| `type`       | `TransactionType` | Must be `TransactionType.UnbondDelegation`. |
+| `maxFeeRate` | `uint64`          |                                             |
+| `nonce`      | `uint64`          |                                             |
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
