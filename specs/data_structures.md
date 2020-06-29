@@ -494,6 +494,7 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 | name                 | type                                       | description                                                  |
 | -------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| `type`               | `TransactionType`                          |                                                              |
 | `messageNamespaceID` | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
 | `messageSize`        | `uint64`                                   | Size of padding this transaction pays a fee for, in `byte`s. |
 
