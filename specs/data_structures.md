@@ -739,9 +739,9 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 
 ## PeriodEntry
 
-| name         | type     | description                                                   |
-| ------------ | -------- | ------------------------------------------------------------- |
-| `rewardRate` | `uint64` | Rewards per unit of voting power accumulated so far, in `1u`. |
+| name         | type                    | description                                                   |
+| ------------ | ----------------------- | ------------------------------------------------------------- |
+| `rewardRate` | [Amount](#type-aliases) | Rewards per unit of voting power accumulated so far, in `1u`. |
 
 For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
 
