@@ -3,6 +3,7 @@ Data Structures
 
 - [Data Structures](#data-structures)
 - [Data Structures Overview](#data-structures-overview)
+- [Type Aliases](#type-aliases)
 - [Blockchain Data Structures](#blockchain-data-structures)
   - [Block](#block)
   - [Header](#header)
@@ -65,6 +66,18 @@ Data Structures
 
 ![fig: Block data structures.](./figures/block_data_structures.svg)
 
+# Type Aliases
+
+| name                        | type                       |
+| --------------------------- | -------------------------- |
+| [`Address`](#address)       | `byte[20]`                 |
+| [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
+| [`HashDigest`](#hashdigest) | `byte[32]`                 |
+| `Height`                    | `uint64`                   |
+| `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
+| `StateSubtreeID`            | `byte`                     |
+| [`Time`](#time)             | `uint64`                   |
+
 # Blockchain Data Structures
 
 ## Block
@@ -84,7 +97,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 | name                | type                      | description                                                                  |
 | ------------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                            |
+| `height`            | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                            |
 | `time`              | [Time](#time)             | Timestamp of this block.                                                     |
 | `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                         |
 | `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                     |
@@ -114,36 +127,32 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 
 | name         | type                        | description |
 | ------------ | --------------------------- | ----------- |
-| `height`     | `uint64`                    |             |
+| `height`     | [Height](#type-aliases)     |             |
 | `round`      | `uint64`                    |             |
 | `blockID`    | [BlockID](#blockid)         |             |
 | `signatures` | [CommitSig](#commitsig)`[]` |             |
 
 ## Time
 
+Time is a [type alias](#type-aliases).
+
 LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
 
 ## BlockID
 
-The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
+BlockID is a [type alias](#type-aliases).
 
-| name         | type                      | description                      |
-| ------------ | ------------------------- | -------------------------------- |
-| `headerRoot` | [HashDigest](#hashdigest) | Root of the block header fields. |
+The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
 
 ## HashDigest
 
-| name      | type       | description           |
-| --------- | ---------- | --------------------- |
-| `rawData` | `byte[32]` | Raw hash digest data. |
+HashDigest is a [type alias](#type-aliases).
 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## Address
 
-| name      | type       | description       |
-| --------- | ---------- | ----------------- |
-| `rawData` | `byte[20]` | Raw address data. |
+Address is a [type alias](#type-aliases).
 
 Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
@@ -477,14 +486,14 @@ Transfers `amount` coins to `to`.
 
 #### SignedTransactionData: PayForMessage
 
-| name                     | type                                       | description                                                  |
-| ------------------------ | ------------------------------------------ | ------------------------------------------------------------ |
-| `type`                   | `TransactionType`                          | Must be `TransactionType.PayForMessage`.                     |
-| `maxFeeRate`             | `uint64`                                   |                                                              |
-| `nonce`                  | `uint64`                                   |                                                              |
-| `messageNamespaceID`     | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
-| `messageSize`            | `uint64`                                   | Size of message this transaction pays a fee for, in `byte`s. |
-| `messageShareCommitment` | [HashDigest](#hashdigest)                  | Commitment to message shares (details below).                |
+| name                     | type                           | description                                                  |
+| ------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| `type`                   | `TransactionType`              | Must be `TransactionType.PayForMessage`.                     |
+| `maxFeeRate`             | `uint64`                       |                                                              |
+| `nonce`                  | `uint64`                       |                                                              |
+| `messageNamespaceID`     | [`NamespaceID`](#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
+| `messageSize`            | `uint64`                       | Size of message this transaction pays a fee for, in `byte`s. |
+| `messageShareCommitment` | [HashDigest](#hashdigest)      | Commitment to message shares (details below).                |
 
 Pays for the inclusion of a [message](#message) in the same block.
 
@@ -492,11 +501,11 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 #### SignedTransactionData: PayForPadding
 
-| name                 | type                                       | description                                                  |
-| -------------------- | ------------------------------------------ | ------------------------------------------------------------ |
-| `type`               | `TransactionType`                          | Must be `TransactionType.PayForPadding`.                     |
-| `messageNamespaceID` | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
-| `messageSize`        | `uint64`                                   | Size of padding this transaction pays a fee for, in `byte`s. |
+| name                 | type                           | description                                                  |
+| -------------------- | ------------------------------ | ------------------------------------------------------------ |
+| `type`               | `TransactionType`              | Must be `TransactionType.PayForPadding`.                     |
+| `messageNamespaceID` | [`NamespaceID`](#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
+| `messageSize`        | `uint64`                       | Size of padding this transaction pays a fee for, in `byte`s. |
 
 Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
@@ -579,9 +588,9 @@ Finish unbonding the [Delegation](#delegation) at this address.
 
 ### IntermediateStateRoot
 
-| name   | type         | description                                                                              |
-| ------ | ------------ | ---------------------------------------------------------------------------------------- |
-| `root` | `HashDigest` | Root of intermediate state, which is composed of the global state and the validator set. |
+| name   | type                      | description                                                                              |
+| ------ | ------------------------- | ---------------------------------------------------------------------------------------- |
+| `root` | [HashDigest](#hashdigest) | Root of intermediate state, which is composed of the global state and the validator set. |
 
 ## EvidenceData
 
@@ -618,7 +627,7 @@ enum VoteType : uint8_t {
 | name               | type                    | description |
 | ------------------ | ----------------------- | ----------- |
 | `type`             | `VoteType`              |             |
-| `height`           | `uint64`                |             |
+| `height`           | [Height](#type-aliases) |             |
 | `round`            | `uint64`                |             |
 | `blockID`          | [BlockID](#blockid)     |             |
 | `timestamp`        | [Time](#time)           |             |
@@ -634,10 +643,10 @@ enum VoteType : uint8_t {
 
 ### Message
 
-| name          | type                       | description                   |
-| ------------- | -------------------------- | ----------------------------- |
-| `namespaceID` | `byte[NAMESPACE_ID_BYTES]` | Namespace ID of this message. |
-| `rawData`     | `byte[]`                   | Raw message bytes.            |
+| name          | type                         | description                   |
+| ------------- | ---------------------------- | ----------------------------- |
+| `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of this message. |
+| `rawData`     | `byte[]`                     | Raw message bytes.            |
 
 # State
 
@@ -678,7 +687,7 @@ enum DelegationStatus : uint8_t {
 | `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
 | `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
 | `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
-| `unbondingHeight` | `uint64`                    | Block height delegation began unbonding.            |
+| `unbondingHeight` | [Height](#type-aliases)     | Block height delegation began unbonding.            |
 
 Delegation objects represent a delegation. They have two statuses:
 1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
@@ -704,7 +713,7 @@ enum ValidatorStatus : uint8_t {
 | `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
 | `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
 | `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
-| `unbondingHeight` | `uint64`                    | Block height validator began unbonding.                                                |
+| `unbondingHeight` | [Height](#type-aliases)     | Block height validator began unbonding.                                                |
 | `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
 | `slashRate`       | [Decimal](#decimal)         | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
 

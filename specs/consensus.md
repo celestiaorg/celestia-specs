@@ -5,7 +5,6 @@ Consensus Rules
 - [System Parameters](#system-parameters)
   - [Units](#units)
   - [Constants](#constants)
-  - [Type Aliases](#type-aliases)
   - [Reserved Namespace IDs](#reserved-namespace-ids)
   - [Reserved State Subtree IDs](#reserved-state-subtree-ids)
   - [Rewards and Penalties](#rewards-and-penalties)
@@ -43,13 +42,6 @@ Consensus Rules
 | `UNBONDING_DURATION`                  | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                               |
 | `MAX_VALIDATORS`                      | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                        |
 | `STATE_SUBTREE_RESERVED_BYTES`        | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                        |
-
-## Type Aliases
-
-| name             | type                       |
-| ---------------- | -------------------------- |
-| `NamespaceID`    | `byte[NAMESPACE_ID_BYTES]` |
-| `StateSubtreeID` | `byte`                     |
 
 ## Reserved Namespace IDs
 
