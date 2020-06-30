@@ -398,7 +398,7 @@ In the example below, two messages (of lengths 2 and 1, respectively) are placed
 
 ![fig: Original data: messages.](./figures/rs2d_originaldata_message.svg)
 
-The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#transaction).
+The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#signedtransactiondata-payforpadding).
 
 # Available Data
 
