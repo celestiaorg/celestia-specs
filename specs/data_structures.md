@@ -3,13 +3,14 @@ Data Structures
 
 - [Data Structures](#data-structures)
 - [Data Structures Overview](#data-structures-overview)
+- [Type Aliases](#type-aliases)
 - [Blockchain Data Structures](#blockchain-data-structures)
   - [Block](#block)
   - [Header](#header)
   - [AvailableDataHeader](#availabledataheader)
   - [AvailableData](#availabledata)
   - [Commit](#commit)
-  - [Time](#time)
+  - [Timestamp](#timestamp)
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
@@ -65,6 +66,23 @@ Data Structures
 
 ![fig: Block data structures.](./figures/block_data_structures.svg)
 
+# Type Aliases
+
+| name                        | type                       |
+| --------------------------- | -------------------------- |
+| [`Address`](#address)       | `byte[20]`                 |
+| `Amount`                    | `uint64`                   |
+| [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
+| `FeeRate`                   | `uint64`                   |
+| [`HashDigest`](#hashdigest) | `byte[32]`                 |
+| `Height`                    | `uint64`                   |
+| `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
+| `Nonce`                     | `uint64`                   |
+| `Round`                     | `uint64`                   |
+| `StateSubtreeID`            | `byte`                     |
+| [`Timestamp`](#timestamp)   | `uint64`                   |
+| `VotingPower`               | `uint64`                   |
+
 # Blockchain Data Structures
 
 ## Block
@@ -84,8 +102,8 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 | name                | type                      | description                                                                  |
 | ------------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `height`            | `uint64`                  | Block height. The genesis block is at height `1`.                            |
-| `time`              | [Time](#time)             | Timestamp of this block.                                                     |
+| `height`            | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                            |
+| `timestamp`         | [Timestamp](#timestamp)   | Timestamp of this block.                                                     |
 | `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                         |
 | `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                     |
 | `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block. |
@@ -114,36 +132,32 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 
 | name         | type                        | description |
 | ------------ | --------------------------- | ----------- |
-| `height`     | `uint64`                    |             |
-| `round`      | `uint64`                    |             |
+| `height`     | [Height](#type-aliases)     |             |
+| `round`      | [Round](#type-aliases)      |             |
 | `blockID`    | [BlockID](#blockid)         |             |
 | `signatures` | [CommitSig](#commitsig)`[]` |             |
 
-## Time
+## Timestamp
+
+Timestamp is a [type alias](#type-aliases).
 
 LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
 
 ## BlockID
 
-The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
+BlockID is a [type alias](#type-aliases).
 
-| name         | type                      | description                      |
-| ------------ | ------------------------- | -------------------------------- |
-| `headerRoot` | [HashDigest](#hashdigest) | Root of the block header fields. |
+The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
 
 ## HashDigest
 
-| name      | type       | description           |
-| --------- | ---------- | --------------------- |
-| `rawData` | `byte[32]` | Raw hash digest data. |
+HashDigest is a [type alias](#type-aliases).
 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 ## Address
 
-| name      | type       | description       |
-| --------- | ---------- | ----------------- |
-| `rawData` | `byte[20]` | Raw address data. |
+Address is a [type alias](#type-aliases).
 
 Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
@@ -161,7 +175,7 @@ enum BlockIDFlag : uint8_t {
 | ------------------ | ----------------------- | ----------- |
 | `blockIDFlag`      | `BlockIDFlag`           |             |
 | `validatorAddress` | [Address](#address)     |             |
-| `timestamp`        | [Time](#time)           |             |
+| `timestamp`        | [Timestamp](#timestamp) |             |
 | `signature`        | [Signature](#signature) |             |
 
 ## Signature
@@ -412,11 +426,11 @@ The non-interactive default rules may introduce empty shares that do not belong 
 
 Wrapped transactions include additional metadata by the block proposer that is committed to in the [available data matrix](#arranging-available-data-into-shares).
 
-| name                | type          | description                                                                                                                                                                                                                                                                                                |
-| ------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index`             | `uint64`      | Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking a transaction to an [intermediate state root](#wrappedintermediatestateroot). |
-| `transaction`       | `Transaction` | Actual transaction.                                                                                                                                                                                                                                                                                        |
-| `messageStartIndex` | `uint64`      | _Optional, only used if transaction pays for a message or padding_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                       |
+| name                | type                        | description                                                                                                                                                                                                                                                                                                |
+| ------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`             | `uint64`                    | Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking a transaction to an [intermediate state root](#wrappedintermediatestateroot). |
+| `transaction`       | [Transaction](#transaction) | Actual transaction.                                                                                                                                                                                                                                                                                        |
+| `messageStartIndex` | `uint64`                    | _Optional, only used if transaction pays for a message or padding_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                       |
 
 ### Transaction
 
@@ -454,37 +468,37 @@ Signed transaction data comes in a number of types:
 
 Common fields are denoted here to avoid repeating descriptions:
 
-| name         | type                | description                                                                |
-| ------------ | ------------------- | -------------------------------------------------------------------------- |
-| `type`       | `TransactionType`   | Type of the transaction. Each type indicates a different state transition. |
-| `amount`     | `uint64`            | Amount of coins to send, in `1u`.                                          |
-| `to`         | [Address](#address) | Recipient's address.                                                       |
-| `maxFeeRate` | `uint64`            | The maximum fee rate the sender is willing to pay.                         |
-| `nonce`      | `uint64`            | Nonce of sender.                                                           |
+| name         | type                     | description                                                                |
+| ------------ | ------------------------ | -------------------------------------------------------------------------- |
+| `type`       | `TransactionType`        | Type of the transaction. Each type indicates a different state transition. |
+| `amount`     | [Amount](#type-aliases)  | Amount of coins to send, in `1u`.                                          |
+| `to`         | [Address](#address)      | Recipient's address.                                                       |
+| `maxFeeRate` | [FeeRate](#type-aliases) | The maximum fee rate the sender is willing to pay.                         |
+| `nonce`      | [Nonce](#type-aliases)   | Nonce of sender.                                                           |
 
 
 #### SignedTransactionData: Transfer
 
-| name         | type                | description                         |
-| ------------ | ------------------- | ----------------------------------- |
-| `type`       | `TransactionType`   | Must be `TransactionType.Transfer`. |
-| `amount`     | `uint64`            |                                     |
-| `to`         | [Address](#address) |                                     |
-| `maxFeeRate` | `uint64`            |                                     |
-| `nonce`      | `uint64`            |                                     |
+| name         | type                     | description                         |
+| ------------ | ------------------------ | ----------------------------------- |
+| `type`       | `TransactionType`        | Must be `TransactionType.Transfer`. |
+| `amount`     | [Amount](#type-aliases)  |                                     |
+| `to`         | [Address](#address)      |                                     |
+| `maxFeeRate` | [FeeRate](#type-aliases) |                                     |
+| `nonce`      | [Nonce](#type-aliases)   |                                     |
 
 Transfers `amount` coins to `to`.
 
 #### SignedTransactionData: PayForMessage
 
-| name                     | type                                       | description                                                  |
-| ------------------------ | ------------------------------------------ | ------------------------------------------------------------ |
-| `type`                   | `TransactionType`                          | Must be `TransactionType.PayForMessage`.                     |
-| `maxFeeRate`             | `uint64`                                   |                                                              |
-| `nonce`                  | `uint64`                                   |                                                              |
-| `messageNamespaceID`     | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
-| `messageSize`            | `uint64`                                   | Size of message this transaction pays a fee for, in `byte`s. |
-| `messageShareCommitment` | [HashDigest](#hashdigest)                  | Commitment to message shares (details below).                |
+| name                     | type                           | description                                                  |
+| ------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| `type`                   | `TransactionType`              | Must be `TransactionType.PayForMessage`.                     |
+| `maxFeeRate`             | [FeeRate](#type-aliases)       |                                                              |
+| `nonce`                  | [Nonce](#type-aliases)         |                                                              |
+| `messageNamespaceID`     | [`NamespaceID`](#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
+| `messageSize`            | `uint64`                       | Size of message this transaction pays a fee for, in `byte`s. |
+| `messageShareCommitment` | [HashDigest](#hashdigest)      | Commitment to message shares (details below).                |
 
 Pays for the inclusion of a [message](#message) in the same block.
 
@@ -492,75 +506,75 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 #### SignedTransactionData: PayForPadding
 
-| name                 | type                                       | description                                                  |
-| -------------------- | ------------------------------------------ | ------------------------------------------------------------ |
-| `type`               | `TransactionType`                          | Must be `TransactionType.PayForPadding`.                     |
-| `messageNamespaceID` | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
-| `messageSize`        | `uint64`                                   | Size of padding this transaction pays a fee for, in `byte`s. |
+| name                 | type                           | description                                                  |
+| -------------------- | ------------------------------ | ------------------------------------------------------------ |
+| `type`               | `TransactionType`              | Must be `TransactionType.PayForPadding`.                     |
+| `messageNamespaceID` | [`NamespaceID`](#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
+| `messageSize`        | `uint64`                       | Size of padding this transaction pays a fee for, in `byte`s. |
 
 Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
 #### SignedTransactionData: CreateValidator
 
-| name             | type                | description                                |
-| ---------------- | ------------------- | ------------------------------------------ |
-| `type`           | `TransactionType`   | Must be `TransactionType.CreateValidator`. |
-| `amount`         | `uint64`            |                                            |
-| `maxFeeRate`     | `uint64`            |                                            |
-| `nonce`          | `uint64`            |                                            |
-| `commissionRate` | [Decimal](#decimal) |                                            |
+| name             | type                     | description                                |
+| ---------------- | ------------------------ | ------------------------------------------ |
+| `type`           | `TransactionType`        | Must be `TransactionType.CreateValidator`. |
+| `amount`         | [Amount](#type-aliases)  |                                            |
+| `maxFeeRate`     | [FeeRate](#type-aliases) |                                            |
+| `nonce`          | [Nonce](#type-aliases)   |                                            |
+| `commissionRate` | [Decimal](#decimal)      |                                            |
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
 #### SignedTransactionData: BeginUnbondingValidator
 
-| name         | type              | description                                        |
-| ------------ | ----------------- | -------------------------------------------------- |
-| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingValidator`. |
-| `maxFeeRate` | `uint64`          |                                                    |
-| `nonce`      | `uint64`          |                                                    |
+| name         | type                     | description                                        |
+| ------------ | ------------------------ | -------------------------------------------------- |
+| `type`       | `TransactionType`        | Must be `TransactionType.BeginUnbondingValidator`. |
+| `maxFeeRate` | [FeeRate](#type-aliases) |                                                    |
+| `nonce`      | [Nonce](#type-aliases)   |                                                    |
 
 Begin unbonding the [Validator](#validator) at this address.
 
 #### SignedTransactionData: UnbondValidator
 
-| name         | type              | description                                |
-| ------------ | ----------------- | ------------------------------------------ |
-| `type`       | `TransactionType` | Must be `TransactionType.UnbondValidator`. |
-| `maxFeeRate` | `uint64`          |                                            |
-| `nonce`      | `uint64`          |                                            |
+| name         | type                     | description                                |
+| ------------ | ------------------------ | ------------------------------------------ |
+| `type`       | `TransactionType`        | Must be `TransactionType.UnbondValidator`. |
+| `maxFeeRate` | [FeeRate](#type-aliases) |                                            |
+| `nonce`      | [Nonce](#type-aliases)   |                                            |
 
 Finish unbonding the [Validator](#validator) at this address.
 
 #### SignedTransactionData: CreateDelegation
 
-| name         | type                | description                                 |
-| ------------ | ------------------- | ------------------------------------------- |
-| `type`       | `TransactionType`   | Must be `TransactionType.CreateDelegation`. |
-| `amount`     | `uint64`            |                                             |
-| `to`         | [Address](#address) |                                             |
-| `maxFeeRate` | `uint64`            |                                             |
-| `nonce`      | `uint64`            |                                             |
+| name         | type                     | description                                 |
+| ------------ | ------------------------ | ------------------------------------------- |
+| `type`       | `TransactionType`        | Must be `TransactionType.CreateDelegation`. |
+| `amount`     | [Amount](#type-aliases)  |                                             |
+| `to`         | [Address](#address)      |                                             |
+| `maxFeeRate` | [FeeRate](#type-aliases) |                                             |
+| `nonce`      | [Nonce](#type-aliases)   |                                             |
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
 #### SignedTransactionData: BeginUnbondingDelegation
 
-| name         | type              | description                                         |
-| ------------ | ----------------- | --------------------------------------------------- |
-| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingDelegation`. |
-| `maxFeeRate` | `uint64`          |                                                     |
-| `nonce`      | `uint64`          |                                                     |
+| name         | type                     | description                                         |
+| ------------ | ------------------------ | --------------------------------------------------- |
+| `type`       | `TransactionType`        | Must be `TransactionType.BeginUnbondingDelegation`. |
+| `maxFeeRate` | [FeeRate](#type-aliases) |                                                     |
+| `nonce`      | [Nonce](#type-aliases)   |                                                     |
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
 #### SignedTransactionData: UnbondDelegation
 
-| name         | type              | description                                 |
-| ------------ | ----------------- | ------------------------------------------- |
-| `type`       | `TransactionType` | Must be `TransactionType.UnbondDelegation`. |
-| `maxFeeRate` | `uint64`          |                                             |
-| `nonce`      | `uint64`          |                                             |
+| name         | type                     | description                                 |
+| ------------ | ------------------------ | ------------------------------------------- |
+| `type`       | `TransactionType`        | Must be `TransactionType.UnbondDelegation`. |
+| `maxFeeRate` | [FeeRate](#type-aliases) |                                             |
+| `nonce`      | [Nonce](#type-aliases)   |                                             |
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
@@ -572,16 +586,16 @@ Finish unbonding the [Delegation](#delegation) at this address.
 
 ### WrappedIntermediateStateRoot
 
-| name                    | type                    | description                                                                                                                                                                                                                                                                                                                  |
-| ----------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index`                 | `uint64`                | Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a [transaction](#wrappedtransaction). |
-| `intermediateStateRoot` | `IntermediateStateRoot` | Intermediate state root. Used for fraud proofs.                                                                                                                                                                                                                                                                              |
+| name                    | type                                            | description                                                                                                                                                                                                                                                                                                                  |
+| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`                 | `uint64`                                        | Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a [transaction](#wrappedtransaction). |
+| `intermediateStateRoot` | [IntermediateStateRoot](#intermediatestateroot) | Intermediate state root. Used for fraud proofs.                                                                                                                                                                                                                                                                              |
 
 ### IntermediateStateRoot
 
-| name   | type         | description                                                                              |
-| ------ | ------------ | ---------------------------------------------------------------------------------------- |
-| `root` | `HashDigest` | Root of intermediate state, which is composed of the global state and the validator set. |
+| name   | type                      | description                                                                              |
+| ------ | ------------------------- | ---------------------------------------------------------------------------------------- |
+| `root` | [HashDigest](#hashdigest) | Root of intermediate state, which is composed of the global state and the validator set. |
 
 ## EvidenceData
 
@@ -618,10 +632,10 @@ enum VoteType : uint8_t {
 | name               | type                    | description |
 | ------------------ | ----------------------- | ----------- |
 | `type`             | `VoteType`              |             |
-| `height`           | `uint64`                |             |
-| `round`            | `uint64`                |             |
+| `height`           | [Height](#type-aliases) |             |
+| `round`            | [Round](#type-aliases)  |             |
 | `blockID`          | [BlockID](#blockid)     |             |
-| `timestamp`        | [Time](#time)           |             |
+| `timestamp`        | [Timestamp](#timestamp) |             |
 | `validatorAddress` | [Address](#address)     |             |
 | `validatorIndex`   | `uint64`                |             |
 | `signature`        | [Signature](#signature) |             |
@@ -634,10 +648,10 @@ enum VoteType : uint8_t {
 
 ### Message
 
-| name          | type                       | description                   |
-| ------------- | -------------------------- | ----------------------------- |
-| `namespaceID` | `byte[NAMESPACE_ID_BYTES]` | Namespace ID of this message. |
-| `rawData`     | `byte[]`                   | Raw message bytes.            |
+| name          | type                         | description                   |
+| ------------- | ---------------------------- | ----------------------------- |
+| `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of this message. |
+| `rawData`     | `byte[]`                     | Raw message bytes.            |
 
 # State
 
@@ -654,8 +668,8 @@ Three subtrees are maintained:
 
 | name             | type                      | description                                                                       |
 | ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
-| `balance`        | `uint64`                  | Coin balance.                                                                     |
-| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `balance`        | [Amount](#type-aliases)   | Coin balance.                                                                     |
+| `nonce`          | [Nonce](#type-aliases)    | Account nonce. Every outgoing transaction from this account increments the nonce. |
 | `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
 | `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
 | `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
@@ -671,14 +685,14 @@ enum DelegationStatus : uint8_t {
 };
 ```
 
-| name              | type                        | description                                         |
-| ----------------- | --------------------------- | --------------------------------------------------- |
-| `status`          | `DelegationStatus`          | Status of this delegation.                          |
-| `validator`       | [Address](#address)         | The validator being delegating to.                  |
-| `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
-| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
-| `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
-| `unbondingHeight` | `uint64`                    | Block height delegation began unbonding.            |
+| name              | type                         | description                                         |
+| ----------------- | ---------------------------- | --------------------------------------------------- |
+| `status`          | `DelegationStatus`           | Status of this delegation.                          |
+| `validator`       | [Address](#address)          | The validator being delegating to.                  |
+| `stakedBalance`   | [VotingPower](#type-aliases) | Delegated stake, in `4u`.                           |
+| `beginEntry`      | [PeriodEntry](#periodentry)  | Entry when delegation began.                        |
+| `endEntry`        | [PeriodEntry](#periodentry)  | Entry when delegation ended (i.e. began unbonding). |
+| `unbondingHeight` | [Height](#type-aliases)      | Block height delegation began unbonding.            |
 
 Delegation objects represent a delegation. They have two statuses:
 1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
@@ -695,18 +709,18 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name              | type                        | description                                                                            |
-| ----------------- | --------------------------- | -------------------------------------------------------------------------------------- |
-| `status`          | `ValidatorStatus`           | Status of this validator.                                                              |
-| `stakedBalance`   | `uint64`                    | Validator's personal staked balance, in `4u`.                                          |
-| `commissionRate`  | [Decimal](#decimal)         | Commission rate.                                                                       |
-| `delegatedCount`  | `uint32`                    | Number of accounts delegating to this validator.                                       |
-| `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
-| `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
-| `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
-| `unbondingHeight` | `uint64`                    | Block height validator began unbonding.                                                |
-| `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
-| `slashRate`       | [Decimal](#decimal)         | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| name              | type                         | description                                                                            |
+| ----------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
+| `status`          | `ValidatorStatus`            | Status of this validator.                                                              |
+| `stakedBalance`   | [VotingPower](#type-aliases) | Validator's personal staked balance, in `4u`.                                          |
+| `commissionRate`  | [Decimal](#decimal)          | Commission rate.                                                                       |
+| `delegatedCount`  | `uint32`                     | Number of accounts delegating to this validator.                                       |
+| `votingPower`     | [VotingPower](#type-aliases) | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `pendingRewards`  | [Amount](#type-aliases)      | Rewards collected so far this period, in `1u`.                                         |
+| `latestEntry`     | [PeriodEntry](#periodentry)  | Latest entry, used for calculating reward distribution.                                |
+| `unbondingHeight` | [Height](#type-aliases)      | Block height validator began unbonding.                                                |
+| `isSlashed`       | `bool`                       | If this validator has been slashed or not.                                             |
+| `slashRate`       | [Decimal](#decimal)          | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
@@ -726,9 +740,9 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 
 ## PeriodEntry
 
-| name         | type     | description                                                   |
-| ------------ | -------- | ------------------------------------------------------------- |
-| `rewardRate` | `uint64` | Rewards per unit of voting power accumulated so far, in `1u`. |
+| name         | type                    | description                                                   |
+| ------------ | ----------------------- | ------------------------------------------------------------- |
+| `rewardRate` | [Amount](#type-aliases) | Rewards per unit of voting power accumulated so far, in `1u`. |
 
 For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
 
