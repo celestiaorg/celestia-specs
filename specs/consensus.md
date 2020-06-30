@@ -53,12 +53,13 @@ Consensus Rules
 
 ## Reserved Namespace IDs
 
-| name                                   | type          | value                                                                |
-| -------------------------------------- | ------------- | -------------------------------------------------------------------- |
-| `TRANSACTION_NAMESPACE_ID`             | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000001` |
-| `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000002` |
-| `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000003` |
-| `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| name                                   | type          | value                                                                | description                                                                   |
+| -------------------------------------- | ------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `TRANSACTION_NAMESPACE_ID`             | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000001` | Transactions: requests that modify the state.                                 |
+| `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000002` | Intermediate state roots, committed after every transaction.                  |
+| `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000003` | Evidence: fraud proofs or other proof of slashable action.                    |
+| `TAIL_PADDING_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE` | Tail padding: padding after all messages to fill up the original data square. |
+| `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | Parity shares: extended shares in the available data matrix.                  |
 
 ## Reserved State Subtree IDs
 
@@ -137,7 +138,7 @@ validator.votingPower += tx.amount
 then initializes the [Delegation](data_structures.md#delegation) field of that account as follows:
 ```
 delegation.status = DelegationStatus.Bonded
-delegation.validator = tx.validator
+delegation.validator = tx.to
 delegation.stakedBalance = tx.amount
 delegation.beginEntry = validator.latestEntry
 delegation.endEntry = PeriodEntry(0)

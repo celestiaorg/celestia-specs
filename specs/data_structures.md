@@ -33,6 +33,16 @@ Data Structures
   - [TransactionData](#transactiondata)
     - [WrappedTransaction](#wrappedtransaction)
     - [Transaction](#transaction)
+    - [SignedTransactionData](#signedtransactiondata)
+      - [SignedTransactionData: Transfer](#signedtransactiondata-transfer)
+      - [SignedTransactionData: PayForMessage](#signedtransactiondata-payformessage)
+      - [SignedTransactionData: PayForPadding](#signedtransactiondata-payforpadding)
+      - [SignedTransactionData: CreateValidator](#signedtransactiondata-createvalidator)
+      - [SignedTransactionData: BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
+      - [SignedTransactionData: UnbondValidator](#signedtransactiondata-unbondvalidator)
+      - [SignedTransactionData: CreateDelegation](#signedtransactiondata-createdelegation)
+      - [SignedTransactionData: BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
+      - [SignedTransactionData: UnbondDelegation](#signedtransactiondata-unbonddelegation)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -388,7 +398,7 @@ In the example below, two messages (of lengths 2 and 1, respectively) are placed
 
 ![fig: Original data: messages.](./figures/rs2d_originaldata_message.svg)
 
-The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#transaction).
+The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#signedtransactiondata-payforpadding).
 
 # Available Data
 
@@ -406,16 +416,153 @@ Wrapped transactions include additional metadata by the block proposer that is c
 | ------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `index`             | `uint64`      | Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking a transaction to an [intermediate state root](#wrappedintermediatestateroot). |
 | `transaction`       | `Transaction` | Actual transaction.                                                                                                                                                                                                                                                                                        |
-| `messageStartIndex` | `uint64`      | _Optional, only used if transaction pays for a message_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                                  |
+| `messageStartIndex` | `uint64`      | _Optional, only used if transaction pays for a message or padding_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                       |
 
 ### Transaction
 
-| name                    | type                      | description                                                                                                                                                                                                                                                           |
-| ----------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TODO                    |                           |                                                                                                                                                                                                                                                                       |
-| `messageSize`           | `uint64`                  | Size of message this transaction pays a fee for, in `byte`s. If this transaction does not pay a fee for a message, must be `0`.                                                                                                                                       |
-| `messageShareRootsRoot` | [HashDigest](#hashdigest) | Merkle root of message share roots of an optional message that this transaction pays a fee to be included in the current block. Messages are split into shares and committed to here. Large messages can span across rows, which requires more roots to the provided. |
+| name                    | type                                            | description                       |
+| ----------------------- | ----------------------------------------------- | --------------------------------- |
+| `signedTransactionData` | [SignedTransactionData](#signedtransactiondata) | Data payload that is signed over. |
+| `signature`             | [Signature](#signature)                         | Signature.                        |
 
+### SignedTransactionData
+
+```C++
+enum TransactionType : uint8_t {
+    Transfer = 1,
+    PayForMessage = 2,
+    PayForPadding = 3,
+    CreateValidator = 4,
+    BeginUnbondingValidator = 5,
+    UnbondValidator = 6,
+    CreateDelegation = 7,
+    BeginUnbondingDelegation = 8,
+    UnbondDelegation = 9,
+};
+```
+
+Signed transaction data comes in a number of types:
+1. [Transfer](#signedtransactiondata-transfer)
+1. [PayForMessage](#signedtransactiondata-payformessage)
+1. [PayForPadding](#signedtransactiondata-payforpadding)
+1. [CreateValidator](#signedtransactiondata-createvalidator)
+1. [BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
+1. [UnbondValidator](#signedtransactiondata-unbondvalidator)
+1. [CreateDelegation](#signedtransactiondata-createdelegation)
+1. [BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
+1. [UnbondDelegation](#signedtransactiondata-unbonddelegation)
+
+Common fields are denoted here to avoid repeating descriptions:
+
+| name         | type                | description                                                                |
+| ------------ | ------------------- | -------------------------------------------------------------------------- |
+| `type`       | `TransactionType`   | Type of the transaction. Each type indicates a different state transition. |
+| `amount`     | `uint64`            | Amount of coins to send, in `1u`.                                          |
+| `to`         | [Address](#address) | Recipient's address.                                                       |
+| `maxFeeRate` | `uint64`            | The maximum fee rate the sender is willing to pay.                         |
+| `nonce`      | `uint64`            | Nonce of sender.                                                           |
+
+
+#### SignedTransactionData: Transfer
+
+| name         | type                | description                         |
+| ------------ | ------------------- | ----------------------------------- |
+| `type`       | `TransactionType`   | Must be `TransactionType.Transfer`. |
+| `amount`     | `uint64`            |                                     |
+| `to`         | [Address](#address) |                                     |
+| `maxFeeRate` | `uint64`            |                                     |
+| `nonce`      | `uint64`            |                                     |
+
+Transfers `amount` coins to `to`.
+
+#### SignedTransactionData: PayForMessage
+
+| name                     | type                                       | description                                                  |
+| ------------------------ | ------------------------------------------ | ------------------------------------------------------------ |
+| `type`                   | `TransactionType`                          | Must be `TransactionType.PayForMessage`.                     |
+| `maxFeeRate`             | `uint64`                                   |                                                              |
+| `nonce`                  | `uint64`                                   |                                                              |
+| `messageNamespaceID`     | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
+| `messageSize`            | `uint64`                                   | Size of message this transaction pays a fee for, in `byte`s. |
+| `messageShareCommitment` | [HashDigest](#hashdigest)                  | Commitment to message shares (details below).                |
+
+Pays for the inclusion of a [message](#message) in the same block.
+
+The commitment to message shares `messageShareCommitment` is a [Merkle root](#binary-merkle-tree) of message share roots. Each message share root is [a subtree root in a row NMT](#arranging-available-data-into-shares). For rationale, see [rationale doc](../rationale/message_block_layout.md).
+
+#### SignedTransactionData: PayForPadding
+
+| name                 | type                                       | description                                                  |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| `type`               | `TransactionType`                          | Must be `TransactionType.PayForPadding`.                     |
+| `messageNamespaceID` | [`NamespaceID`](consensus.md#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
+| `messageSize`        | `uint64`                                   | Size of padding this transaction pays a fee for, in `byte`s. |
+
+Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
+
+#### SignedTransactionData: CreateValidator
+
+| name             | type                | description                                |
+| ---------------- | ------------------- | ------------------------------------------ |
+| `type`           | `TransactionType`   | Must be `TransactionType.CreateValidator`. |
+| `amount`         | `uint64`            |                                            |
+| `maxFeeRate`     | `uint64`            |                                            |
+| `nonce`          | `uint64`            |                                            |
+| `commissionRate` | [Decimal](#decimal) |                                            |
+
+Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
+
+#### SignedTransactionData: BeginUnbondingValidator
+
+| name         | type              | description                                        |
+| ------------ | ----------------- | -------------------------------------------------- |
+| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingValidator`. |
+| `maxFeeRate` | `uint64`          |                                                    |
+| `nonce`      | `uint64`          |                                                    |
+
+Begin unbonding the [Validator](#validator) at this address.
+
+#### SignedTransactionData: UnbondValidator
+
+| name         | type              | description                                |
+| ------------ | ----------------- | ------------------------------------------ |
+| `type`       | `TransactionType` | Must be `TransactionType.UnbondValidator`. |
+| `maxFeeRate` | `uint64`          |                                            |
+| `nonce`      | `uint64`          |                                            |
+
+Finish unbonding the [Validator](#validator) at this address.
+
+#### SignedTransactionData: CreateDelegation
+
+| name         | type                | description                                 |
+| ------------ | ------------------- | ------------------------------------------- |
+| `type`       | `TransactionType`   | Must be `TransactionType.CreateDelegation`. |
+| `amount`     | `uint64`            |                                             |
+| `to`         | [Address](#address) |                                             |
+| `maxFeeRate` | `uint64`            |                                             |
+| `nonce`      | `uint64`            |                                             |
+
+Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
+
+#### SignedTransactionData: BeginUnbondingDelegation
+
+| name         | type              | description                                         |
+| ------------ | ----------------- | --------------------------------------------------- |
+| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingDelegation`. |
+| `maxFeeRate` | `uint64`          |                                                     |
+| `nonce`      | `uint64`          |                                                     |
+
+Begin unbonding the [Delegation](#delegation) at this address.
+
+#### SignedTransactionData: UnbondDelegation
+
+| name         | type              | description                                 |
+| ------------ | ----------------- | ------------------------------------------- |
+| `type`       | `TransactionType` | Must be `TransactionType.UnbondDelegation`. |
+| `maxFeeRate` | `uint64`          |                                             |
+| `nonce`      | `uint64`          |                                             |
+
+Finish unbonding the [Delegation](#delegation) at this address.
 
 ## IntermediateStateRootData
 
