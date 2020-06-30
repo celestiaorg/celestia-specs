@@ -71,12 +71,14 @@ Data Structures
 | name                        | type                       |
 | --------------------------- | -------------------------- |
 | [`Address`](#address)       | `byte[20]`                 |
+| `Amount`                    | `uint64`                   |
 | [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
 | `StateSubtreeID`            | `byte`                     |
 | [`Timestamp`](#timestamp)   | `uint64`                   |
+| `VotingPower`               | `uint64`                   |
 
 # Blockchain Data Structures
 
@@ -463,24 +465,24 @@ Signed transaction data comes in a number of types:
 
 Common fields are denoted here to avoid repeating descriptions:
 
-| name         | type                | description                                                                |
-| ------------ | ------------------- | -------------------------------------------------------------------------- |
-| `type`       | `TransactionType`   | Type of the transaction. Each type indicates a different state transition. |
-| `amount`     | `uint64`            | Amount of coins to send, in `1u`.                                          |
-| `to`         | [Address](#address) | Recipient's address.                                                       |
-| `maxFeeRate` | `uint64`            | The maximum fee rate the sender is willing to pay.                         |
-| `nonce`      | `uint64`            | Nonce of sender.                                                           |
+| name         | type                    | description                                                                |
+| ------------ | ----------------------- | -------------------------------------------------------------------------- |
+| `type`       | `TransactionType`       | Type of the transaction. Each type indicates a different state transition. |
+| `amount`     | [Amount](#type-aliases) | Amount of coins to send, in `1u`.                                          |
+| `to`         | [Address](#address)     | Recipient's address.                                                       |
+| `maxFeeRate` | `uint64`                | The maximum fee rate the sender is willing to pay.                         |
+| `nonce`      | `uint64`                | Nonce of sender.                                                           |
 
 
 #### SignedTransactionData: Transfer
 
-| name         | type                | description                         |
-| ------------ | ------------------- | ----------------------------------- |
-| `type`       | `TransactionType`   | Must be `TransactionType.Transfer`. |
-| `amount`     | `uint64`            |                                     |
-| `to`         | [Address](#address) |                                     |
-| `maxFeeRate` | `uint64`            |                                     |
-| `nonce`      | `uint64`            |                                     |
+| name         | type                    | description                         |
+| ------------ | ----------------------- | ----------------------------------- |
+| `type`       | `TransactionType`       | Must be `TransactionType.Transfer`. |
+| `amount`     | [Amount](#type-aliases) |                                     |
+| `to`         | [Address](#address)     |                                     |
+| `maxFeeRate` | `uint64`                |                                     |
+| `nonce`      | `uint64`                |                                     |
 
 Transfers `amount` coins to `to`.
 
@@ -511,13 +513,13 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 #### SignedTransactionData: CreateValidator
 
-| name             | type                | description                                |
-| ---------------- | ------------------- | ------------------------------------------ |
-| `type`           | `TransactionType`   | Must be `TransactionType.CreateValidator`. |
-| `amount`         | `uint64`            |                                            |
-| `maxFeeRate`     | `uint64`            |                                            |
-| `nonce`          | `uint64`            |                                            |
-| `commissionRate` | [Decimal](#decimal) |                                            |
+| name             | type                    | description                                |
+| ---------------- | ----------------------- | ------------------------------------------ |
+| `type`           | `TransactionType`       | Must be `TransactionType.CreateValidator`. |
+| `amount`         | [Amount](#type-aliases) |                                            |
+| `maxFeeRate`     | `uint64`                |                                            |
+| `nonce`          | `uint64`                |                                            |
+| `commissionRate` | [Decimal](#decimal)     |                                            |
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
@@ -543,13 +545,13 @@ Finish unbonding the [Validator](#validator) at this address.
 
 #### SignedTransactionData: CreateDelegation
 
-| name         | type                | description                                 |
-| ------------ | ------------------- | ------------------------------------------- |
-| `type`       | `TransactionType`   | Must be `TransactionType.CreateDelegation`. |
-| `amount`     | `uint64`            |                                             |
-| `to`         | [Address](#address) |                                             |
-| `maxFeeRate` | `uint64`            |                                             |
-| `nonce`      | `uint64`            |                                             |
+| name         | type                    | description                                 |
+| ------------ | ----------------------- | ------------------------------------------- |
+| `type`       | `TransactionType`       | Must be `TransactionType.CreateDelegation`. |
+| `amount`     | [Amount](#type-aliases) |                                             |
+| `to`         | [Address](#address)     |                                             |
+| `maxFeeRate` | `uint64`                |                                             |
+| `nonce`      | `uint64`                |                                             |
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
@@ -663,7 +665,7 @@ Three subtrees are maintained:
 
 | name             | type                      | description                                                                       |
 | ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
-| `balance`        | `uint64`                  | Coin balance.                                                                     |
+| `balance`        | [Amount](#type-aliases)   | Coin balance.                                                                     |
 | `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
 | `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
 | `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
@@ -680,14 +682,14 @@ enum DelegationStatus : uint8_t {
 };
 ```
 
-| name              | type                        | description                                         |
-| ----------------- | --------------------------- | --------------------------------------------------- |
-| `status`          | `DelegationStatus`          | Status of this delegation.                          |
-| `validator`       | [Address](#address)         | The validator being delegating to.                  |
-| `stakedBalance`   | `uint64`                    | Delegated stake, in `4u`.                           |
-| `beginEntry`      | [PeriodEntry](#periodentry) | Entry when delegation began.                        |
-| `endEntry`        | [PeriodEntry](#periodentry) | Entry when delegation ended (i.e. began unbonding). |
-| `unbondingHeight` | [Height](#type-aliases)     | Block height delegation began unbonding.            |
+| name              | type                         | description                                         |
+| ----------------- | ---------------------------- | --------------------------------------------------- |
+| `status`          | `DelegationStatus`           | Status of this delegation.                          |
+| `validator`       | [Address](#address)          | The validator being delegating to.                  |
+| `stakedBalance`   | [VotingPower](#type-aliases) | Delegated stake, in `4u`.                           |
+| `beginEntry`      | [PeriodEntry](#periodentry)  | Entry when delegation began.                        |
+| `endEntry`        | [PeriodEntry](#periodentry)  | Entry when delegation ended (i.e. began unbonding). |
+| `unbondingHeight` | [Height](#type-aliases)      | Block height delegation began unbonding.            |
 
 Delegation objects represent a delegation. They have two statuses:
 1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
@@ -704,18 +706,18 @@ enum ValidatorStatus : uint8_t {
 };
 ```
 
-| name              | type                        | description                                                                            |
-| ----------------- | --------------------------- | -------------------------------------------------------------------------------------- |
-| `status`          | `ValidatorStatus`           | Status of this validator.                                                              |
-| `stakedBalance`   | `uint64`                    | Validator's personal staked balance, in `4u`.                                          |
-| `commissionRate`  | [Decimal](#decimal)         | Commission rate.                                                                       |
-| `delegatedCount`  | `uint32`                    | Number of accounts delegating to this validator.                                       |
-| `votingPower`     | `uint64`                    | Total voting power as staked balance + delegated stake, in `4u`.                       |
-| `pendingRewards`  | `uint64`                    | Rewards collected so far this period, in `1u`.                                         |
-| `latestEntry`     | [PeriodEntry](#periodentry) | Latest entry, used for calculating reward distribution.                                |
-| `unbondingHeight` | [Height](#type-aliases)     | Block height validator began unbonding.                                                |
-| `isSlashed`       | `bool`                      | If this validator has been slashed or not.                                             |
-| `slashRate`       | [Decimal](#decimal)         | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| name              | type                         | description                                                                            |
+| ----------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
+| `status`          | `ValidatorStatus`            | Status of this validator.                                                              |
+| `stakedBalance`   | [VotingPower](#type-aliases) | Validator's personal staked balance, in `4u`.                                          |
+| `commissionRate`  | [Decimal](#decimal)          | Commission rate.                                                                       |
+| `delegatedCount`  | `uint32`                     | Number of accounts delegating to this validator.                                       |
+| `votingPower`     | [VotingPower](#type-aliases) | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `pendingRewards`  | [Amount](#type-aliases)      | Rewards collected so far this period, in `1u`.                                         |
+| `latestEntry`     | [PeriodEntry](#periodentry)  | Latest entry, used for calculating reward distribution.                                |
+| `unbondingHeight` | [Height](#type-aliases)      | Block height validator began unbonding.                                                |
+| `isSlashed`       | `bool`                       | If this validator has been slashed or not.                                             |
+| `slashRate`       | [Decimal](#decimal)          | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
