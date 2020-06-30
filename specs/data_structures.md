@@ -10,7 +10,7 @@ Data Structures
   - [AvailableDataHeader](#availabledataheader)
   - [AvailableData](#availabledata)
   - [Commit](#commit)
-  - [Time](#time)
+  - [Timestamp](#timestamp)
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [Address](#address)
@@ -76,7 +76,7 @@ Data Structures
 | `Height`                    | `uint64`                   |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
 | `StateSubtreeID`            | `byte`                     |
-| [`Time`](#time)             | `uint64`                   |
+| [`Timestamp`](#timestamp)   | `uint64`                   |
 
 # Blockchain Data Structures
 
@@ -98,7 +98,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | name                | type                      | description                                                                  |
 | ------------------- | ------------------------- | ---------------------------------------------------------------------------- |
 | `height`            | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                            |
-| `time`              | [Time](#time)             | Timestamp of this block.                                                     |
+| `timestamp`         | [Timestamp](#timestamp)   | Timestamp of this block.                                                     |
 | `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                         |
 | `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                     |
 | `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block. |
@@ -132,9 +132,9 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | `blockID`    | [BlockID](#blockid)         |             |
 | `signatures` | [CommitSig](#commitsig)`[]` |             |
 
-## Time
+## Timestamp
 
-Time is a [type alias](#type-aliases).
+Timestamp is a [type alias](#type-aliases).
 
 LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
 
@@ -170,7 +170,7 @@ enum BlockIDFlag : uint8_t {
 | ------------------ | ----------------------- | ----------- |
 | `blockIDFlag`      | `BlockIDFlag`           |             |
 | `validatorAddress` | [Address](#address)     |             |
-| `timestamp`        | [Time](#time)           |             |
+| `timestamp`        | [Timestamp](#timestamp) |             |
 | `signature`        | [Signature](#signature) |             |
 
 ## Signature
@@ -630,7 +630,7 @@ enum VoteType : uint8_t {
 | `height`           | [Height](#type-aliases) |             |
 | `round`            | `uint64`                |             |
 | `blockID`          | [BlockID](#blockid)     |             |
-| `timestamp`        | [Time](#time)           |             |
+| `timestamp`        | [Timestamp](#timestamp) |             |
 | `validatorAddress` | [Address](#address)     |             |
 | `validatorIndex`   | `uint64`                |             |
 | `signature`        | [Signature](#signature) |             |
