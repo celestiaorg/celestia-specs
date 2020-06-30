@@ -76,6 +76,8 @@ Data Structures
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
+| `Nonce`                     | `uint64`                   |
+| `Round`                     | `uint64`                   |
 | `StateSubtreeID`            | `byte`                     |
 | [`Timestamp`](#timestamp)   | `uint64`                   |
 | `VotingPower`               | `uint64`                   |
@@ -130,7 +132,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | name         | type                        | description |
 | ------------ | --------------------------- | ----------- |
 | `height`     | [Height](#type-aliases)     |             |
-| `round`      | `uint64`                    |             |
+| `round`      | [Round](#type-aliases)      |             |
 | `blockID`    | [BlockID](#blockid)         |             |
 | `signatures` | [CommitSig](#commitsig)`[]` |             |
 
@@ -471,7 +473,7 @@ Common fields are denoted here to avoid repeating descriptions:
 | `amount`     | [Amount](#type-aliases) | Amount of coins to send, in `1u`.                                          |
 | `to`         | [Address](#address)     | Recipient's address.                                                       |
 | `maxFeeRate` | `uint64`                | The maximum fee rate the sender is willing to pay.                         |
-| `nonce`      | `uint64`                | Nonce of sender.                                                           |
+| `nonce`      | [Nonce](#type-aliases)  | Nonce of sender.                                                           |
 
 
 #### SignedTransactionData: Transfer
@@ -482,7 +484,7 @@ Common fields are denoted here to avoid repeating descriptions:
 | `amount`     | [Amount](#type-aliases) |                                     |
 | `to`         | [Address](#address)     |                                     |
 | `maxFeeRate` | `uint64`                |                                     |
-| `nonce`      | `uint64`                |                                     |
+| `nonce`      | [Nonce](#type-aliases)  |                                     |
 
 Transfers `amount` coins to `to`.
 
@@ -492,7 +494,7 @@ Transfers `amount` coins to `to`.
 | ------------------------ | ------------------------------ | ------------------------------------------------------------ |
 | `type`                   | `TransactionType`              | Must be `TransactionType.PayForMessage`.                     |
 | `maxFeeRate`             | `uint64`                       |                                                              |
-| `nonce`                  | `uint64`                       |                                                              |
+| `nonce`                  | [Nonce](#type-aliases)         |                                                              |
 | `messageNamespaceID`     | [`NamespaceID`](#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
 | `messageSize`            | `uint64`                       | Size of message this transaction pays a fee for, in `byte`s. |
 | `messageShareCommitment` | [HashDigest](#hashdigest)      | Commitment to message shares (details below).                |
@@ -518,28 +520,28 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 | `type`           | `TransactionType`       | Must be `TransactionType.CreateValidator`. |
 | `amount`         | [Amount](#type-aliases) |                                            |
 | `maxFeeRate`     | `uint64`                |                                            |
-| `nonce`          | `uint64`                |                                            |
+| `nonce`          | [Nonce](#type-aliases)  |                                            |
 | `commissionRate` | [Decimal](#decimal)     |                                            |
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
 #### SignedTransactionData: BeginUnbondingValidator
 
-| name         | type              | description                                        |
-| ------------ | ----------------- | -------------------------------------------------- |
-| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingValidator`. |
-| `maxFeeRate` | `uint64`          |                                                    |
-| `nonce`      | `uint64`          |                                                    |
+| name         | type                   | description                                        |
+| ------------ | ---------------------- | -------------------------------------------------- |
+| `type`       | `TransactionType`      | Must be `TransactionType.BeginUnbondingValidator`. |
+| `maxFeeRate` | `uint64`               |                                                    |
+| `nonce`      | [Nonce](#type-aliases) |                                                    |
 
 Begin unbonding the [Validator](#validator) at this address.
 
 #### SignedTransactionData: UnbondValidator
 
-| name         | type              | description                                |
-| ------------ | ----------------- | ------------------------------------------ |
-| `type`       | `TransactionType` | Must be `TransactionType.UnbondValidator`. |
-| `maxFeeRate` | `uint64`          |                                            |
-| `nonce`      | `uint64`          |                                            |
+| name         | type                   | description                                |
+| ------------ | ---------------------- | ------------------------------------------ |
+| `type`       | `TransactionType`      | Must be `TransactionType.UnbondValidator`. |
+| `maxFeeRate` | `uint64`               |                                            |
+| `nonce`      | [Nonce](#type-aliases) |                                            |
 
 Finish unbonding the [Validator](#validator) at this address.
 
@@ -551,27 +553,27 @@ Finish unbonding the [Validator](#validator) at this address.
 | `amount`     | [Amount](#type-aliases) |                                             |
 | `to`         | [Address](#address)     |                                             |
 | `maxFeeRate` | `uint64`                |                                             |
-| `nonce`      | `uint64`                |                                             |
+| `nonce`      | [Nonce](#type-aliases)  |                                             |
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
 #### SignedTransactionData: BeginUnbondingDelegation
 
-| name         | type              | description                                         |
-| ------------ | ----------------- | --------------------------------------------------- |
-| `type`       | `TransactionType` | Must be `TransactionType.BeginUnbondingDelegation`. |
-| `maxFeeRate` | `uint64`          |                                                     |
-| `nonce`      | `uint64`          |                                                     |
+| name         | type                   | description                                         |
+| ------------ | ---------------------- | --------------------------------------------------- |
+| `type`       | `TransactionType`      | Must be `TransactionType.BeginUnbondingDelegation`. |
+| `maxFeeRate` | `uint64`               |                                                     |
+| `nonce`      | [Nonce](#type-aliases) |                                                     |
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
 #### SignedTransactionData: UnbondDelegation
 
-| name         | type              | description                                 |
-| ------------ | ----------------- | ------------------------------------------- |
-| `type`       | `TransactionType` | Must be `TransactionType.UnbondDelegation`. |
-| `maxFeeRate` | `uint64`          |                                             |
-| `nonce`      | `uint64`          |                                             |
+| name         | type                   | description                                 |
+| ------------ | ---------------------- | ------------------------------------------- |
+| `type`       | `TransactionType`      | Must be `TransactionType.UnbondDelegation`. |
+| `maxFeeRate` | `uint64`               |                                             |
+| `nonce`      | [Nonce](#type-aliases) |                                             |
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
@@ -630,7 +632,7 @@ enum VoteType : uint8_t {
 | ------------------ | ----------------------- | ----------- |
 | `type`             | `VoteType`              |             |
 | `height`           | [Height](#type-aliases) |             |
-| `round`            | `uint64`                |             |
+| `round`            | [Round](#type-aliases)  |             |
 | `blockID`          | [BlockID](#blockid)     |             |
 | `timestamp`        | [Timestamp](#timestamp) |             |
 | `validatorAddress` | [Address](#address)     |             |
@@ -666,7 +668,7 @@ Three subtrees are maintained:
 | name             | type                      | description                                                                       |
 | ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
 | `balance`        | [Amount](#type-aliases)   | Coin balance.                                                                     |
-| `nonce`          | `uint64`                  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `nonce`          | [Nonce](#type-aliases)    | Account nonce. Every outgoing transaction from this account increments the nonce. |
 | `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
 | `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
 | `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
