@@ -29,6 +29,7 @@ Data Structures
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
   - [Share](#share)
+    - [Share Serialization](#share-serialization)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
   - [TransactionData](#transactiondata)
@@ -271,18 +272,18 @@ In addition to the root, leaf, index, and sibling values of a Merkle proof for a
 
 ## Namespace Merkle Tree
 
-Messages in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
+[Messages](#message) in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
 
 The NMT is an annotated Merkle tree with two additional fields and methods that indicate the range of namespace IDs in each node's subtree.
 
 For leaf node of message `m`:
 ```C++
-n_min = m_1_l(m) = m.namespace_id
-n_max = m_2_l(m) = m.namespace_id
+n_min = m_1_l(m) = m.namespaceID
+n_max = m_2_l(m) = m.namespaceID
 v = h(serialize(m))
 ```
 
-The `namespace_id` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-byte unsigned integer.
+The `namespaceID` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
 
 Before being hashed, the [messages](#message) are [serialized](#serialization).
 
@@ -379,15 +380,20 @@ Finally, the `availableDataRoot` of the block [Header](#header) is computed as t
 
 A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
 
-| name      | type               | description     |
-| --------- | ------------------ | --------------- |
-| `rawData` | `byte[SHARE_SIZE]` | Raw share data. |
+| name          | type                         | description                |
+| ------------- | ---------------------------- | -------------------------- |
+| `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of the share. |
+| `rawData`     | `byte[SHARE_SIZE]`           | Raw share data.            |
 
 An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first `SHARE_RESERVED_BYTES` bytes (`*` in the figure) is the starting byte of the first request in the share as an unsigned integer, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first `SHARE_RESERVED_BYTES` bytes have no special meaning and are simply used to store data like all the other bytes in the share.
 
 ![fig: Reserved share.](./figures/share.svg)
 
 For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
+
+### Share Serialization
+
+Shares [canonically serialized](#serialization) using only the raw share data, i.e. `serialize(share) = serialize(share.rawData)`.
 
 ## Arranging Available Data Into Shares
 
