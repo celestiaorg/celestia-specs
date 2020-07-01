@@ -45,6 +45,7 @@ Data Structures
       - [SignedTransactionData: CreateDelegation](#signedtransactiondata-createdelegation)
       - [SignedTransactionData: BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
       - [SignedTransactionData: UnbondDelegation](#signedtransactiondata-unbonddelegation)
+      - [SignedTransactionData: Burn](#signedtransactiondata-burn)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -75,6 +76,7 @@ Data Structures
 | `Amount`                    | `uint64`                   |
 | [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
 | `FeeRate`                   | `uint64`                   |
+| `Graffiti`                  | `NamespaceID`              |
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
@@ -458,6 +460,7 @@ enum TransactionType : uint8_t {
     CreateDelegation = 7,
     BeginUnbondingDelegation = 8,
     UnbondDelegation = 9,
+    Burn = 10,
 };
 ```
 
@@ -471,6 +474,7 @@ Signed transaction data comes in a number of types:
 1. [CreateDelegation](#signedtransactiondata-createdelegation)
 1. [BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
 1. [UnbondDelegation](#signedtransactiondata-unbonddelegation)
+1. [Burn](#signedtransactiondata-burn)
 
 Common fields are denoted here to avoid repeating descriptions:
 
@@ -481,7 +485,6 @@ Common fields are denoted here to avoid repeating descriptions:
 | `to`         | [Address](#address)      | Recipient's address.                                                       |
 | `maxFeeRate` | [FeeRate](#type-aliases) | The maximum fee rate the sender is willing to pay.                         |
 | `nonce`      | [Nonce](#type-aliases)   | Nonce of sender.                                                           |
-
 
 #### SignedTransactionData: Transfer
 
@@ -583,6 +586,16 @@ Begin unbonding the [Delegation](#delegation) at this address.
 | `nonce`      | [Nonce](#type-aliases)   |                                             |
 
 Finish unbonding the [Delegation](#delegation) at this address.
+
+#### SignedTransactionData: Burn
+
+| name         | type                      | description                                  |
+| ------------ | ------------------------- | -------------------------------------------- |
+| `type`       | `TransactionType`         | Must be `TransactionType.Burn`.              |
+| `amount`     | [Amount](#type-aliases)   |                                              |
+| `maxFeeRate` | [FeeRate](#type-aliases)  |                                              |
+| `nonce`      | [Nonce](#type-aliases)    |                                              |
+| `graffiti`   | [Graffiti](#type-aliases) | Graffiti to indicate the reason for burning. |
 
 ## IntermediateStateRootData
 
