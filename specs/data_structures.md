@@ -272,7 +272,7 @@ In addition to the root, leaf, index, and sibling values of a Merkle proof for a
 
 ## Namespace Merkle Tree
 
-Messages in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
+[Messages](#message) in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
 
 The NMT is an annotated Merkle tree with two additional fields and methods that indicate the range of namespace IDs in each node's subtree.
 
