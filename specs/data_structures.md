@@ -283,7 +283,7 @@ n_max = m_2_l(m) = m.namespaceID
 v = h(serialize(m))
 ```
 
-The `namespaceID` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-byte unsigned integer.
+The `namespaceID` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
 
 Before being hashed, the [messages](#message) are [serialized](#serialization).
 
