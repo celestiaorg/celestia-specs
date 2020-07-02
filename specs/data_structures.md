@@ -23,6 +23,7 @@ Data Structures
   - [Binary Merkle Tree](#binary-merkle-tree)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
+    - [Sparse Merkle Tree Proofs](#sparse-merkle-tree-proofs)
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
@@ -278,17 +279,12 @@ v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 
 Sparse Merkle Trees (SMTs) are _sparse_, i.e. they contain mostly empty leaves. They can be used as key-value stores for arbitrary data, as each leaf is keyed by its index in the tree. Storage efficiency is achieved through clever use of implicit defaults, avoiding the need to store empty leaves.
 
-Default values are given to leaf nodes with empty leaves. While this is sufficient to pre-compute the values of intermediate nodes that are roots of empty subtrees, a further simplification is to extend this default value to all nodes that are roots of empty subtrees. The 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`, is used as the default value.
+Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-tree):
+1. Default values are given to leaf nodes with empty leaves.
+1. While the above rule is sufficient to pre-compute the values of intermediate nodes that are roots of empty subtrees, a further simplification is to extend this default value to all nodes that are roots of empty subtrees. The 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`, is used as the default value. This rule takes precedence over the above one.
+1. The number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average, assuming a uniform distribution of non-empty leaf keys. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
 
-SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
-
-For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. The lowest bit corresponds to the sibling of the leaf node, and each higher bit corresponds to the next parent. A value of `1` indicates that the next value in the list of values provided explicitly in the proof should be used, and a value of `0` indicates that the default value should be used.
-
-Finally, the number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
-
-Additionally, the key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
-
-The base case (an empty tree) is defined as:
+The base case (an empty tree) is defined as the default value:
 ```C++
 v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
@@ -298,10 +294,18 @@ For leaf node of leaf data `d` with key `k`, its value `v` is:
 v = h(0x00, k, serialize(d))
 ```
 
+The key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
+
 For internal node with children `l` and `r`, its value `v` is:
 ```C++
 v = h(0x01, l.v, r.v)
 ```
+
+### Sparse Merkle Tree Proofs
+
+SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
+
+For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. The lowest bit corresponds to the sibling of the leaf node, and each higher bit corresponds to the next parent. A value of `1` indicates that the next value in the list of values provided explicitly in the proof should be used, and a value of `0` indicates that the default value should be used.
 
 A proof into an SMT is structured as:
 
