@@ -21,7 +21,9 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
+    - [Binary Merkle Tree Proofs](#binary-merkle-tree-proofs)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
+    - [Namespace Merkle Tree Proofs](#namespace-merkle-tree-proofs)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
     - [Sparse Merkle Tree Proofs](#sparse-merkle-tree-proofs)
 - [Erasure Coding](#erasure-coding)
@@ -248,6 +250,16 @@ Note that rather than duplicating the last node if there are an odd number of no
 
 Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
+### Binary Merkle Tree Proofs
+
+| name       | type                          | description                                                              |
+| ---------- | ----------------------------- | ------------------------------------------------------------------------ |
+| `root`     | [HashDigest](#hashdigest)     | Merkle root.                                                             |
+| `key`      | `byte[32]`                    | Key (i.e. index) of the leaf.                                            |
+| `depth`    | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
+| `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                     |
+| `leaf`     | `byte[]`                      | Leaf value.                                                              |
+
 ## Namespace Merkle Tree
 
 [Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion of exclusion of shares with particular namespace IDs.
@@ -274,6 +286,18 @@ n_min = min(l.n_min, r.n_min)
 n_max = max(l.n_max, r.n_max)
 v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 ```
+
+### Namespace Merkle Tree Proofs
+
+| name            | type                             | description                                                              |
+| --------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| `root`          | [HashDigest](#hashdigest)        | Merkle root.                                                             |
+| `key`           | `byte[32]`                       | Key (i.e. index) of the leaf.                                            |
+| `depth`         | `uint16`                         | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
+| `siblingValues` | [HashDigest](#hashdigest)`[]`    | Sibling hash values.                                                     |
+| `siblingMins`   | [NamespaceID](#type-aliases)`[]` | Sibling min namespaceIDs.                                                |
+| `siblingMaxs`   | [NamespaceID](#type-aliases)`[]` | Sibling max namespaceIDs.                                                |
+| `leaf`          | `byte[]`                         | Leaf value.                                                              |
 
 ## Sparse Merkle Tree
 
