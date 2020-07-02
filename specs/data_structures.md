@@ -231,6 +231,11 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
+Nodes contain a single field:
+| name | type       | description |
+| ---- | ---------- | ----------- |
+| `v`  | `byte[32]` | Node value. |
+
 The base case (an empty tree) is defined as zero:
 ```C++
 node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -262,6 +267,13 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 ## Namespace Merkle Tree
 
 [Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.
+
+Nodes contain three fields:
+| name    | type                         | description                                      |
+| ------- | ---------------------------- | ------------------------------------------------ |
+| `n_min` | [NamespaceID](#type-aliases) | Min namespace ID in subtree rooted at this node. |
+| `n_max` | [NamespaceID](#type-aliases) | Max namespace ID in subtree rooted at this node. |
+| `v`     | `byte[32]`                   | Node value.                                      |
 
 The base case (an empty tree) is defined as:
 ```C++
@@ -305,6 +317,11 @@ Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-
 1. Default values are given to leaf nodes with empty leaves.
 1. While the above rule is sufficient to pre-compute the values of intermediate nodes that are roots of empty subtrees, a further simplification is to extend this default value to all nodes that are roots of empty subtrees. The 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`, is used as the default value. This rule takes precedence over the above one.
 1. The number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average, assuming a uniform distribution of non-empty leaf keys. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
+
+Nodes contain a single field:
+| name | type       | description |
+| ---- | ---------- | ----------- |
+| `v`  | `byte[32]` | Node value. |
 
 The base case (an empty tree) is defined as the default value:
 ```C++
