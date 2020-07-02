@@ -232,9 +232,9 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
 Nodes contain a single field:
-| name | type       | description |
-| ---- | ---------- | ----------- |
-| `v`  | `byte[32]` | Node value. |
+| name | type                      | description |
+| ---- | ------------------------- | ----------- |
+| `v`  | [HashDigest](#hashdigest) | Node value. |
 
 The base case (an empty tree) is defined as zero:
 ```C++
@@ -273,7 +273,7 @@ Nodes contain three fields:
 | ------- | ---------------------------- | ------------------------------------------------ |
 | `n_min` | [NamespaceID](#type-aliases) | Min namespace ID in subtree rooted at this node. |
 | `n_max` | [NamespaceID](#type-aliases) | Max namespace ID in subtree rooted at this node. |
-| `v`     | `byte[32]`                   | Node value.                                      |
+| `v`     | [HashDigest](#hashdigest)    | Node value.                                      |
 
 The base case (an empty tree) is defined as:
 ```C++
@@ -319,9 +319,9 @@ Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-
 1. The number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average, assuming a uniform distribution of non-empty leaf keys. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
 
 Nodes contain a single field:
-| name | type       | description |
-| ---- | ---------- | ----------- |
-| `v`  | `byte[32]` | Node value. |
+| name | type                      | description |
+| ---- | ------------------------- | ----------- |
+| `v`  | [HashDigest](#hashdigest) | Node value. |
 
 The base case (an empty tree) is defined as the default value:
 ```C++
