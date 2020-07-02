@@ -248,7 +248,7 @@ node.v = h(0x00, serialize(d))
 
 For internal node `node` with children `l` and `r`:
 ```C++
-node.v = h(0x01, l.v, r.v)
+node.v = h(0x01, serialize(l), serialize(r))
 ```
 
 Note that rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3 of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962).
@@ -295,7 +295,7 @@ For internal node `node` with children `l` and `r`:
 ```C++
 node.n_min = min(l.n_min, r.n_min)
 node.n_max = max(l.n_max, r.n_max)
-node.v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
+node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 ```
 
 ### Namespace Merkle Tree Proofs
@@ -337,7 +337,7 @@ The key of leaf nodes must be prepended, since the index of a leaf node that is 
 
 For internal node `node` with children `l` and `r`:
 ```C++
-node.v = h(0x01, l.v, r.v)
+node.v = h(0x01, serialize(l), serialize(r))
 ```
 
 ### Sparse Merkle Tree Proofs
