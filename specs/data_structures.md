@@ -228,19 +228,19 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 ## Binary Merkle Tree
 
-Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf node values and internal node values being the hash of the concatenation of their children. The specific mechanism for hashing leaves for leaf nodes and children for internal nodes may be different (see: [annotated Merkle trees](#annotated-merkle-tree)), but for plain binary Merkle trees are the same.
+Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
-For leaf node of leaf message `m`, its value `v` is:
+For leaf node of leaf data `d`, its value `v` is:
 ```C++
-v = h(serialize(m))
+v = h(0x00, serialize(d))
 ```
-
-An exception is made, in the case of empty leaves: the value of a leaf node with an empty leaf is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)) to avoid the complexities in that design, which resulted in e.g. [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). By constructions, trees are implicitly padded with empty leaves up to the smallest enclosing power of 2.
 
 For internal node with children `l` and `r`, its value `v` is:
 ```C++
-v = h(l.v, r.v)
+v = h(0x01, l.v, r.v)
 ```
+
+Note that rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3. of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962).
 
 ## Annotated Merkle Tree
 
