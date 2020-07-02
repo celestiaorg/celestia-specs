@@ -241,12 +241,12 @@ The base case (an empty tree) is defined as zero:
 node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-For leaf node `node` of leaf data `d`, its value `v` is:
+For leaf node `node` of leaf data `d`:
 ```C++
 node.v = h(0x00, serialize(d))
 ```
 
-For internal node `node` with children `l` and `r`, its value `v` is:
+For internal node `node` with children `l` and `r`:
 ```C++
 node.v = h(0x01, l.v, r.v)
 ```
@@ -328,14 +328,14 @@ The base case (an empty tree) is defined as the default value:
 node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-For leaf node `node` of leaf data `d` with key `k`, its value `v` is:
+For leaf node `node` of leaf data `d` with key `k`:
 ```C++
 node.v = h(0x00, k, serialize(d))
 ```
 
 The key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
 
-For internal node `node` with children `l` and `r`, its value `v` is:
+For internal node `node` with children `l` and `r`:
 ```C++
 node.v = h(0x01, l.v, r.v)
 ```
