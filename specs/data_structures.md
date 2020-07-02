@@ -279,18 +279,16 @@ For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. Th
 
 Finally, the number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
 
-This creates an imbalanced tree with leaf nodes at different heights, so leaves and nodes must be hashed differently to avoid a second-preimage attack [where internal nodes are presented as leaf nodes](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack). When hashing leaves, the `uint8` value `0x00` is prepended to the leaf value, and when hashing nodes, `0x01` is prepended to the hash value.
-
 Additionally, the key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
 
-For leaf node of leaf message `m` with key `k`, its value `v` is:
+For leaf node of leaf data `d` with key `k`, its value `v` is:
 ```C++
-v = h(`0x00`, k, serialize(m))
+v = h(0x00, k, serialize(d))
 ```
 
 For internal node with children `l` and `r`, its value `v` is:
 ```C++
-v = h(`0x01`, l.v, r.v)
+v = h(0x01, l.v, r.v)
 ```
 
 A proof into an SMT is structured as:
