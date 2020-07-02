@@ -21,8 +21,6 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
-  - [Annotated Merkle Tree](#annotated-merkle-tree)
-    - [Verifying Annotated Merkle Proofs](#verifying-annotated-merkle-proofs)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
 - [Erasure Coding](#erasure-coding)
@@ -247,58 +245,26 @@ v = h(0x01, l.v, r.v)
 
 Note that rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3. of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962).
 
-## Annotated Merkle Tree
-
-Merkle trees can be augmented as generic annotated Merkle trees, where additional fields can be contained in each node. One of the early annotated Merkle trees is the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0), which allows for compact fraud proofs to be made of fees collected in a block.
-
-Annotated Merkle trees have extra fields and methods to compute values for those fields, i.e. `f_1, ..., f_n, v` for `n` fields (note that if `n=0`, the annotated Merkle tree is a plain [binary Merkle tree](#binary-merkle-tree)). The value of field `f_i` is computed with the method `m_i_i(height, left_child_field, right_child_field)` for internal nodes and `m_i_l(message)` for leaf nodes.
-
-For leaf node of leaf message `m`, its value `v` and fields `f_1, ..., f_n` are:
-```C++
-f_1 = m_1_l(m)
-...
-f_n = m_n_l(m)
-v = h(serialize(m))
-```
-
-For internal node at height `height` with children `l` and `r`, its value `v` and fields `f_1, ..., f_n` are:
-```C++
-f_1 = m_1_i(height, l.f_1, r.f_1)
-...
-f_n = m_n_i(height, l.f_n, r.f_n)
-v = h(l.f_1, ..., l.f_n, l.v, r.f_1, ..., r.f_n, r.v)
-```
-
-If a compact Merkle root is needed, the root level (which consists of root fields and a root value) can be hashed once.
-
-As an example of annotation, when hashing leaves, `0x00` can be prepended, and when hashing internal nodes, `0x01` can be prepended (i.e. `m_1_l() = 0x00` and `m_1_i() = 0x01`). This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) for incomplete trees.
-
-### Verifying Annotated Merkle Proofs
-
-In addition to the root, leaf, index, and sibling values of a Merkle proof for a plain [binary Merkle tree](#binary-merkle-tree), Merkle proofs for annotated Mekle trees have the sibling field values. Proofs are verified by using the appropriate methods to compute field values.
+Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
 ## Namespace Merkle Tree
 
-[Messages](#message) in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
+[Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion of exclusion of shares with particular namespace IDs.
 
-The NMT is an annotated Merkle tree with two additional fields and methods that indicate the range of namespace IDs in each node's subtree.
-
-For leaf node of message `m`:
+For leaf node of data `d`:
 ```C++
-n_min = m_1_l(m) = m.namespaceID
-n_max = m_2_l(m) = m.namespaceID
-v = h(serialize(m))
+n_min = d.namespaceID
+n_max = d.namespaceID
+v = h(0x00, serialize(m))
 ```
 
-The `namespaceID` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
-
-Before being hashed, the [messages](#message) are [serialized](#serialization).
+The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
 
 For internal node with children `l` and `r`:
 ```C++
-n_min = m_1_i(height, l, r) = min(l.n_min, r.n_min)
-n_max = m_2_i(height, l, r) = max(l.n_max, r.n_max)
-v = h(l, r) = h(l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
+n_min = min(l.n_min, r.n_min)
+n_max = max(l.n_max, r.n_max)
+v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 ```
 
 ## Sparse Merkle Tree
