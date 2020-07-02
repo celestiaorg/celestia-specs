@@ -298,16 +298,22 @@ node.n_max = max(l.n_max, r.n_max)
 node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 ```
 
+A root hash can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
+
 ### Namespace Merkle Tree Proofs
 
-| name            | type                             | description                   |
-| --------------- | -------------------------------- | ----------------------------- |
-| `root`          | [HashDigest](#hashdigest)        | Merkle root.                  |
-| `key`           | `byte[32]`                       | Key (i.e. index) of the leaf. |
-| `siblingValues` | [HashDigest](#hashdigest)`[]`    | Sibling hash values.          |
-| `siblingMins`   | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.    |
-| `siblingMaxes`  | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
-| `leaf`          | `byte[]`                         | Leaf value.                   |
+| name                 | type                             | description                   |
+| -------------------- | -------------------------------- | ----------------------------- |
+| `rootHash`           | [HashDigest](#hashdigest)        | Root hash.                    |
+| `rootNamespaceIDMin` | [NamespaceID](#type-aliases)     | Root minimum namespace ID.    |
+| `rootNamespaceIDMax` | [NamespaceID](#type-aliases)     | Root maximum namespace ID.    |
+| `key`                | `byte[32]`                       | Key (i.e. index) of the leaf. |
+| `siblingValues`      | [HashDigest](#hashdigest)`[]`    | Sibling hash values.          |
+| `siblingMins`        | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.    |
+| `siblingMaxes`       | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
+| `leaf`               | `byte[]`                         | Leaf value.                   |
+
+When verifying a NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
 ## Sparse Merkle Tree
 
