@@ -233,17 +233,17 @@ Binary Merkle trees are constructed in the same fashion as described in [Certifi
 
 The base case (an empty tree) is defined as zero:
 ```C++
-v = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-For leaf node of leaf data `d`, its value `v` is:
+For leaf node `node` of leaf data `d`, its value `v` is:
 ```C++
-v = h(0x00, serialize(d))
+node.v = h(0x00, serialize(d))
 ```
 
-For internal node with children `l` and `r`, its value `v` is:
+For internal node `node` with children `l` and `r`, its value `v` is:
 ```C++
-v = h(0x01, l.v, r.v)
+node.v = h(0x01, l.v, r.v)
 ```
 
 Note that rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3 of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962).
@@ -265,25 +265,25 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 
 The base case (an empty tree) is defined as:
 ```C++
-n_min = 0x0000000000000000000000000000000000000000000000000000000000000000
-n_max = 0x0000000000000000000000000000000000000000000000000000000000000000
-v = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.n_min = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.n_max = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-For leaf node of data `d`:
+For leaf node `node` of data `d`:
 ```C++
-n_min = d.namespaceID
-n_max = d.namespaceID
-v = h(0x00, serialize(d)
+node.n_min = d.namespaceID
+node.n_max = d.namespaceID
+node.v = h(0x00, serialize(d)
 ```
 
 The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
 
-For internal node with children `l` and `r`:
+For internal node `node` with children `l` and `r`:
 ```C++
-n_min = min(l.n_min, r.n_min)
-n_max = max(l.n_max, r.n_max)
-v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
+node.n_min = min(l.n_min, r.n_min)
+node.n_max = max(l.n_max, r.n_max)
+node.v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 ```
 
 ### Namespace Merkle Tree Proofs
@@ -308,19 +308,19 @@ Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-
 
 The base case (an empty tree) is defined as the default value:
 ```C++
-v = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-For leaf node of leaf data `d` with key `k`, its value `v` is:
+For leaf node `node` of leaf data `d` with key `k`, its value `v` is:
 ```C++
-v = h(0x00, k, serialize(d))
+node.v = h(0x00, k, serialize(d))
 ```
 
 The key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
 
-For internal node with children `l` and `r`, its value `v` is:
+For internal node `node` with children `l` and `r`, its value `v` is:
 ```C++
-v = h(0x01, l.v, r.v)
+node.v = h(0x01, l.v, r.v)
 ```
 
 ### Sparse Merkle Tree Proofs
