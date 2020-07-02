@@ -21,10 +21,11 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
-  - [Annotated Merkle Tree](#annotated-merkle-tree)
-    - [Verifying Annotated Merkle Proofs](#verifying-annotated-merkle-proofs)
+    - [Binary Merkle Tree Proofs](#binary-merkle-tree-proofs)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
+    - [Namespace Merkle Tree Proofs](#namespace-merkle-tree-proofs)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
+    - [Sparse Merkle Tree Proofs](#sparse-merkle-tree-proofs)
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
@@ -228,99 +229,128 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 ## Binary Merkle Tree
 
-Binary Merkle trees are constructed in the usual fashion, with leaves being hashed once to get leaf node values and internal node values being the hash of the concatenation of their children. The specific mechanism for hashing leaves for leaf nodes and children for internal nodes may be different (see: [annotated Merkle trees](#annotated-merkle-tree)), but for plain binary Merkle trees are the same.
+Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
-For leaf node of leaf message `m`, its value `v` is:
+Nodes contain a single field:
+| name | type                      | description |
+| ---- | ------------------------- | ----------- |
+| `v`  | [HashDigest](#hashdigest) | Node value. |
+
+The base case (an empty tree) is defined as zero:
 ```C++
-v = h(serialize(m))
+node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-An exception is made, in the case of empty leaves: the value of a leaf node with an empty leaf is 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`. This is used rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)) to avoid the complexities in that design, which resulted in e.g. [CVE-2012-2459](https://nvd.nist.gov/vuln/detail/CVE-2012-2459). By constructions, trees are implicitly padded with empty leaves up to the smallest enclosing power of 2.
-
-For internal node with children `l` and `r`, its value `v` is:
+For leaf node `node` of leaf data `d`:
 ```C++
-v = h(l.v, r.v)
+node.v = h(0x00, serialize(d))
 ```
 
-## Annotated Merkle Tree
-
-Merkle trees can be augmented as generic annotated Merkle trees, where additional fields can be contained in each node. One of the early annotated Merkle trees is the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0), which allows for compact fraud proofs to be made of fees collected in a block.
-
-Annotated Merkle trees have extra fields and methods to compute values for those fields, i.e. `f_1, ..., f_n, v` for `n` fields (note that if `n=0`, the annotated Merkle tree is a plain [binary Merkle tree](#binary-merkle-tree)). The value of field `f_i` is computed with the method `m_i_i(height, left_child_field, right_child_field)` for internal nodes and `m_i_l(message)` for leaf nodes.
-
-For leaf node of leaf message `m`, its value `v` and fields `f_1, ..., f_n` are:
+For internal node `node` with children `l` and `r`:
 ```C++
-f_1 = m_1_l(m)
-...
-f_n = m_n_l(m)
-v = h(serialize(m))
+node.v = h(0x01, serialize(l), serialize(r))
 ```
 
-For internal node at height `height` with children `l` and `r`, its value `v` and fields `f_1, ..., f_n` are:
-```C++
-f_1 = m_1_i(height, l.f_1, r.f_1)
-...
-f_n = m_n_i(height, l.f_n, r.f_n)
-v = h(l.f_1, ..., l.f_n, l.v, r.f_1, ..., r.f_n, r.v)
-```
+Note that rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3 of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962).
 
-If a compact Merkle root is needed, the root level (which consists of root fields and a root value) can be hashed once.
+Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
-As an example of annotation, when hashing leaves, `0x00` can be prepended, and when hashing internal nodes, `0x01` can be prepended (i.e. `m_1_l() = 0x00` and `m_1_i() = 0x01`). This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) for incomplete trees.
+### Binary Merkle Tree Proofs
 
-### Verifying Annotated Merkle Proofs
-
-In addition to the root, leaf, index, and sibling values of a Merkle proof for a plain [binary Merkle tree](#binary-merkle-tree), Merkle proofs for annotated Mekle trees have the sibling field values. Proofs are verified by using the appropriate methods to compute field values.
+| name       | type                          | description                   |
+| ---------- | ----------------------------- | ----------------------------- |
+| `root`     | [HashDigest](#hashdigest)     | Merkle root.                  |
+| `key`      | `byte[32]`                    | Key (i.e. index) of the leaf. |
+| `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.          |
+| `leaf`     | `byte[]`                      | Leaf value.                   |
 
 ## Namespace Merkle Tree
 
-[Messages](#message) in LazyLedger are associated with a provided _namespace ID_, which identifies the application (or applications) that will read these messages when parsing blocks. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642).
+[Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.
 
-The NMT is an annotated Merkle tree with two additional fields and methods that indicate the range of namespace IDs in each node's subtree.
+Nodes contain three fields:
+| name    | type                         | description                                      |
+| ------- | ---------------------------- | ------------------------------------------------ |
+| `n_min` | [NamespaceID](#type-aliases) | Min namespace ID in subtree rooted at this node. |
+| `n_max` | [NamespaceID](#type-aliases) | Max namespace ID in subtree rooted at this node. |
+| `v`     | [HashDigest](#hashdigest)    | Node value.                                      |
 
-For leaf node of message `m`:
+The base case (an empty tree) is defined as:
 ```C++
-n_min = m_1_l(m) = m.namespaceID
-n_max = m_2_l(m) = m.namespaceID
-v = h(serialize(m))
+node.n_min = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.n_max = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-The `namespaceID` message field here is the namespace ID of the message, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
-
-Before being hashed, the [messages](#message) are [serialized](#serialization).
-
-For internal node with children `l` and `r`:
+For leaf node `node` of data `d`:
 ```C++
-n_min = m_1_i(height, l, r) = min(l.n_min, r.n_min)
-n_max = m_2_i(height, l, r) = max(l.n_max, r.n_max)
-v = h(l, r) = h(l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
+node.n_min = d.namespaceID
+node.n_max = d.namespaceID
+node.v = h(0x00, serialize(d))
 ```
+
+The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
+
+For internal node `node` with children `l` and `r`:
+```C++
+node.n_min = min(l.n_min, r.n_min)
+node.n_max = max(l.n_max, r.n_max)
+node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
+```
+
+A root hash can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
+
+### Namespace Merkle Tree Proofs
+
+| name                 | type                             | description                   |
+| -------------------- | -------------------------------- | ----------------------------- |
+| `rootHash`           | [HashDigest](#hashdigest)        | Root hash.                    |
+| `rootNamespaceIDMin` | [NamespaceID](#type-aliases)     | Root minimum namespace ID.    |
+| `rootNamespaceIDMax` | [NamespaceID](#type-aliases)     | Root maximum namespace ID.    |
+| `key`                | `byte[32]`                       | Key (i.e. index) of the leaf. |
+| `siblingValues`      | [HashDigest](#hashdigest)`[]`    | Sibling hash values.          |
+| `siblingMins`        | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.    |
+| `siblingMaxes`       | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
+| `leaf`               | `byte[]`                         | Leaf value.                   |
+
+When verifying a NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
 ## Sparse Merkle Tree
 
 Sparse Merkle Trees (SMTs) are _sparse_, i.e. they contain mostly empty leaves. They can be used as key-value stores for arbitrary data, as each leaf is keyed by its index in the tree. Storage efficiency is achieved through clever use of implicit defaults, avoiding the need to store empty leaves.
 
-Default values are given to leaf nodes with empty leaves. While this is sufficient to pre-compute the values of intermediate nodes that are roots of empty subtrees, a further simplification is to extend this default value to all nodes that are roots of empty subtrees. The 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`, is used as the default value.
+Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-tree):
+1. Default values are given to leaf nodes with empty leaves.
+1. While the above rule is sufficient to pre-compute the values of intermediate nodes that are roots of empty subtrees, a further simplification is to extend this default value to all nodes that are roots of empty subtrees. The 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`, is used as the default value. This rule takes precedence over the above one.
+1. The number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average, assuming a uniform distribution of non-empty leaf keys. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
+
+Nodes contain a single field:
+| name | type                      | description |
+| ---- | ------------------------- | ----------- |
+| `v`  | [HashDigest](#hashdigest) | Node value. |
+
+The base case (an empty tree) is defined as the default value:
+```C++
+node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
+```
+
+For leaf node `node` of leaf data `d` with key `k`:
+```C++
+node.v = h(0x00, k, serialize(d))
+```
+
+The key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
+
+For internal node `node` with children `l` and `r`:
+```C++
+node.v = h(0x01, serialize(l), serialize(r))
+```
+
+### Sparse Merkle Tree Proofs
 
 SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
 
 For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. The lowest bit corresponds to the sibling of the leaf node, and each higher bit corresponds to the next parent. A value of `1` indicates that the next value in the list of values provided explicitly in the proof should be used, and a value of `0` indicates that the default value should be used.
-
-Finally, the number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
-
-This creates an imbalanced tree with leaf nodes at different heights, so leaves and nodes must be hashed differently to avoid a second-preimage attack [where internal nodes are presented as leaf nodes](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack). When hashing leaves, the `uint8` value `0x00` is prepended to the leaf value, and when hashing nodes, `0x01` is prepended to the hash value.
-
-Additionally, the key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
-
-For leaf node of leaf message `m` with key `k`, its value `v` is:
-```C++
-v = h(`0x00`, k, serialize(m))
-```
-
-For internal node with children `l` and `r`, its value `v` is:
-```C++
-v = h(`0x01`, l.v, r.v)
-```
 
 A proof into an SMT is structured as:
 
