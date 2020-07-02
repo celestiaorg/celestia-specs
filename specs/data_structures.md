@@ -274,7 +274,7 @@ For leaf node of data `d`:
 ```C++
 n_min = d.namespaceID
 n_max = d.namespaceID
-v = h(0x00, serialize(m))
+v = h(0x00, serialize(d)
 ```
 
 The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
