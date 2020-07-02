@@ -261,7 +261,7 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 
 ## Namespace Merkle Tree
 
-[Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion of exclusion of shares with particular namespace IDs.
+[Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.
 
 The base case (an empty tree) is defined as:
 ```C++
