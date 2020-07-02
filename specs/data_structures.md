@@ -252,13 +252,12 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 
 ### Binary Merkle Tree Proofs
 
-| name       | type                          | description                                                              |
-| ---------- | ----------------------------- | ------------------------------------------------------------------------ |
-| `root`     | [HashDigest](#hashdigest)     | Merkle root.                                                             |
-| `key`      | `byte[32]`                    | Key (i.e. index) of the leaf.                                            |
-| `depth`    | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
-| `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                     |
-| `leaf`     | `byte[]`                      | Leaf value.                                                              |
+| name       | type                          | description                   |
+| ---------- | ----------------------------- | ----------------------------- |
+| `root`     | [HashDigest](#hashdigest)     | Merkle root.                  |
+| `key`      | `byte[32]`                    | Key (i.e. index) of the leaf. |
+| `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.          |
+| `leaf`     | `byte[]`                      | Leaf value.                   |
 
 ## Namespace Merkle Tree
 
