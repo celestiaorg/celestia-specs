@@ -230,6 +230,11 @@ Merkle trees are used to authenticate various pieces of data across the LazyLedg
 
 Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
+The base case (an empty tree) is defined as zero:
+```C++
+v = 0x0000000000000000000000000000000000000000000000000000000000000000
+```
+
 For leaf node of leaf data `d`, its value `v` is:
 ```C++
 v = h(0x00, serialize(d))
