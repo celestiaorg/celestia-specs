@@ -288,15 +288,14 @@ v = h(l, r) = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 
 ### Namespace Merkle Tree Proofs
 
-| name            | type                             | description                                                              |
-| --------------- | -------------------------------- | ------------------------------------------------------------------------ |
-| `root`          | [HashDigest](#hashdigest)        | Merkle root.                                                             |
-| `key`           | `byte[32]`                       | Key (i.e. index) of the leaf.                                            |
-| `depth`         | `uint16`                         | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
-| `siblingValues` | [HashDigest](#hashdigest)`[]`    | Sibling hash values.                                                     |
-| `siblingMins`   | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.                                               |
-| `siblingMaxes`  | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.                                               |
-| `leaf`          | `byte[]`                         | Leaf value.                                                              |
+| name            | type                             | description                   |
+| --------------- | -------------------------------- | ----------------------------- |
+| `root`          | [HashDigest](#hashdigest)        | Merkle root.                  |
+| `key`           | `byte[32]`                       | Key (i.e. index) of the leaf. |
+| `siblingValues` | [HashDigest](#hashdigest)`[]`    | Sibling hash values.          |
+| `siblingMins`   | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.    |
+| `siblingMaxes`  | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
+| `leaf`          | `byte[]`                         | Leaf value.                   |
 
 ## Sparse Merkle Tree
 
