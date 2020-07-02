@@ -288,6 +288,11 @@ Finally, the number of hashing operations can be reduced to be logarithmic in th
 
 Additionally, the key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
 
+The base case (an empty tree) is defined as:
+```C++
+v = 0x0000000000000000000000000000000000000000000000000000000000000000
+```
+
 For leaf node of leaf data `d` with key `k`, its value `v` is:
 ```C++
 v = h(0x00, k, serialize(d))
