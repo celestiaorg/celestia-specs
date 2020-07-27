@@ -73,7 +73,7 @@ Data Structures
 
 | name                        | type                       |
 | --------------------------- | -------------------------- |
-| [`Address`](#address)       | `byte[20]`                 |
+| [`Address`](#address)       | `byte[32]`                 |
 | `Amount`                    | `uint64`                   |
 | [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
 | `FeeRate`                   | `uint64`                   |
@@ -163,7 +163,7 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
 Address is a [type alias](#type-aliases).
 
-Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
+Addresses are the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
 ## CommitSig
 
