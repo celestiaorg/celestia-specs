@@ -1,7 +1,6 @@
 Consensus Rules
 ===
 
-- [Consensus Rules](#consensus-rules)
 - [System Parameters](#system-parameters)
   - [Units](#units)
   - [Constants](#constants)
@@ -16,9 +15,9 @@ Consensus Rules
   - [Formatting](#formatting)
   - [Availability](#availability)
 
-# System Parameters
+## System Parameters
 
-## Units
+### Units
 
 | name | SI    | value   | description         |
 | ---- | ----- | ------- | ------------------- |
@@ -27,7 +26,7 @@ Consensus Rules
 | `3u` | `M1u` | `10**6` | `1000000` units.    |
 | `4u` | `G1u` | `10**9` | `1000000000` units. |
 
-## Constants
+### Constants
 
 | name                                  | type     | value   | unit    | description                                                                                                                                                 |
 | ------------------------------------- | -------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -43,7 +42,7 @@ Consensus Rules
 | `MAX_VALIDATORS`                      | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                        |
 | `STATE_SUBTREE_RESERVED_BYTES`        | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                        |
 
-## Reserved Namespace IDs
+### Reserved Namespace IDs
 
 | name                                   | type          | value                                                                | description                                                                   |
 | -------------------------------------- | ------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -53,7 +52,7 @@ Consensus Rules
 | `TAIL_PADDING_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE` | Tail padding: padding after all messages to fill up the original data square. |
 | `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | Parity shares: extended shares in the available data matrix.                  |
 
-## Reserved State Subtree IDs
+### Reserved State Subtree IDs
 
 | name                             | type             | value  |
 | -------------------------------- | ---------------- | ------ |
@@ -62,22 +61,22 @@ Consensus Rules
 | `INACTIVE_VALIDATORS_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
 
 
-## Rewards and Penalties
+### Rewards and Penalties
 
 | name                 | type     | value | unit | description                      |
 | -------------------- | -------- | ----- | ---- | -------------------------------- |
 | `BASE_REWARD`        | `uint64` |       |      |                                  |
 | `BASE_REWARD_FACTOR` | `uint64` |       |      | Factor that scales base rewards. |
 
-# Leader Selection
+## Leader Selection
 
-# Fork Choice
+## Fork Choice
 
-# Block Validity
+## Block Validity
 
-## State Transitions
+### State Transitions
 
-### Validators and Delegations
+#### Validators and Delegations
 
 A transaction `tx` that requests a new validator initializes a new [Validator](data_structures.md#validator) leaf in the inactive validators subtree for that account as follows:
 ```
@@ -150,8 +149,8 @@ validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
 ```
 
-## Formatting
+### Formatting
 
 Leaves in the message [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree) must be ordered lexicographically by namespace ID.
 
-## Availability
+### Availability

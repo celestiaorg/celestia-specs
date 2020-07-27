@@ -1,12 +1,11 @@
 Rationale: Distributing Rewards and Penalties
 ===
 
-- [Rationale: Distributing Rewards and Penalties](#rationale-distributing-rewards-and-penalties)
 - [Preamble](#preamble)
 - [Distribution Scheme](#distribution-scheme)
   - [State-Efficient Implementation](#state-efficient-implementation)
 
-# Preamble
+## Preamble
 
 Due to the requirement that all incorrect state transitions on LazyLedger be provable with a [compact fraud proof](https://arxiv.org/abs/1809.09044) that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:
 1. In-protocol stake delegation: this makes it easier for users to participate in the consensus process, and reduces reliance on custodial staking services.
@@ -16,7 +15,7 @@ Naively, rewards and penalties (henceforth referred to collectively as "rewards"
 
 This forms the primary motivation of the scheme discussed here: a mechanism for distributing rewards that is state-efficient and requires no iteration over state elements for any state transition.
 
-# Distribution Scheme
+## Distribution Scheme
 
 The scheme presented here is an incarnation of Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/_proposals/f1-fee-distribution/f1_fee_distr.pdf). F1 has the nice property of being approximation-free and, with proper implementation details, can be highly efficient with state usage and completely iteration-free in all cases.
 
@@ -45,7 +44,7 @@ $$
 
 This raw reward can be scaled by additional factors, such as commissions or slashing penalties.
 
-## State-Efficient Implementation
+### State-Efficient Implementation
 
 The F1 paper does not specify where entries are stored in state, but the understanding is that they are placed in independent state elements. This has the downside of requiring multiple Merkle branches to prove the inclusion of entries for e.g. fraud proofs. We can improve on this by leveraging a specific property of entries, namely that each entry is only used in exactly two cases:
 1. To compute the next entry.

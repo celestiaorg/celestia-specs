@@ -1,17 +1,16 @@
 Message Layout
 ===
 
-- [Message Layout](#message-layout)
 - [Preamble](#preamble)
 - [Message Layout Rationale](#message-layout-rationale)
   - [Non-Interactive Default Rules](#non-interactive-default-rules)
   - [Caveats](#caveats)
 
-# Preamble
+## Preamble
 
 LazyLedger uses [a data availability scheme](https://arxiv.org/abs/1809.09044) that allows nodes to determine whether a block's data was published without downloading the whole block. The core of this scheme is arranging data in a two-dimensional matrix then applying erasure coding to each row and column. This document describes the rationale for how data—transactions, messages, and other data—[is actually arranged](../specs/data_structures.md#arranging-available-data-into-shares). Familiarity with the [originally proposed data layout format](https://arxiv.org/abs/1809.09044) is assumed.
 
-# Message Layout Rationale
+## Message Layout Rationale
 
 Block data consists of transactions (which modify the LazyLedger chain's state), intermediate state roots (required for fraud proofs of the aforementioned transactions), messages (binary blobs which do not modify the LazyLedger state, but which are intended for a LazyLedger application identified with a provided namespace ID), and other relevant pieces of data (e.g. evidence for slashing). We want to arrange this data into a `k * k` matrix of fixed-sized shares, which will later be committed to in [Namespace Merkle Trees (NMTs)](../specs/data_structures.md#namespace-merkle-tree).
 
@@ -33,7 +32,7 @@ Specifically, messages must begin at a new share, unlike non-message data which 
 
 This, however, requires the block producer to interact with the transaction sender to provide them the starting location of their message. This can be done selectively, but is not ideal as a default for e.g. end-user wallets.
 
-## Non-Interactive Default Rules
+### Non-Interactive Default Rules
 
 As a non-consensus-critical default, we can impose some additional rules on message placement to make the possible starting locations of messages sufficiently predictable and constrained such that users can deterministically compute subtree roots without interaction:
 1. Messages that span multiple rows must begin at the start of a row (this can occur if a message is longer than `k` shares _or_ if the block producer decides to start a message partway through a row and it cannot fit).
@@ -45,6 +44,6 @@ This is similar to [Merkle Mountain Ranges](https://www.usenix.org/legacy/event/
 
 The last piece of the puzzle is determining _which_ row the message is placed at (or, more specifically, the starting location). This is needed to keep the block producer accountable. To this end, the block producer simply augments each fee-paying transaction with some metadata: the starting location of the message the transaction pays for.
 
-## Caveats
+### Caveats
 
 The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by having special transactions the block producer includes that specify a range a zero-padding shares for a given namespace ID (which must be between the namespace IDs of the surrounding real shares, inclusive).

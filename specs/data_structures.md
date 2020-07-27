@@ -1,7 +1,6 @@
 Data Structures
 ===
 
-- [Data Structures](#data-structures)
 - [Data Structures Overview](#data-structures-overview)
 - [Type Aliases](#type-aliases)
 - [Blockchain Data Structures](#blockchain-data-structures)
@@ -65,11 +64,11 @@ Data Structures
   - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
 
-# Data Structures Overview
+## Data Structures Overview
 
 ![fig: Block data structures.](./figures/block_data_structures.svg)
 
-# Type Aliases
+## Type Aliases
 
 | name                        | type                       |
 | --------------------------- | -------------------------- |
@@ -87,9 +86,9 @@ Data Structures
 | [`Timestamp`](#timestamp)   | `uint64`                   |
 | `VotingPower`               | `uint64`                   |
 
-# Blockchain Data Structures
+## Blockchain Data Structures
 
-## Block
+### Block
 
 Blocks are the top-level data structure of the LazyLedger blockchain.
 
@@ -100,7 +99,7 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 | `availableData`       | [AvailableData](#availabledata)             | Data that is erasure-coded for availability.                          |
 | `lastCommit`          | [Commit](#commit)                           | Previous block's Tendermint commit.                                   |
 
-## Header
+### Header
 
 Block header, which is fully downloaded by both full clients and light clients.
 
@@ -115,13 +114,13 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).           |
 | `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                            |
 
-## AvailableDataHeader
+### AvailableDataHeader
 
 | name                       | type                          | description                            |
 | -------------------------- | ----------------------------- | -------------------------------------- |
 | `availableDataCommitments` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
-## AvailableData
+### AvailableData
 
 Data that is [erasure-coded](#erasure-coding) for [data availability checks](https://arxiv.org/abs/1809.09044).
 
@@ -132,7 +131,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | `evidenceData`              | [EvidenceData](#evidencedata)                           | Evidence used for slashing conditions (e.g. equivocation).                                                      |
 | `messageData`               | [MessageData](#messagedata)                             | Message data. Messages are app data.                                                                            |
 
-## Commit
+### Commit
 
 | name         | type                        | description |
 | ------------ | --------------------------- | ----------- |
@@ -141,31 +140,31 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | `blockID`    | [BlockID](#blockid)         |             |
 | `signatures` | [CommitSig](#commitsig)`[]` |             |
 
-## Timestamp
+### Timestamp
 
 Timestamp is a [type alias](#type-aliases).
 
 LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
 
-## BlockID
+### BlockID
 
 BlockID is a [type alias](#type-aliases).
 
 The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
 
-## HashDigest
+### HashDigest
 
 HashDigest is a [type alias](#type-aliases).
 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
-## Address
+### Address
 
 Address is a [type alias](#type-aliases).
 
 Addresses are the last `20` bytes of the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
-## CommitSig
+### CommitSig
 
 ```C++
 enum BlockIDFlag : uint8_t {
@@ -182,7 +181,7 @@ enum BlockIDFlag : uint8_t {
 | `timestamp`        | [Timestamp](#timestamp) |             |
 | `signature`        | [Signature](#signature) |             |
 
-## Signature
+### Signature
 
 | name | type       | description                                                          |
 | ---- | ---------- | -------------------------------------------------------------------- |
@@ -191,11 +190,11 @@ enum BlockIDFlag : uint8_t {
 
 Output of the [signing](#public-key-cryptography) process.
 
-# Serialization
+## Serialization
 
 Objects that are committed to or signed over require a canonical serialization. This is done using TODO.
 
-# Hashing
+## Hashing
 
 All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)). This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM. Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
 
@@ -203,7 +202,7 @@ Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.
 
 Unless otherwise indicated explicitly, objects are first [serialized](#serialization) before being hashed.
 
-# Public-Key Cryptography
+## Public-Key Cryptography
 
 Consensus-critical data is authenticated using [ECDSA](https://www.secg.org/sec1-v2.pdf), with the curve [secp256k1](https://en.bitcoin.it/wiki/Secp256k1). A highly-optimized library is available in C (https://github.com/bitcoin-core/secp256k1), with wrappers in Go (https://pkg.go.dev/github.com/ethereum/go-ethereum/crypto/secp256k1) and Rust (https://docs.rs/crate/secp256k1).
 
@@ -223,11 +222,11 @@ Putting it all together, the encoding for signatures is:
 
 This encoding scheme is derived from [EIP 2098: Compact Signature Representation](https://eips.ethereum.org/EIPS/eip-2098).
 
-# Merkle Trees
+## Merkle Trees
 
 Merkle trees are used to authenticate various pieces of data across the LazyLedger stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.
 
-## Binary Merkle Tree
+### Binary Merkle Tree
 
 Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
@@ -255,7 +254,7 @@ Note that rather than duplicating the last node if there are an odd number of no
 
 Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
-### Binary Merkle Tree Proofs
+#### Binary Merkle Tree Proofs
 
 | name       | type                          | description                   |
 | ---------- | ----------------------------- | ----------------------------- |
@@ -264,7 +263,7 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 | `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.          |
 | `leaf`     | `byte[]`                      | Leaf value.                   |
 
-## Namespace Merkle Tree
+### Namespace Merkle Tree
 
 [Shares](#share) in LazyLedger are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.
 
@@ -300,7 +299,7 @@ node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 
 A root hash can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
-### Namespace Merkle Tree Proofs
+#### Namespace Merkle Tree Proofs
 
 | name                 | type                             | description                   |
 | -------------------- | -------------------------------- | ----------------------------- |
@@ -315,7 +314,7 @@ A root hash can be computed by taking the [hash](#hashing) of the [serialized](#
 
 When verifying a NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
-## Sparse Merkle Tree
+### Sparse Merkle Tree
 
 Sparse Merkle Trees (SMTs) are _sparse_, i.e. they contain mostly empty leaves. They can be used as key-value stores for arbitrary data, as each leaf is keyed by its index in the tree. Storage efficiency is achieved through clever use of implicit defaults, avoiding the need to store empty leaves.
 
@@ -346,7 +345,7 @@ For internal node `node` with children `l` and `r`:
 node.v = h(0x01, serialize(l), serialize(r))
 ```
 
-### Sparse Merkle Tree Proofs
+#### Sparse Merkle Tree Proofs
 
 SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
 
@@ -363,13 +362,13 @@ A proof into an SMT is structured as:
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes. The lowest bit corresponds the leaf node level. |
 | `leaf`             | `byte[]`                      | Leaf value.                                                                                     |
 
-# Erasure Coding
+## Erasure Coding
 
 In order to enable trust-minimized light clients (i.e. light clients that do not rely on an honest majority of validating state assumption), it is critical that light clients can determine whether the data in each block is _available_ or not, without downloading the whole block itself. The technique used here was formally described in the paper [Fraud and Data Availability Proofs: Maximising Light Client Security and Scaling Blockchains with Dishonest Majorities](https://arxiv.org/abs/1809.09044).
 
 The remainder of the subsections below specify the [2D Reed-Solomon erasure coding scheme](#2d-reed-solomon-encoding-scheme) used, along with the format of [shares](#share) and how [available data](#available-data) is arranged into shares.
 
-## Reed-Solomon Erasure Coding
+### Reed-Solomon Erasure Coding
 
 Note that while data is laid out in a two-dimensional square, rows and columns are erasure coded using a standard one-dimensional encoding.
 
@@ -381,7 +380,7 @@ Reed-Solomon erasure coding is used as the underlying coding scheme. The paramet
 
 [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
 
-## 2D Reed-Solomon Encoding Scheme
+### 2D Reed-Solomon Encoding Scheme
 
 The 2-dimensional data layout is described in this section. The roots of [NMTs](#namespace-merkle-tree) for each row and column across four quadrants of data in a `2k * 2k` matrix of shares, `Q0` to `Q3` (shown below), must be computed. In other words, `2k` row roots and `2k` column roots must be computed. The row and column roots are stored in the `availableDataCommitments` of the [AvailableDataHeader](#availabledataheader).
 
@@ -408,7 +407,7 @@ Finally, the `availableDataRoot` of the block [Header](#header) is computed as t
 
 ![fig: Available data root.](./figures/data_root.svg)
 
-## Share
+### Share
 
 A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
 
@@ -423,11 +422,11 @@ An example layout of the share's internal bytes is shown below. For non-parity s
 
 For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
 
-### Share Serialization
+#### Share Serialization
 
 Shares [canonically serialized](#serialization) using only the raw share data, i.e. `serialize(share) = serialize(share.rawData)`.
 
-## Arranging Available Data Into Shares
+### Arranging Available Data Into Shares
 
 The previous sections described how some original data, arranged into a `k * k` matrix, can be extended into a `2k * 2k` matrix and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
 
@@ -452,15 +451,15 @@ In the example below, two messages (of lengths 2 and 1, respectively) are placed
 
 The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#signedtransactiondata-payforpadding).
 
-# Available Data
+## Available Data
 
-## TransactionData
+### TransactionData
 
 | name                  | type                                          | description                   |
 | --------------------- | --------------------------------------------- | ----------------------------- |
 | `wrappedTransactions` | [WrappedTransaction](#wrappedtransaction)`[]` | List of wrapped transactions. |
 
-### WrappedTransaction
+#### WrappedTransaction
 
 Wrapped transactions include additional metadata by the block proposer that is committed to in the [available data matrix](#arranging-available-data-into-shares).
 
@@ -470,14 +469,14 @@ Wrapped transactions include additional metadata by the block proposer that is c
 | `transaction`       | [Transaction](#transaction) | Actual transaction.                                                                                                                                                                                                                                                                                        |
 | `messageStartIndex` | `uint64`                    | _Optional, only used if transaction pays for a message or padding_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                       |
 
-### Transaction
+#### Transaction
 
 | name                    | type                                            | description                       |
 | ----------------------- | ----------------------------------------------- | --------------------------------- |
 | `signedTransactionData` | [SignedTransactionData](#signedtransactiondata) | Data payload that is signed over. |
 | `signature`             | [Signature](#signature)                         | Signature.                        |
 
-### SignedTransactionData
+#### SignedTransactionData
 
 ```C++
 enum TransactionType : uint8_t {
@@ -516,7 +515,7 @@ Common fields are denoted here to avoid repeating descriptions:
 | `maxFeeRate` | [FeeRate](#type-aliases) | The maximum fee rate the sender is willing to pay.                         |
 | `nonce`      | [Nonce](#type-aliases)   | Nonce of sender.                                                           |
 
-#### SignedTransactionData: Transfer
+##### SignedTransactionData: Transfer
 
 | name         | type                     | description                         |
 | ------------ | ------------------------ | ----------------------------------- |
@@ -528,7 +527,7 @@ Common fields are denoted here to avoid repeating descriptions:
 
 Transfers `amount` coins to `to`.
 
-#### SignedTransactionData: PayForMessage
+##### SignedTransactionData: PayForMessage
 
 | name                     | type                           | description                                                  |
 | ------------------------ | ------------------------------ | ------------------------------------------------------------ |
@@ -543,7 +542,7 @@ Pays for the inclusion of a [message](#message) in the same block.
 
 The commitment to message shares `messageShareCommitment` is a [Merkle root](#binary-merkle-tree) of message share roots. Each message share root is [a subtree root in a row NMT](#arranging-available-data-into-shares). For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
-#### SignedTransactionData: PayForPadding
+##### SignedTransactionData: PayForPadding
 
 | name                 | type                           | description                                                  |
 | -------------------- | ------------------------------ | ------------------------------------------------------------ |
@@ -553,7 +552,7 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
-#### SignedTransactionData: CreateValidator
+##### SignedTransactionData: CreateValidator
 
 | name             | type                     | description                                |
 | ---------------- | ------------------------ | ------------------------------------------ |
@@ -565,7 +564,7 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
-#### SignedTransactionData: BeginUnbondingValidator
+##### SignedTransactionData: BeginUnbondingValidator
 
 | name         | type                     | description                                        |
 | ------------ | ------------------------ | -------------------------------------------------- |
@@ -575,7 +574,7 @@ Create a new [Validator](#validator) at this address for `amount` coins worth of
 
 Begin unbonding the [Validator](#validator) at this address.
 
-#### SignedTransactionData: UnbondValidator
+##### SignedTransactionData: UnbondValidator
 
 | name         | type                     | description                                |
 | ------------ | ------------------------ | ------------------------------------------ |
@@ -585,7 +584,7 @@ Begin unbonding the [Validator](#validator) at this address.
 
 Finish unbonding the [Validator](#validator) at this address.
 
-#### SignedTransactionData: CreateDelegation
+##### SignedTransactionData: CreateDelegation
 
 | name         | type                     | description                                 |
 | ------------ | ------------------------ | ------------------------------------------- |
@@ -597,7 +596,7 @@ Finish unbonding the [Validator](#validator) at this address.
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
-#### SignedTransactionData: BeginUnbondingDelegation
+##### SignedTransactionData: BeginUnbondingDelegation
 
 | name         | type                     | description                                         |
 | ------------ | ------------------------ | --------------------------------------------------- |
@@ -607,7 +606,7 @@ Create a new [Delegation](#delegation) of `amount` coins worth of voting power f
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
-#### SignedTransactionData: UnbondDelegation
+##### SignedTransactionData: UnbondDelegation
 
 | name         | type                     | description                                 |
 | ------------ | ------------------------ | ------------------------------------------- |
@@ -617,7 +616,7 @@ Begin unbonding the [Delegation](#delegation) at this address.
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
-#### SignedTransactionData: Burn
+##### SignedTransactionData: Burn
 
 | name         | type                      | description                                  |
 | ------------ | ------------------------- | -------------------------------------------- |
@@ -627,26 +626,26 @@ Finish unbonding the [Delegation](#delegation) at this address.
 | `nonce`      | [Nonce](#type-aliases)    |                                              |
 | `graffiti`   | [Graffiti](#type-aliases) | Graffiti to indicate the reason for burning. |
 
-## IntermediateStateRootData
+### IntermediateStateRootData
 
 | name                            | type                                                              | description                               |
 | ------------------------------- | ----------------------------------------------------------------- | ----------------------------------------- |
 | `wrappedIntermediateStateRoots` | [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)`[]` | List of wrapped intermediate state roots. |
 
-### WrappedIntermediateStateRoot
+#### WrappedIntermediateStateRoot
 
 | name                    | type                                            | description                                                                                                                                                                                                                                                                                                                  |
 | ----------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `index`                 | `uint64`                                        | Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a [transaction](#wrappedtransaction). |
 | `intermediateStateRoot` | [IntermediateStateRoot](#intermediatestateroot) | Intermediate state root. Used for fraud proofs.                                                                                                                                                                                                                                                                              |
 
-### IntermediateStateRoot
+#### IntermediateStateRoot
 
 | name   | type                      | description                                                                              |
 | ------ | ------------------------- | ---------------------------------------------------------------------------------------- |
 | `root` | [HashDigest](#hashdigest) | Root of intermediate state, which is composed of the global state and the validator set. |
 
-## EvidenceData
+### EvidenceData
 
 Wrapper for evidence data.
 
@@ -654,7 +653,7 @@ Wrapper for evidence data.
 | ----------- | ------------------------- | ---------------------------------------------- |
 | `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
 
-### Evidence
+#### Evidence
 
 | name     | type                    | description |
 | -------- | ----------------------- | ----------- |
@@ -662,14 +661,14 @@ Wrapper for evidence data.
 | `voteA`  | [Vote](#vote)           |             |
 | `voteB`  | [Vote](#vote)           |             |
 
-### PublicKey
+#### PublicKey
 
 | name | type       | description              |
 | ---- | ---------- | ------------------------ |
 | `x`  | `byte[32]` | `x` value of public key. |
 | `y`  | `byte[32]` | `y` value of public key. |
 
-### Vote
+#### Vote
 
 ```C++
 enum VoteType : uint8_t {
@@ -689,20 +688,20 @@ enum VoteType : uint8_t {
 | `validatorIndex`   | `uint64`                |             |
 | `signature`        | [Signature](#signature) |             |
 
-## MessageData
+### MessageData
 
 | name       | type                    | description       |
 | ---------- | ----------------------- | ----------------- |
 | `messages` | [Message](#message)`[]` | List of messages. |
 
-### Message
+#### Message
 
 | name          | type                         | description                   |
 | ------------- | ---------------------------- | ----------------------------- |
 | `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of this message. |
 | `rawData`     | `byte[]`                     | Raw message bytes.            |
 
-# State
+## State
 
 The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified [Sparse Merkle Tree](#sparse-merkle-tree) is maintained for the entire chain state, the _state tree_. The root of this tree is committed to in the [block header](#header).
 
@@ -713,7 +712,7 @@ Three subtrees are maintained:
 1. [Active validator set](#validator)
 1. [Inactive validator set](#validator)
 
-## Account
+### Account
 
 | name             | type                      | description                                                                       |
 | ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
@@ -725,7 +724,7 @@ Three subtrees are maintained:
 
 In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACCOUNTS_SUBTREE_ID`.
 
-## Delegation
+### Delegation
 
 ```C++
 enum DelegationStatus : uint8_t {
@@ -747,7 +746,7 @@ Delegation objects represent a delegation. They have two statuses:
 1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
 1. `Unbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
 
-## Validator
+### Validator
 
 ```C++
 enum ValidatorStatus : uint8_t {
@@ -779,7 +778,7 @@ Validator objects represent all the information needed to be keep track of a val
 
 In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACTIVE_VALIDATORS_SUBTREE_ID` for the active validator set or `INACTIVE_VALIDATORS_SUBTREE_ID` for the inactive validator set. Active validators are `Bonded`, while inactive validators are not `Bonded`. By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
 
-## ActiveValidatorCount
+### ActiveValidatorCount
 
 | name            | type     | description                  |
 | --------------- | -------- | ---------------------------- |
@@ -787,7 +786,7 @@ In the validators subtrees, validators are keyed by the [hash](#hashdigest) of t
 
 Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
-## PeriodEntry
+### PeriodEntry
 
 | name         | type                    | description                                                   |
 | ------------ | ----------------------- | ------------------------------------------------------------- |
@@ -795,11 +794,11 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 
 For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
 
-## Decimal
+### Decimal
 
 TODO define a format for numbers in the range `[0,1]`
 
-# Consensus Parameters
+## Consensus Parameters
 
 Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
 
