@@ -1,11 +1,10 @@
 Architecture
 ===
 
-- [Architecture](#architecture)
 - [Common Terms and Expressions](#common-terms-and-expressions)
 - [System Architecture](#system-architecture)
 
-# Common Terms and Expressions
+## Common Terms and Expressions
 
 | name              | description                                                                                                                                                                      |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -13,7 +12,7 @@ Architecture
 | Transaction       | Requests that modify the consensus-critical state (validator balances and statuses).                                                                                             |
 | Message           | Requests that are executed by non-consensus-critical apps.                                                                                                                       |
 
-# System Architecture
+## System Architecture
 
 LazyLedger has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native _transactions_, distinct from the _messages_ processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.
 
