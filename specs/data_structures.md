@@ -235,9 +235,9 @@ Nodes contain a single field:
 | ---- | ------------------------- | ----------- |
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
-The base case (an empty tree) is defined as zero:
+The base case (an empty tree) is defined as the [hash](#hashing) of the empty string:
 ```C++
-node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
 ```
 
 For leaf node `node` of leaf data `d`:
@@ -278,7 +278,7 @@ The base case (an empty tree) is defined as:
 ```C++
 node.n_min = 0x0000000000000000000000000000000000000000000000000000000000000000
 node.n_max = 0x0000000000000000000000000000000000000000000000000000000000000000
-node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
 ```
 
 For leaf node `node` of data `d`:
@@ -328,9 +328,9 @@ Nodes contain a single field:
 | ---- | ------------------------- | ----------- |
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
-The base case (an empty tree) is defined as the default value:
+The base case (an empty tree) is defined as the [hash](#hashing) of the empty string:
 ```C++
-node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
+node.v = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
 ```
 
 For leaf node `node` of leaf data `d` with key `k`:
