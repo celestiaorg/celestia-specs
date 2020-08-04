@@ -303,7 +303,7 @@ node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 ```
 In plain English, the min and max namespace IDs for subtree roots with non-parity shares in their leaves (which includes the root of a NMT) ignore the namespace ID for the parity shares. Subtree roots with _only parity shares_ have their min and max namespace ID set to [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids).
 
-A root hash can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
+A compact commitment can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
 #### Namespace Merkle Tree Proofs
 
