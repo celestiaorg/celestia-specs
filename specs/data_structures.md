@@ -293,9 +293,15 @@ The `namespaceID` message field here is the namespace ID of the leaf, which is a
 For internal node `node` with children `l` and `r`:
 ```C++
 node.n_min = min(l.n_min, r.n_min)
-node.n_max = max(l.n_max, r.n_max)
+if l.n_min == PARITY_SHARE_NAMESPACE_ID
+  node.n_max = PARITY_SHARE_NAMESPACE_ID
+else if r.n_min == PARITY_SHARE_NAMESPACE_ID
+  node.n_max = l.n_max
+else
+  node.n_max = max(l.n_max, r.n_max)
 node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 ```
+In plain English, the minimum and maximum namespace IDs for subtree roots with non-parity shares in their leaves (which includes the root of a NMT) ignore the namespace ID for the parity shares. Subtree roots with _only parity shares_ have their minimum and maximum namespace ID set to [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids).
 
 A root hash can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
