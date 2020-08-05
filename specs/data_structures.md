@@ -290,14 +290,24 @@ node.v = h(0x00, serialize(d))
 
 The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
 
+Leaves in an NMT **must** be lexicographically sorted by namespace ID in ascending order.
+
 For internal node `node` with children `l` and `r`:
 ```C++
 node.n_min = min(l.n_min, r.n_min)
-node.n_max = max(l.n_max, r.n_max)
+if l.n_min == PARITY_SHARE_NAMESPACE_ID
+  node.n_max = PARITY_SHARE_NAMESPACE_ID
+else if r.n_min == PARITY_SHARE_NAMESPACE_ID
+  node.n_max = l.n_max
+else
+  node.n_max = max(l.n_max, r.n_max)
 node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 ```
+Note that the above snippet leverages the property that leaves are sorted by namespace ID: if `l.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `{l,r}.n_max`. By construction, either both the min and max namespace IDs of a node will be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), or neither will: if `r.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `r.n_max`.
 
-A root hash can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
+For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as [the right half of an NMT as used in LazyLedger will be parity shares](#2d-reed-solomon-encoding-scheme)) _ignore_ the namespace ID for the parity leaves. Subtree roots with _only parity leaves_ have their min and max namespace ID set to [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids). This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids)).
+
+A compact commitment can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
 #### Namespace Merkle Tree Proofs
 
@@ -312,7 +322,7 @@ A root hash can be computed by taking the [hash](#hashing) of the [serialized](#
 | `siblingMaxes`       | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
 | `leaf`               | `byte[]`                         | Leaf value.                   |
 
-When verifying a NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
+When verifying an NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
 ### Sparse Merkle Tree
 
