@@ -303,7 +303,9 @@ else
   node.n_max = max(l.n_max, r.n_max)
 node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
 ```
-_Note that the above snippet leverages the property that leaves are sorted by namespace ID._ In plain English, the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as [the right half of an NMT as used in LazyLedger will be parity shares](#2d-reed-solomon-encoding-scheme)) ignore the namespace ID for the parity leaves. Subtree roots with _only parity leaves_ have their min and max namespace ID set to [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids).
+Note that the above snippet leverages the property that leaves are sorted by namespace ID: if `l.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `{l,r}.n_max`. By construction, either both the min and max namespace IDs of a node will be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), or neither will: if `r.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `r.n_max`.
+
+For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as [the right half of an NMT as used in LazyLedger will be parity shares](#2d-reed-solomon-encoding-scheme)) _ignore_ the namespace ID for the parity leaves. Subtree roots with _only parity leaves_ have their min and max namespace ID set to [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids). This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids)).
 
 A compact commitment can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
