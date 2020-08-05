@@ -290,6 +290,8 @@ node.v = h(0x00, serialize(d))
 
 The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
 
+Leaves in an NMT **must** be lexicographically sorted by namespace ID in ascending order.
+
 For internal node `node` with children `l` and `r`:
 ```C++
 node.n_min = min(l.n_min, r.n_min)
