@@ -345,10 +345,9 @@ node.v = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
 
 For leaf node `node` of leaf data `d` with key `k`:
 ```C++
-node.v = h(0x00, k, serialize(d))
+node.v = h(0x00, k, h(serialize(d)))
 ```
-
-The key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information.
+The key of leaf nodes must be prepended, since the index of a leaf node that is not at the base of the tree cannot be determined without this information. Leaf values are hashed so that they do not need to be included in full in non-membership proofs.
 
 For internal node `node` with children `l` and `r`:
 ```C++
