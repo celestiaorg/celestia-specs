@@ -28,6 +28,7 @@ Data Structures
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
+  - [Invalid Erasure Coding](#invalid-erasure-coding)
   - [Share](#share)
     - [Share Serialization](#share-serialization)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
@@ -415,6 +416,28 @@ Now that all four quadrants of the `2k * 2k` matrix are filled, the row and colu
 Finally, the `availableDataRoot` of the block [Header](#header) is computed as the Merkle root of the [binary Merkle tree](#binary-merkle-tree) with the row and column roots as leaves.
 
 ![fig: Available data root.](./figures/data_root.svg)
+
+### Invalid Erasure Coding
+
+If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.
+
+#### ShareProof
+
+| name       | type                                                         | description                                                                                     |
+| ---------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `share`    | [Share](#share)                                              | The share.                                                                                      |
+| `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the share in `availableDataRoot`[#header].                                  |
+| `axis`     | `bool`                                                       | A boolean indicating if the proof is from a row root or column root; false if it is a row root. |
+| `position` | `uint64`                                                     | The index of the share in the offending row or column.                                          |
+
+#### BadEncodingFraudProof
+
+| name       | type                                                         | description                                                                     |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `root`     | [HashDigest](#hashdigest)                                    | The Merkle root of the offending row or column.                                 |
+| `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the row or column root in `availableDataRoot`[#header].     |
+| `axis`     | `bool`                                                       | A boolean indicating if it is an offending row or column; false if it is a row. |
+| `position` | `uint64`                                                     | The index of the row or column in the square.                                   |
 
 ### Share
 
