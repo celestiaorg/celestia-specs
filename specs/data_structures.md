@@ -427,7 +427,7 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 | ---------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
 | `share`    | [Share](#share)                                              | The share.                                                                                      |
 | `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the share in [`availableDataRoot`](#header).                                |
-| `axis`     | `bool`                                                       | A boolean indicating if the proof is from a row root or column root; false if it is a row root. |
+| `axis`     | `bool`                                                       | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
 | `position` | `uint64`                                                     | The index of the share in the offending row or column.                                          |
 
 #### BadEncodingFraudProof
