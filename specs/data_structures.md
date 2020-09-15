@@ -29,6 +29,8 @@ Data Structures
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
   - [Invalid Erasure Coding](#invalid-erasure-coding)
+    - [ShareProof](#shareproof)
+    - [BadEncodingFraudProof](#badencodingfraudproof)
   - [Share](#share)
     - [Share Serialization](#share-serialization)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
