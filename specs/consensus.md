@@ -41,6 +41,7 @@ Consensus Rules
 | `UNBONDING_DURATION`                  | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                               |
 | `MAX_VALIDATORS`                      | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                        |
 | `STATE_SUBTREE_RESERVED_BYTES`        | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                        |
+| `GRAFFITI_BYTES`                      | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                             |
 
 ### Reserved Namespace IDs
 
