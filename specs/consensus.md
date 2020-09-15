@@ -32,7 +32,7 @@ Consensus Rules
 | ------------------------------------- | -------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `VERSION`                             | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                  |
 | `CHAIN_ID`                            | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                          |
-| `NAMESPACE_ID_BYTES`                  | `uint64` | `32`    | `byte`  | Size of namespace ID, in bytes.                                                                                                                             |
+| `NAMESPACE_ID_BYTES`                  | `uint64` | `8`     | `byte`  | Size of namespace ID, in bytes.                                                                                                                             |
 | `NAMESPACE_ID_MAX_RESERVED`           | `uint64` | `255`   |         | Value of maximum reserved namespace ID (inclusive). 1 byte worth of IDs.                                                                                    |
 | `SHARE_SIZE`                          | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                               |
 | `SHARE_RESERVED_BYTES`                | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                    |
@@ -44,13 +44,13 @@ Consensus Rules
 
 ### Reserved Namespace IDs
 
-| name                                   | type          | value                                                                | description                                                                   |
-| -------------------------------------- | ------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `TRANSACTION_NAMESPACE_ID`             | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000001` | Transactions: requests that modify the state.                                 |
-| `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000002` | Intermediate state roots, committed after every transaction.                  |
-| `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000000000000000000000000000000000000000000000000000003` | Evidence: fraud proofs or other proof of slashable action.                    |
-| `TAIL_PADDING_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE` | Tail padding: padding after all messages to fill up the original data square. |
-| `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | Parity shares: extended shares in the available data matrix.                  |
+| name                                   | type          | value                | description                                                                   |
+| -------------------------------------- | ------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `TRANSACTION_NAMESPACE_ID`             | `NamespaceID` | `0x0000000000000001` | Transactions: requests that modify the state.                                 |
+| `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID` | `NamespaceID` | `0x0000000000000002` | Intermediate state roots, committed after every transaction.                  |
+| `EVIDENCE_NAMESPACE_ID`                | `NamespaceID` | `0x0000000000000003` | Evidence: fraud proofs or other proof of slashable action.                    |
+| `TAIL_PADDING_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFE` | Tail padding: padding after all messages to fill up the original data square. |
+| `PARITY_SHARE_NAMESPACE_ID`            | `NamespaceID` | `0xFFFFFFFFFFFFFFFF` | Parity shares: extended shares in the available data matrix.                  |
 
 ### Reserved State Subtree IDs
 
