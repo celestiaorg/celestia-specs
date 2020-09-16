@@ -76,7 +76,7 @@ Data Structures
 | `Amount`                    | `uint64`                   |
 | [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
 | `FeeRate`                   | `uint64`                   |
-| `Graffiti`                  | `NamespaceID`              |
+| `Graffiti`                  | `byte[GRAFFITI_BYTES]`     |
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
