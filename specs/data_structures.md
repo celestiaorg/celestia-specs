@@ -32,7 +32,6 @@ Data Structures
     - [ShareProof](#shareproof)
     - [BadEncodingFraudProof](#badencodingfraudproof)
   - [Share](#share)
-    - [Share Serialization](#share-serialization)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
   - [TransactionData](#transactiondata)
@@ -456,10 +455,6 @@ An example layout of the share's internal bytes is shown below. For non-parity s
 ![fig: Reserved share.](./figures/share.svg)
 
 For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
-
-#### Share Serialization
-
-Shares [canonically serialized](#serialization) using only the raw share data, i.e. `serialize(share) = serialize(share.rawData)`.
 
 ### Arranging Available Data Into Shares
 
