@@ -443,14 +443,14 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 ### Share
 
-A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
-
 | name          | type                         | description                |
 | ------------- | ---------------------------- | -------------------------- |
 | `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of the share. |
 | `rawData`     | `byte[SHARE_SIZE]`           | Raw share data.            |
 
-An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first `SHARE_RESERVED_BYTES` bytes (`*` in the figure) is the starting byte of the length of the first request that starts in the share as a big-endian unsigned integer, or `0` if there is none. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first `SHARE_RESERVED_BYTES` bytes have no special meaning and are simply used to store data like all the other bytes in the share.
+A share is a fixed-size data chunk associated with a namespace ID, whose data will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
+
+An example layout of the share's internal bytes is shown below. For shares with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants), the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes (the `*` in the figure) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a [canonically serialized](#serialization) big-endian unsigned integer. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex). For shares with a namespace ID above [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants), the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes have no special meaning and are simply used to store data like all the other bytes in the share.
 
 ![fig: Reserved share.](./figures/share.svg)
 
