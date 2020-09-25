@@ -460,7 +460,15 @@ For non-parity shares, if there is insufficient request data to fill the share, 
 
 The previous sections described how some original data, arranged into a `k * k` matrix, can be extended into a `2k * 2k` matrix and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
 
- First, for each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization) the data and split it up into `SHARE_SIZE-SHARE_RESERVED_BYTES`-byte [shares](#share). This data has a _reserved_ namespace ID, and as such the first `SHARE_RESERVED_BYTES` bytes for these shares has special meaning. Then, concatenate the lists of shares in the order: transactions, intermediate state roots, evidence. Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
+Then,
+1. For each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization):
+    1. For each request in the list:
+        1. [Serialize](#serialization) the request (individually).
+        1. Compute the length of each serialized request, [serialize the length](#share), and pre-pend the serialized request with its serialized length.
+    1. Split up the length/request pairs into [`SHARE_SIZE`](./consensus.md#constants)`-`[`SHARE_RESERVED_BYTES`](./consensus.md#constants)-byte [shares](#share) and assign [the appropriate namespace ID](./consensus.md#reserved-namespace-ids). This data has a _reserved_ namespace ID, so the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes for these shares must be [set specially](#share).
+1. Concatenate the lists of shares in the order: transactions, intermediate state roots, evidence.
+
+Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
 
 These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-scheme) (`Q0`) of the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2 * AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` available data matrix in _row-major_ order. In the example below, each reserved data element takes up exactly one share.
 
