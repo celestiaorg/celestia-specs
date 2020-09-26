@@ -32,7 +32,6 @@ Data Structures
     - [ShareProof](#shareproof)
     - [BadEncodingFraudProof](#badencodingfraudproof)
   - [Share](#share)
-    - [Share Serialization](#share-serialization)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
   - [TransactionData](#transactiondata)
@@ -425,47 +424,51 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 #### ShareProof
 
-| name       | type                                                         | description                                                                                     |
-| ---------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| `share`    | [Share](#share)                                              | The share.                                                                                      |
-| `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the share in [`availableDataRoot`](#header).                                |
+| name       | type                                                         | description                                                                                       |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `share`    | [Share](#share)                                              | The share.                                                                                        |
+| `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
 | `isCol`    | `bool`                                                       | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                                     | The index of the share in the offending row or column.                                          |
+| `position` | `uint64`                                                     | The index of the share in the offending row or column.                                            |
 
 #### BadEncodingFraudProof
 
-| name          | type                                                         | description                                                                     |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `shareProofs` | [ShareProof](#shareproof)`[]`                                | The available shares in the offending row or column.                            |
-| `root`        | [HashDigest](#hashdigest)                                    | The Merkle root of the offending row or column.                                 |
-| `proof`       | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).   |
+| name          | type                                                         | description                                                                       |
+| ------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `shareProofs` | [ShareProof](#shareproof)`[]`                                | The available shares in the offending row or column.                              |
+| `root`        | [HashDigest](#hashdigest)                                    | The Merkle root of the offending row or column.                                   |
+| `proof`       | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
 | `isCol`       | `bool`                                                       | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
-| `position`    | `uint64`                                                     | The index of the row or column in the square.                                   |
+| `position`    | `uint64`                                                     | The index of the row or column in the square.                                     |
 
 ### Share
-
-A share is a fixed-size data chunk that will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
 
 | name          | type                         | description                |
 | ------------- | ---------------------------- | -------------------------- |
 | `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of the share. |
 | `rawData`     | `byte[SHARE_SIZE]`           | Raw share data.            |
 
-An example layout of the share's internal bytes is shown below. For non-parity shares _with a reserved namespace_, the first `SHARE_RESERVED_BYTES` bytes (`*` in the figure) is the starting byte of the first request in the share as an unsigned integer, or `0` if there is none. In this example, the first byte would be `80` (or `0x50` in hex). For shares _with a non-reserved namespace_ (and parity shares), the first `SHARE_RESERVED_BYTES` bytes have no special meaning and are simply used to store data like all the other bytes in the share.
+A share is a fixed-size data chunk associated with a namespace ID, whose data will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
+
+An example layout of the share's internal bytes is shown below. For shares with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants), the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes (the `*` in the figure) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a [canonically serialized](#serialization) big-endian unsigned integer. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex). For shares with a namespace ID above [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants), the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes have no special meaning and are simply used to store data like all the other bytes in the share.
 
 ![fig: Reserved share.](./figures/share.svg)
 
 For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
 
-#### Share Serialization
-
-Shares [canonically serialized](#serialization) using only the raw share data, i.e. `serialize(share) = serialize(share.rawData)`.
-
 ### Arranging Available Data Into Shares
 
 The previous sections described how some original data, arranged into a `k * k` matrix, can be extended into a `2k * 2k` matrix and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
 
- First, for each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization) the data and split it up into `SHARE_SIZE-SHARE_RESERVED_BYTES`-byte [shares](#share). This data has a _reserved_ namespace ID, and as such the first `SHARE_RESERVED_BYTES` bytes for these shares has special meaning. Then, concatenate the lists of shares in the order: transactions, intermediate state roots, evidence. Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
+Then,
+1. For each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization):
+    1. For each request in the list:
+        1. [Serialize](#serialization) the request (individually).
+        1. Compute the length of each serialized request, [serialize the length](#share), and pre-pend the serialized request with its serialized length.
+    1. Split up the length/request pairs into [`SHARE_SIZE`](./consensus.md#constants)`-`[`SHARE_RESERVED_BYTES`](./consensus.md#constants)-byte [shares](#share) and assign [the appropriate namespace ID](./consensus.md#reserved-namespace-ids). This data has a _reserved_ namespace ID, so the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes for these shares must be [set specially](#share).
+1. Concatenate the lists of shares in the order: transactions, intermediate state roots, evidence.
+
+Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
 
 These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-scheme) (`Q0`) of the `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2 * AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE*2` available data matrix in _row-major_ order. In the example below, each reserved data element takes up exactly one share.
 
@@ -476,7 +479,7 @@ Each message in the list `messageData` is _independently_ serialized and split i
 
 Transactions [must commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs. For additional info, see [the rationale document](../rationale/message_block_layout.md) for this section.
 
-However, with only the rule above, interaction between the block producer and transaction sender is required to compute a commitment to the message the transaction sender can sign over. To remove interaction, messages can also be laid out using a non-interactive default:
+However, with only the rule above, interaction between the block producer and transaction sender may be required to compute a commitment to the message the transaction sender can sign over. To remove interaction, messages can optionally be laid out using a non-interactive default:
 1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the largest power of 2 that is not larger than the message length or `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`, then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
 1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose length is greater than `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE` will be placed in this way.
 
