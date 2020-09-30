@@ -105,16 +105,17 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                | type                      | description                                                                  |
-| ------------------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `height`            | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                            |
-| `timestamp`         | [Timestamp](#timestamp)   | Timestamp of this block.                                                     |
-| `lastBlockID`       | [BlockID](#blockid)       | Previous block's ID.                                                         |
-| `lastCommitRoot`    | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                     |
-| `consensusRoot`     | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block. |
-| `stateCommitment`   | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.        |
-| `availableDataRoot` | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).           |
-| `proposerAddress`   | [Address](#address)       | Address of this block's proposer.                                            |
+| name                 | type                      | description                                                                                                                       |
+| -------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `height`             | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                 |
+| `timestamp`          | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                          |
+| `lastBlockID`        | [BlockID](#blockid)       | Previous block's ID.                                                                                                              |
+| `lastCommitRoot`     | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                                                          |
+| `nextValidatorsRoot` | [HashDigest](#hashdigest) | [Merkle root of validators for next block](https://docs.tendermint.com/master/spec/core/data_structures.html#nextvalidatorshash). |
+| `consensusRoot`      | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                      |
+| `stateCommitment`    | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                             |
+| `availableDataRoot`  | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                |
+| `proposerAddress`    | [Address](#address)       | Address of this block's proposer.                                                                                                 |
 
 ### AvailableDataHeader
 
