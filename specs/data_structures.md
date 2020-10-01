@@ -18,6 +18,7 @@ Data Structures
 - [Serialization](#serialization)
 - [Hashing](#hashing)
 - [Public-Key Cryptography](#public-key-cryptography)
+  - [PublicKey](#publickey)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
     - [Binary Merkle Tree Proofs](#binary-merkle-tree-proofs)
@@ -53,7 +54,6 @@ Data Structures
     - [IntermediateStateRoot](#intermediatestateroot)
   - [EvidenceData](#evidencedata)
     - [Evidence](#evidence)
-    - [PublicKey](#publickey)
     - [Vote](#vote)
   - [MessageData](#messagedata)
     - [Message](#message)
@@ -166,13 +166,6 @@ Address is a [type alias](#type-aliases).
 
 Addresses are the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
-### PublicKey
-
-| name | type       | description              |
-| ---- | ---------- | ------------------------ |
-| `x`  | `byte[32]` | `x` value of public key. |
-| `y`  | `byte[32]` | `y` value of public key. |
-
 ### CommitSig
 
 ```C++
@@ -231,6 +224,13 @@ Putting it all together, the encoding for signatures is:
 ```
 
 This encoding scheme is derived from [EIP 2098: Compact Signature Representation](https://eips.ethereum.org/EIPS/eip-2098).
+
+### PublicKey
+
+| name | type       | description              |
+| ---- | ---------- | ------------------------ |
+| `x`  | `byte[]` | `x` value of public key. |
+| `y`  | `byte[]` | `y` value of public key. |
 
 ## Merkle Trees
 
