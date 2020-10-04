@@ -723,10 +723,54 @@ Wrapper for evidence data.
 
 #### Evidence
 
+#### DuplicateVote
+
 | name     | type                    | description |
 | -------- | ----------------------- | ----------- |
 | `voteA`  | [Vote](#vote)           |             |
 | `voteB`  | [Vote](#vote)           |             |
+
+type LightClientAttackEvidence struct {
+ ConflictingBlock *LightBlock
+ CommonHeight     int64
+}
+
+#### LightClientAttack
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `conflictingBlock`  | [LightBlock](#lightblock)         |             |
+| `commonHeight`      | int64           |             |
+
+#### LightBlock
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `signedHeader`  | [SignedHeader](#signedheader)           |             |
+| `validatorSet`  | [ValidatorSet](#validatorset)           |             |
+
+#### SignedHeader
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `Header`  | [Header](#header)           |             |
+| `commit`  | [commit](#commit)           |             |
+
+#### ValidatorSet
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `validators`  | [Array of Validator](#validator)           |             |
+| `proposer`  | [Validator](#validator)           |             |
+
+<!-- #### Validator
+
+| name     | type                    | description |
+| -------- | ----------------------- | ----------- |
+| `address`  | [Address](#address)           |             |
+| `pubKey`  | [publickey](#publickey)           |             |
+| `VotingPower`  | int64           |             |
+| `ProposerPriority`  | int64           |             | -->
 
 #### Vote
 
