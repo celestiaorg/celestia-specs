@@ -844,12 +844,12 @@ TODO define a format for numbers in the range `[0,1]`
 
 Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
 
-| name                              | type     | description                                |
-| --------------------------------- | -------- | ------------------------------------------ |
-| `version`                         | `uint64` | The `VERSION`.                             |
-| `chainID`                         | `uint64` | The `CHAIN_ID`.                            |
-| `shareSize`                       | `uint64` | The `SHARE_SIZE`.                          |
-| `shareReservedBytes`              | `uint64` | The `SHARE_RESERVED_BYTES`.                |
-| `availableDataOriginalSquareSize` | `uint64` | The `AVAILABLE_DATA_ORIGINAL_SQUARE_SIZE`. |
+| name                             | type     | description                               |
+| -------------------------------- | -------- | ----------------------------------------- |
+| `version`                        | `uint64` | The `VERSION`.                            |
+| `chainID`                        | `uint64` | The `CHAIN_ID`.                           |
+| `shareSize`                      | `uint64` | The `SHARE_SIZE`.                         |
+| `shareReservedBytes`             | `uint64` | The `SHARE_RESERVED_BYTES`.               |
+| `availableDataOriginalSquareMax` | `uint64` | The `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`. |
 
 In order to compute the `consensusRoot` field in the [block header](#header), the above list of parameters is Merkleized in a plain [binary Merkle tree](#binary-merkle-tree), whose root is assigned to the `consensusRoot`.
