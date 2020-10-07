@@ -22,12 +22,12 @@ digraph G {
 
         subgraph cluster_header {
             label = "header";
-            struct1 [label = "height | timestamp | lastBlockID | <f3> lastCommitRoot | consensusRoot | stateCommitment | <f6> availableDataRoot | proposerAddress"];
+            struct1 [label = "height | timestamp | lastBlockID | <f3> lastCommitRoot | consensusRoot | stateCommitment | availableDataOriginalSquareSize | <f7> availableDataRoot | proposerAddress"];
         }
     }
 
     struct1:f3 -> struct2;
-    struct1:f6 -> struct4;
+    struct1:f7 -> struct4;
     struct4:f0 -> struct3 [label = "NMT commitments to\nerasure-coded data"];
 
     edge [style = invis];
