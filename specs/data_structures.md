@@ -20,11 +20,11 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
-    - [Binary Merkle Tree Proofs](#binary-merkle-tree-proofs)
+    - [BinaryMerkleTreeProof](#binarymerkletreeproof)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
-    - [Namespace Merkle Tree Proofs](#namespace-merkle-tree-proofs)
+    - [NamespaceMerkleTreeProof](#namespacemerkletreeproof)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
-    - [Sparse Merkle Tree Proofs](#sparse-merkle-tree-proofs)
+    - [SparseMerkleTreeProof](#sparsemerkletreeproof)
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
@@ -38,16 +38,16 @@ Data Structures
     - [WrappedTransaction](#wrappedtransaction)
     - [Transaction](#transaction)
     - [SignedTransactionData](#signedtransactiondata)
-      - [SignedTransactionData: Transfer](#signedtransactiondata-transfer)
-      - [SignedTransactionData: PayForMessage](#signedtransactiondata-payformessage)
-      - [SignedTransactionData: PayForPadding](#signedtransactiondata-payforpadding)
-      - [SignedTransactionData: CreateValidator](#signedtransactiondata-createvalidator)
-      - [SignedTransactionData: BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
-      - [SignedTransactionData: UnbondValidator](#signedtransactiondata-unbondvalidator)
-      - [SignedTransactionData: CreateDelegation](#signedtransactiondata-createdelegation)
-      - [SignedTransactionData: BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
-      - [SignedTransactionData: UnbondDelegation](#signedtransactiondata-unbonddelegation)
-      - [SignedTransactionData: Burn](#signedtransactiondata-burn)
+      - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
+      - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+      - [SignedTransactionDataPayForPadding](#signedtransactiondatapayforpadding)
+      - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
+      - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
+      - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
+      - [SignedTransactionDataCreateDelegation](#signedtransactiondatacreatedelegation)
+      - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
+      - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
+      - [SignedTransactionDataBurn](#signedtransactiondataburn)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -256,7 +256,7 @@ Note that rather than duplicating the last node if there are an odd number of no
 
 Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
-#### Binary Merkle Tree Proofs
+#### BinaryMerkleTreeProof
 
 | name       | type                          | description                   |
 | ---------- | ----------------------------- | ----------------------------- |
@@ -264,6 +264,8 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 | `key`      | `byte[32]`                    | Key (i.e. index) of the leaf. |
 | `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.          |
 | `leaf`     | `byte[]`                      | Leaf value.                   |
+
+A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree).
 
 ### Namespace Merkle Tree
 
@@ -311,7 +313,7 @@ For some intuition: the min and max namespace IDs for subtree roots with at leas
 
 A compact commitment can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
-#### Namespace Merkle Tree Proofs
+#### NamespaceMerkleTreeProof
 
 | name                 | type                             | description                   |
 | -------------------- | -------------------------------- | ----------------------------- |
@@ -324,7 +326,7 @@ A compact commitment can be computed by taking the [hash](#hashing) of the [seri
 | `siblingMaxes`       | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
 | `leaf`               | `byte[]`                         | Leaf value.                   |
 
-When verifying an NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
+When verifying an NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binarymerkletreeproof)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
 ### Sparse Merkle Tree
 
@@ -356,7 +358,7 @@ For internal node `node` with children `l` and `r`:
 node.v = h(0x01, serialize(l), serialize(r))
 ```
 
-#### Sparse Merkle Tree Proofs
+#### SparseMerkleTreeProof
 
 SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
 
@@ -424,22 +426,22 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 #### ShareProof
 
-| name       | type                                                         | description                                                                                       |
-| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `share`    | [Share](#share)                                              | The share.                                                                                        |
-| `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
-| `isCol`    | `bool`                                                       | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                                     | The index of the share in the offending row or column.                                            |
+| name       | type                                                  | description                                                                                       |
+| ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `share`    | [Share](#share)                                       | The share.                                                                                        |
+| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
+| `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
+| `position` | `uint64`                                              | The index of the share in the offending row or column.                                            |
 
 #### BadEncodingFraudProof
 
-| name          | type                                                         | description                                                                       |
-| ------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| `shareProofs` | [ShareProof](#shareproof)`[]`                                | The available shares in the offending row or column.                              |
-| `root`        | [HashDigest](#hashdigest)                                    | The Merkle root of the offending row or column.                                   |
-| `proof`       | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
-| `isCol`       | `bool`                                                       | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
-| `position`    | `uint64`                                                     | The index of the row or column in the square.                                     |
+| name          | type                                                  | description                                                                       |
+| ------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `shareProofs` | [ShareProof](#shareproof)`[]`                         | The available shares in the offending row or column.                              |
+| `root`        | [HashDigest](#hashdigest)                             | The Merkle root of the offending row or column.                                   |
+| `proof`       | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
+| `isCol`       | `bool`                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
+| `position`    | `uint64`                                              | The index of the row or column in the square.                                     |
 
 ### Share
 
@@ -536,16 +538,16 @@ enum TransactionType : uint8_t {
 ```
 
 Signed transaction data comes in a number of types:
-1. [Transfer](#signedtransactiondata-transfer)
-1. [PayForMessage](#signedtransactiondata-payformessage)
-1. [PayForPadding](#signedtransactiondata-payforpadding)
-1. [CreateValidator](#signedtransactiondata-createvalidator)
-1. [BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
-1. [UnbondValidator](#signedtransactiondata-unbondvalidator)
-1. [CreateDelegation](#signedtransactiondata-createdelegation)
-1. [BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
-1. [UnbondDelegation](#signedtransactiondata-unbonddelegation)
-1. [Burn](#signedtransactiondata-burn)
+1. [Transfer](#signedtransactiondatatransfer)
+1. [PayForMessage](#signedtransactiondatapayformessage)
+1. [PayForPadding](#signedtransactiondatapayforpadding)
+1. [CreateValidator](#signedtransactiondatacreatevalidator)
+1. [BeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
+1. [UnbondValidator](#signedtransactiondataunbondvalidator)
+1. [CreateDelegation](#signedtransactiondatacreatedelegation)
+1. [BeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
+1. [UnbondDelegation](#signedtransactiondataunbonddelegation)
+1. [Burn](#signedtransactiondataburn)
 
 Common fields are denoted here to avoid repeating descriptions:
 
@@ -557,7 +559,7 @@ Common fields are denoted here to avoid repeating descriptions:
 | `maxFeeRate` | [FeeRate](#type-aliases) | The maximum fee rate the sender is willing to pay.                         |
 | `nonce`      | [Nonce](#type-aliases)   | Nonce of sender.                                                           |
 
-##### SignedTransactionData: Transfer
+##### SignedTransactionDataTransfer
 
 | name         | type                     | description                         |
 | ------------ | ------------------------ | ----------------------------------- |
@@ -569,7 +571,7 @@ Common fields are denoted here to avoid repeating descriptions:
 
 Transfers `amount` coins to `to`.
 
-##### SignedTransactionData: PayForMessage
+##### SignedTransactionDataPayForMessage
 
 | name                     | type                           | description                                                  |
 | ------------------------ | ------------------------------ | ------------------------------------------------------------ |
@@ -584,7 +586,7 @@ Pays for the inclusion of a [message](#message) in the same block.
 
 The commitment to message shares `messageShareCommitment` is a [Merkle root](#binary-merkle-tree) of message share roots. Each message share root is [a subtree root in a row NMT](#arranging-available-data-into-shares). For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
-##### SignedTransactionData: PayForPadding
+##### SignedTransactionDataPayForPadding
 
 | name                 | type                           | description                                                  |
 | -------------------- | ------------------------------ | ------------------------------------------------------------ |
@@ -594,7 +596,7 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
-##### SignedTransactionData: CreateValidator
+##### SignedTransactionDataCreateValidator
 
 | name             | type                     | description                                |
 | ---------------- | ------------------------ | ------------------------------------------ |
@@ -606,7 +608,7 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
-##### SignedTransactionData: BeginUnbondingValidator
+##### SignedTransactionDataBeginUnbondingValidator
 
 | name         | type                     | description                                        |
 | ------------ | ------------------------ | -------------------------------------------------- |
@@ -616,7 +618,7 @@ Create a new [Validator](#validator) at this address for `amount` coins worth of
 
 Begin unbonding the [Validator](#validator) at this address.
 
-##### SignedTransactionData: UnbondValidator
+##### SignedTransactionDataUnbondValidator
 
 | name         | type                     | description                                |
 | ------------ | ------------------------ | ------------------------------------------ |
@@ -626,7 +628,7 @@ Begin unbonding the [Validator](#validator) at this address.
 
 Finish unbonding the [Validator](#validator) at this address.
 
-##### SignedTransactionData: CreateDelegation
+##### SignedTransactionDataCreateDelegation
 
 | name         | type                     | description                                 |
 | ------------ | ------------------------ | ------------------------------------------- |
@@ -638,7 +640,7 @@ Finish unbonding the [Validator](#validator) at this address.
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
-##### SignedTransactionData: BeginUnbondingDelegation
+##### SignedTransactionDataBeginUnbondingDelegation
 
 | name         | type                     | description                                         |
 | ------------ | ------------------------ | --------------------------------------------------- |
@@ -648,7 +650,7 @@ Create a new [Delegation](#delegation) of `amount` coins worth of voting power f
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
-##### SignedTransactionData: UnbondDelegation
+##### SignedTransactionDataUnbondDelegation
 
 | name         | type                     | description                                 |
 | ------------ | ------------------------ | ------------------------------------------- |
@@ -658,7 +660,7 @@ Begin unbonding the [Delegation](#delegation) at this address.
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
-##### SignedTransactionData: Burn
+##### SignedTransactionDataBurn
 
 | name         | type                      | description                                  |
 | ------------ | ------------------------- | -------------------------------------------- |
