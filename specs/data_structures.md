@@ -326,7 +326,7 @@ A compact commitment can be computed by taking the [hash](#hashing) of the [seri
 | `siblingMaxes`       | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
 | `leaf`               | `byte[]`                         | Leaf value.                   |
 
-When verifying an NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binary-merkle-tree-proofs)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
+When verifying an NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binarymerkletreeproof)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
 ### Sparse Merkle Tree
 
@@ -426,22 +426,22 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 #### ShareProof
 
-| name       | type                                                         | description                                                                                       |
-| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `share`    | [Share](#share)                                              | The share.                                                                                        |
-| `proof`    | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
-| `isCol`    | `bool`                                                       | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                                     | The index of the share in the offending row or column.                                            |
+| name       | type                                                     | description                                                                                       |
+| ---------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `share`    | [Share](#share)                                          | The share.                                                                                        |
+| `proof`    | [Namespace Merkle Tree Proof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
+| `isCol`    | `bool`                                                   | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
+| `position` | `uint64`                                                 | The index of the share in the offending row or column.                                            |
 
 #### BadEncodingFraudProof
 
-| name          | type                                                         | description                                                                       |
-| ------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| `shareProofs` | [ShareProof](#shareproof)`[]`                                | The available shares in the offending row or column.                              |
-| `root`        | [HashDigest](#hashdigest)                                    | The Merkle root of the offending row or column.                                   |
-| `proof`       | [Namespace Merkle Tree Proof](#namespace-merkle-tree-proofs) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
-| `isCol`       | `bool`                                                       | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
-| `position`    | `uint64`                                                     | The index of the row or column in the square.                                     |
+| name          | type                                                     | description                                                                       |
+| ------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `shareProofs` | [ShareProof](#shareproof)`[]`                            | The available shares in the offending row or column.                              |
+| `root`        | [HashDigest](#hashdigest)                                | The Merkle root of the offending row or column.                                   |
+| `proof`       | [Namespace Merkle Tree Proof](#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
+| `isCol`       | `bool`                                                   | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
+| `position`    | `uint64`                                                 | The index of the row or column in the square.                                     |
 
 ### Share
 
