@@ -38,16 +38,16 @@ Data Structures
     - [WrappedTransaction](#wrappedtransaction)
     - [Transaction](#transaction)
     - [SignedTransactionData](#signedtransactiondata)
-      - [SignedTransactionData: Transfer](#signedtransactiondata-transfer)
-      - [SignedTransactionData: PayForMessage](#signedtransactiondata-payformessage)
-      - [SignedTransactionData: PayForPadding](#signedtransactiondata-payforpadding)
-      - [SignedTransactionData: CreateValidator](#signedtransactiondata-createvalidator)
-      - [SignedTransactionData: BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
-      - [SignedTransactionData: UnbondValidator](#signedtransactiondata-unbondvalidator)
-      - [SignedTransactionData: CreateDelegation](#signedtransactiondata-createdelegation)
-      - [SignedTransactionData: BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
-      - [SignedTransactionData: UnbondDelegation](#signedtransactiondata-unbonddelegation)
-      - [SignedTransactionData: Burn](#signedtransactiondata-burn)
+      - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
+      - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+      - [SignedTransactionDataPayForPadding](#signedtransactiondatapayforpadding)
+      - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
+      - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
+      - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
+      - [SignedTransactionDataCreateDelegation](#signedtransactiondatacreatedelegation)
+      - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
+      - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
+      - [SignedTransactionDataBurn](#signedtransactiondataburn)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -538,16 +538,16 @@ enum TransactionType : uint8_t {
 ```
 
 Signed transaction data comes in a number of types:
-1. [Transfer](#signedtransactiondata-transfer)
-1. [PayForMessage](#signedtransactiondata-payformessage)
-1. [PayForPadding](#signedtransactiondata-payforpadding)
-1. [CreateValidator](#signedtransactiondata-createvalidator)
-1. [BeginUnbondingValidator](#signedtransactiondata-beginunbondingvalidator)
-1. [UnbondValidator](#signedtransactiondata-unbondvalidator)
-1. [CreateDelegation](#signedtransactiondata-createdelegation)
-1. [BeginUnbondingDelegation](#signedtransactiondata-beginunbondingdelegation)
-1. [UnbondDelegation](#signedtransactiondata-unbonddelegation)
-1. [Burn](#signedtransactiondata-burn)
+1. [Transfer](#signedtransactiondatatransfer)
+1. [PayForMessage](#signedtransactiondatapayformessage)
+1. [PayForPadding](#signedtransactiondatapayforpadding)
+1. [CreateValidator](#signedtransactiondatacreatevalidator)
+1. [BeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
+1. [UnbondValidator](#signedtransactiondataunbondvalidator)
+1. [CreateDelegation](#signedtransactiondatacreatedelegation)
+1. [BeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
+1. [UnbondDelegation](#signedtransactiondataunbonddelegation)
+1. [Burn](#signedtransactiondataburn)
 
 Common fields are denoted here to avoid repeating descriptions:
 
@@ -559,7 +559,7 @@ Common fields are denoted here to avoid repeating descriptions:
 | `maxFeeRate` | [FeeRate](#type-aliases) | The maximum fee rate the sender is willing to pay.                         |
 | `nonce`      | [Nonce](#type-aliases)   | Nonce of sender.                                                           |
 
-##### SignedTransactionData: Transfer
+##### SignedTransactionDataTransfer
 
 | name         | type                     | description                         |
 | ------------ | ------------------------ | ----------------------------------- |
@@ -571,7 +571,7 @@ Common fields are denoted here to avoid repeating descriptions:
 
 Transfers `amount` coins to `to`.
 
-##### SignedTransactionData: PayForMessage
+##### SignedTransactionDataPayForMessage
 
 | name                     | type                           | description                                                  |
 | ------------------------ | ------------------------------ | ------------------------------------------------------------ |
@@ -586,7 +586,7 @@ Pays for the inclusion of a [message](#message) in the same block.
 
 The commitment to message shares `messageShareCommitment` is a [Merkle root](#binary-merkle-tree) of message share roots. Each message share root is [a subtree root in a row NMT](#arranging-available-data-into-shares). For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
-##### SignedTransactionData: PayForPadding
+##### SignedTransactionDataPayForPadding
 
 | name                 | type                           | description                                                  |
 | -------------------- | ------------------------------ | ------------------------------------------------------------ |
@@ -596,7 +596,7 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 
 Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
-##### SignedTransactionData: CreateValidator
+##### SignedTransactionDataCreateValidator
 
 | name             | type                     | description                                |
 | ---------------- | ------------------------ | ------------------------------------------ |
@@ -608,7 +608,7 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
-##### SignedTransactionData: BeginUnbondingValidator
+##### SignedTransactionDataBeginUnbondingValidator
 
 | name         | type                     | description                                        |
 | ------------ | ------------------------ | -------------------------------------------------- |
@@ -618,7 +618,7 @@ Create a new [Validator](#validator) at this address for `amount` coins worth of
 
 Begin unbonding the [Validator](#validator) at this address.
 
-##### SignedTransactionData: UnbondValidator
+##### SignedTransactionDataUnbondValidator
 
 | name         | type                     | description                                |
 | ------------ | ------------------------ | ------------------------------------------ |
@@ -628,7 +628,7 @@ Begin unbonding the [Validator](#validator) at this address.
 
 Finish unbonding the [Validator](#validator) at this address.
 
-##### SignedTransactionData: CreateDelegation
+##### SignedTransactionDataCreateDelegation
 
 | name         | type                     | description                                 |
 | ------------ | ------------------------ | ------------------------------------------- |
@@ -640,7 +640,7 @@ Finish unbonding the [Validator](#validator) at this address.
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
-##### SignedTransactionData: BeginUnbondingDelegation
+##### SignedTransactionDataBeginUnbondingDelegation
 
 | name         | type                     | description                                         |
 | ------------ | ------------------------ | --------------------------------------------------- |
@@ -650,7 +650,7 @@ Create a new [Delegation](#delegation) of `amount` coins worth of voting power f
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
-##### SignedTransactionData: UnbondDelegation
+##### SignedTransactionDataUnbondDelegation
 
 | name         | type                     | description                                 |
 | ------------ | ------------------------ | ------------------------------------------- |
@@ -660,7 +660,7 @@ Begin unbonding the [Delegation](#delegation) at this address.
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
-##### SignedTransactionData: Burn
+##### SignedTransactionDataBurn
 
 | name         | type                      | description                                  |
 | ------------ | ------------------------- | -------------------------------------------- |
