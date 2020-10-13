@@ -20,11 +20,11 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
-    - [Binary Merkle Tree Proofs](#binary-merkle-tree-proofs)
+    - [BinaryMerkleTreeProof](#binarymerkletreeproof)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
-    - [Namespace Merkle Tree Proofs](#namespace-merkle-tree-proofs)
+    - [NamespaceMerkleTreeProof](#namespacemerkletreeproof)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
-    - [Sparse Merkle Tree Proofs](#sparse-merkle-tree-proofs)
+    - [SparseMerkleTreeProof](#sparsemerkletreeproof)
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
@@ -256,7 +256,7 @@ Note that rather than duplicating the last node if there are an odd number of no
 
 Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
-#### Binary Merkle Tree Proofs
+#### BinaryMerkleTreeProof
 
 | name       | type                          | description                   |
 | ---------- | ----------------------------- | ----------------------------- |
@@ -264,6 +264,8 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 | `key`      | `byte[32]`                    | Key (i.e. index) of the leaf. |
 | `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.          |
 | `leaf`     | `byte[]`                      | Leaf value.                   |
+
+A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree).
 
 ### Namespace Merkle Tree
 
@@ -311,7 +313,7 @@ For some intuition: the min and max namespace IDs for subtree roots with at leas
 
 A compact commitment can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
-#### Namespace Merkle Tree Proofs
+#### NamespaceMerkleTreeProof
 
 | name                 | type                             | description                   |
 | -------------------- | -------------------------------- | ----------------------------- |
@@ -356,7 +358,7 @@ For internal node `node` with children `l` and `r`:
 node.v = h(0x01, serialize(l), serialize(r))
 ```
 
-#### Sparse Merkle Tree Proofs
+#### SparseMerkleTreeProof
 
 SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
 
