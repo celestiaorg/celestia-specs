@@ -105,17 +105,17 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                              | type                      | description                                                                                                                                                                           |
-| --------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                                     |
-| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                                              |
-| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                                                  |
-| `lastCommitRoot`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                                                                                                              |
-| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                                          |
-| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                                                 |
-| `availableDataOriginalSquareSize` | `uint64`                  | The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). Must be a power of 2. |
-| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                                    |
-| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                                     |
+| name                              | type                      | description                                                                                                                                                                                          |
+| --------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                                                    |
+| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                                                             |
+| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                                                                 |
+| `lastCommitRoot`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                                                                                                                             |
+| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                                                         |
+| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                                                                |
+| `availableDataOriginalSquareSize` | `uint64`                  | The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares) for this block. Must be a power of 2. |
+| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                                                   |
+| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                                                    |
 
 ### AvailableDataHeader
 
@@ -390,7 +390,7 @@ Reed-Solomon erasure coding is used as the underlying coding scheme. The paramet
 - [`availableDataOriginalSquareSize`](#header) parity pieces (maximum of [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants)) (i.e `availableDataOriginalSquareSize * 2` total pieces), for an erasure efficiency of 50%. In other words, any 50% of the pieces from the `availableDataOriginalSquareSize * 2` total pieces are enough to recover the original data.
 - [`SHARE_SIZE`](./consensus.md#constants) bytes per piece
 
-[Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
+Note that [`availableDataOriginalSquareSize`](#header) may vary each block. [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
 
 ### 2D Reed-Solomon Encoding Scheme
 
