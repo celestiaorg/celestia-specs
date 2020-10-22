@@ -390,7 +390,7 @@ Reed-Solomon erasure coding is used as the underlying coding scheme. The paramet
 - [`availableDataOriginalSquareSize`](#header) parity pieces (maximum of [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants)) (i.e `availableDataOriginalSquareSize * 2` total pieces), for an erasure efficiency of 50%. In other words, any 50% of the pieces from the `availableDataOriginalSquareSize * 2` total pieces are enough to recover the original data.
 - [`SHARE_SIZE`](./consensus.md#constants) bytes per piece
 
-Note that [`availableDataOriginalSquareSize`](#header) may vary each block. [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
+Note that [`availableDataOriginalSquareSize`](#header) may vary each block, and [is decided by the block proposer of that block](./block_proposer.md#deciding-on-a-block-size). [Leopard-RS](https://github.com/catid/leopard) is a C library that implements the above scheme with quasilinear runtime.
 
 ### 2D Reed-Solomon Encoding Scheme
 
