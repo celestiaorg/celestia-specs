@@ -30,18 +30,19 @@ Consensus Rules
 
 | name                                 | type     | value   | unit    | description                                                                                                                                                         |
 | ------------------------------------ | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VERSION`                            | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
+| `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX` | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
 | `CHAIN_ID`                           | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
+| `GENESIS_COIN_COUNT`                 | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
+| `GRAFFITI_BYTES`                     | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
+| `MAX_VALIDATORS`                     | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                                |
 | `NAMESPACE_ID_BYTES`                 | `uint64` | `8`     | `byte`  | Size of namespace ID, in bytes.                                                                                                                                     |
 | `NAMESPACE_ID_MAX_RESERVED`          | `uint64` | `255`   |         | Value of maximum reserved namespace ID (inclusive). 1 byte worth of IDs.                                                                                            |
-| `SHARE_SIZE`                         | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                                       |
 | `SHARE_RESERVED_BYTES`               | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                            |
-| `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX` | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
-| `GENESIS_COIN_COUNT`                 | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
-| `UNBONDING_DURATION`                 | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
-| `MAX_VALIDATORS`                     | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                                |
+| `SHARE_SIZE`                         | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                                       |
 | `STATE_SUBTREE_RESERVED_BYTES`       | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                                |
-| `GRAFFITI_BYTES`                     | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
+| `UNBONDING_DURATION`                 | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
+| `VERSION`                            | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
+
 
 ### Reserved Namespace IDs
 
