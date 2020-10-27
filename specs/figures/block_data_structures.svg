@@ -78,7 +78,7 @@
 <polyline fill="none" stroke="#000000" points="24,-198 226.585,-198 "/>
 <text text-anchor="middle" x="125.2925" y="-181.4" font-family="Times,serif" font-size="14.00" fill="#000000">lastBlockID</text>
 <polyline fill="none" stroke="#000000" points="24,-173.2 226.585,-173.2 "/>
-<text text-anchor="middle" x="125.2925" y="-156.6" font-family="Times,serif" font-size="14.00" fill="#000000">lastCommitRoot</text>
+<text text-anchor="middle" x="125.2925" y="-156.6" font-family="Times,serif" font-size="14.00" fill="#000000">lastCommitHash</text>
 <polyline fill="none" stroke="#000000" points="24,-148.4 226.585,-148.4 "/>
 <text text-anchor="middle" x="125.2925" y="-131.8" font-family="Times,serif" font-size="14.00" fill="#000000">consensusRoot</text>
 <polyline fill="none" stroke="#000000" points="24,-123.6 226.585,-123.6 "/>
