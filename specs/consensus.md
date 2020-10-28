@@ -10,6 +10,8 @@ Consensus Rules
 - [Leader Selection](#leader-selection)
 - [Fork Choice](#fork-choice)
 - [Block Validity](#block-validity)
+  - [Block Structure](#block-structure)
+    - [Header](#header)
   - [State Transitions](#state-transitions)
     - [Validators and Delegations](#validators-and-delegations)
   - [Formatting](#formatting)
@@ -75,6 +77,27 @@ Consensus Rules
 ## Fork Choice
 
 ## Block Validity
+
+This section specifies the entirety of the validity rules for a newly-seen block.
+
+### Block Structure
+
+Before executing [state transitions](#state-transitions), the structure of the [block](./data_structures.md#block) must be verified. The `header`, `availableDataHeader`, `availableData`, and `lastCommit` fields of the block are all downloaded or otherwise acquired. If they cannot all be acquired entirely, the block is ignored, but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the [networking spec](./networking.md).
+
+#### Header
+
+The header is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
+
+1. `header.height` == `prev.header.height + 1`.
+1. `header.timestamp` > `prev.header.timestamp`.
+1. `header.lastBlockID` == the [block ID](./data_structures.md#blockid) of `prev`.
+1. `header.lastCommitHash` == the [hash](./data_structures.md#hashing) of `lastCommit`.
+1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
+1. `header.stateCommitment` == the root of the state, computed [with the application of all state transitions in this block](#state-transitions).
+1. `header.availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
+1. `header.availableDataOriginalSquareSize` is a power of `2`.
+1. `header.availableDataRoot` == TODO available data root
+1. `header.proposerAddress` == the [leader](#leader-selection) for `header.height`.
 
 ### State Transitions
 
