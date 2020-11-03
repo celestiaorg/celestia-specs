@@ -195,7 +195,11 @@ Output of the [signing](#public-key-cryptography) process.
 
 ## Serialization
 
-Objects that are committed to or signed over require a canonical serialization. This is done using TODO.
+Objects that are committed to or signed over require a canonical serialization. This is done using a deterministic (and thus, bijective) variant of protobuf defined [here](https://github.com/cosmos/cosmos-sdk/blob/master/docs/architecture/adr-027-deterministic-protobuf-serialization.md).
+
+Note: there are two requirements for a serialization scheme, should this need to be changed:
+1. Must be bijective.
+1. Serialization must include the length of dynamic structures (e.g. arrays with variable length).
 
 ## Hashing
 
