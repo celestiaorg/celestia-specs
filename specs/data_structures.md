@@ -105,17 +105,18 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                              | type                      | description                                                                                                                                                                                          |
-| --------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                                                    |
-| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                                                             |
-| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                                                                 |
-| `lastCommitRoot`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                                                                                                                             |
-| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                                                         |
-| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                                                                |
-| `availableDataOriginalSquareSize` | `uint64`                  | The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares) for this block. Must be a power of 2. |
-| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                                                   |
-| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                                                    |
+| name                              | type                      | description                                                                                                                                                                        |
+| --------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                                  |
+| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                                           |
+| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                                               |
+| `lastCommitRoot`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                                                                                                           |
+| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                                       |
+| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                                              |
+| `availableDataOriginalSharesUsed` | `uint64`                  | The number of shares used in the [original data square](#arranging-available-data-into-shares) that are not [tail padding](./consensus.md#reserved-namespace-ids).                 |
+| `availableDataOriginalSquareSize` | `uint64`                  | The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](#arranging-available-data-into-shares) for this block. Must be a power of 2. |
+| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                                 |
+| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                                  |
 
 ### AvailableDataHeader
 
@@ -125,6 +126,8 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `colRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
 The `availableDataRoot` of the [header](#header) is computed using the row and column roots as described [here](#2d-reed-solomon-encoding-scheme).
+
+The number of column roots is the [header](#header)'s `availableDataOriginalSquareSize` field, and the number of row roots is `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize)`.
 
 ### AvailableData
 
