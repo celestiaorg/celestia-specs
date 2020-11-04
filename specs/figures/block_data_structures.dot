@@ -7,7 +7,7 @@ digraph G {
 
         subgraph cluster_availableheader {
             label = "availableDataHeader";
-            struct4 [label = "{<f0> availableDataCommitments}"];
+            struct4 [label = "{<f0> | { rowRoots | colRoots } }"];
         }
 
         subgraph cluster_body {
@@ -27,8 +27,8 @@ digraph G {
     }
 
     struct1:f3 -> struct2;
-    struct1:f7 -> struct4;
-    struct4:f0 -> struct3 [label = "NMT commitments to\nerasure-coded data"];
+    struct1:f7 -> struct4 [label = "Merkle root of"];
+    struct4:f0 -> struct3 [label = "NMT roots to\nerasure-coded data"];
 
     edge [style = invis];
     struct1 -> struct3;
