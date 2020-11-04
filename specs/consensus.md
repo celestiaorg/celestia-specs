@@ -84,12 +84,14 @@ This section specifies the entirety of the validity rules for a newly-seen block
 
 ### Block Structure
 
-Before executing [state transitions](#state-transitions), the structure of the [block](./data_structures.md#block) must be verified. The `header`, `availableDataHeader`, `availableData`, and `lastCommit` fields of the block are all downloaded or otherwise acquired. If they cannot all be acquired entirely, the block is ignored, but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the [networking spec](./networking.md).
+Before executing [state transitions](#state-transitions), the structure of the [block](./data_structures.md#block) must be verified.
 
-The following fields are parsed (i.e. [deserialized](./data_structures.md#serialization)). If they cannot be parsed, the block is ignored but not explicitly invalid as above.
+The following block fields are acquired from the network and parsed (i.e. [deserialized](./data_structures.md#serialization)). If they cannot be parsed, the block is ignored but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the [networking spec](./networking.md).
 1. [header](./data_structures.md#header)
 1. [availableDataHeader](./data_structures.md#availabledataheader)
 1. [lastCommit](./data_structures.md#commit)
+
+If the above fields are parsed successfully, the available data `availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#availabledata), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
 
 #### `header`
 
@@ -110,7 +112,7 @@ TODO define the genesis block
 
 #### `availableDataHeader`
 
-1. `availableDataHeader.`
+1. Length of `availableDataHeader.availableDataCommitments`
 
 #### `lastCommit`
 
