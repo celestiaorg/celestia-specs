@@ -11,9 +11,10 @@ Consensus Rules
 - [Fork Choice](#fork-choice)
 - [Block Validity](#block-validity)
   - [Block Structure](#block-structure)
-    - [`header`](#header)
-    - [`availableDataHeader`](#availabledataheader)
-    - [`lastCommit`](#lastcommit)
+    - [`block.header`](#blockheader)
+    - [`block.availableDataHeader`](#blockavailabledataheader)
+    - [`block.lastCommit`](#blocklastcommit)
+    - [`block.availableData`](#blockavailabledata)
   - [State Transitions](#state-transitions)
     - [Validators and Delegations](#validators-and-delegations)
   - [Formatting](#formatting)
@@ -80,22 +81,22 @@ Consensus Rules
 
 ## Block Validity
 
-This section specifies the entirety of the validity rules for a newly-seen block.
+This section specifies the entirety of the validity rules for a newly-seen block, `block`.
 
 ### Block Structure
 
 Before executing [state transitions](#state-transitions), the structure of the [block](./data_structures.md#block) must be verified.
 
 The following block fields are acquired from the network and parsed (i.e. [deserialized](./data_structures.md#serialization)). If they cannot be parsed, the block is ignored but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the [networking spec](./networking.md).
-1. [header](./data_structures.md#header)
-1. [availableDataHeader](./data_structures.md#availabledataheader)
-1. [lastCommit](./data_structures.md#commit)
+1. [block.header](./data_structures.md#header)
+1. [block.availableDataHeader](./data_structures.md#availabledataheader)
+1. [block.lastCommit](./data_structures.md#commit)
 
-If the above fields are parsed successfully, the available data `availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#availabledata), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
+If the above fields are parsed successfully, the available data `block.availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#availabledata), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
 
-#### `header`
+#### `block.header`
 
-The header is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
+The block header `block.header` (`header` for short) is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
 
 1. `header.height` == `prev.header.height + 1`.
 1. `header.timestamp` > `prev.header.timestamp`.
@@ -110,11 +111,15 @@ The header is the first thing that is downloaded from the new block, and commits
 
 TODO define the genesis block
 
-#### `availableDataHeader`
+#### `block.availableDataHeader`
 
 1. Length of `availableDataHeader.availableDataCommitments`
 
-#### `lastCommit`
+#### `block.lastCommit`
+
+
+
+#### `block.availableData`
 
 
 
