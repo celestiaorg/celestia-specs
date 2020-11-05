@@ -113,7 +113,9 @@ TODO define the genesis block
 
 #### `block.availableDataHeader`
 
-1. Length of `availableDataHeader.availableDataCommitments`
+The available data header `block.availableDataHeader` (`availableDataHeader` for short) is then downloaded. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed.
+
+1. Length of `availableDataHeader.availableDataCommitments` == `2 * header.availableDataOriginalSquareSize`.
 
 #### `block.lastCommit`
 
