@@ -127,7 +127,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 
 The `availableDataRoot` of the [header](#header) is computed using the row and column roots as described [here](#2d-reed-solomon-encoding-scheme).
 
-The number of column roots is the [header](#header)'s `availableDataOriginalSquareSize` field, and the number of row roots is `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize)`.
+The number of column roots is twice the [header](#header)'s `availableDataOriginalSquareSize` field, and the number of row roots is `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize) + availableDataOriginalSquareSize`.
 
 ### AvailableData
 
