@@ -125,7 +125,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `rowRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 | `colRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
-The `availableDataRoot` of the [header](#header) is computed using the row and column roots as described [here](#2d-reed-solomon-encoding-scheme).
+The `availableDataRoot` of the [header](#header) is computed using the compact row and column roots as described [here](#2d-reed-solomon-encoding-scheme).
 
 The number of column roots is twice the [header](#header)'s `availableDataOriginalSquareSize` field, and the number of row roots is `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize) + availableDataOriginalSquareSize`. Rows containing only [tail padding](./consensus.md#reserved-namespace-ids) are implicitly available, and so do not need to be committed to here.
 
