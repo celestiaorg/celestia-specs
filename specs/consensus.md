@@ -92,7 +92,7 @@ The following block fields are acquired from the network and parsed (i.e. [deser
 1. [block.availableDataHeader](./data_structures.md#availabledataheader)
 1. [block.lastCommit](./data_structures.md#commit)
 
-If the above fields are parsed successfully, the available data `block.availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#availabledata), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
+If the above fields are parsed successfully, the available data `block.availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#arranging-available-data-into-shares), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
 
 #### `block.header`
 
@@ -113,14 +113,14 @@ TODO define the genesis block
 
 #### `block.availableDataHeader`
 
-The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be true:
+The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be `true`:
 
 1. Length of `availableDataHeader.availableDataCommitments` == `2 * header.availableDataOriginalSquareSize`.
 1. The length of each element in `availableDataHeader.availableDataCommitments` must be [`32`](./consensus.md#hashing).
 
 #### `block.lastCommit`
 
-The last [commit](./data_structures.md#commit) `block.lastCommit` (`lastCommit` for short) is processed next. This is the Tendermint commit (i.e. polka of votes) _for the previous block_. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
+The last [commit](./data_structures.md#commit) `block.lastCommit` (`lastCommit` for short) is processed next. This is the Tendermint commit (i.e. polka of votes) _for the previous block_. For previous block `prev` and previous block header `prev.header`, the following checks must be `true`:
 
 1. `lastCommit.height` == `prev.header.height`.
 1. `lastCommit.round` >= `1`.
@@ -133,7 +133,13 @@ TODO define specifically how to validate commitsigs
 
 #### `block.availableData`
 
+The block's [available data](./data_structures.md#availabledata) (analogous to transactions in contemporary blockchain designs) `block.availableData` (`availableData` for short) is finally processed. The [list of share rows](./networking.md#arranging-available-data-into-shares) is parsed into actual data structures; if parsing fails here, the block is invalid.
 
+TODO define fraud proof for invalid block here
+
+Once parsed, the following checks must be `true`:
+
+1. 
 
 ### State Transitions
 
