@@ -8,7 +8,7 @@ This document describes the tasks of an honest block proposer to assemble a new 
 
 ## Deciding on a Block Size
 
-Before [arranging available data into shares](./data_structures.md#arranging-available-data-into-shares), the size of the original data's square must be determined. This value will be set as the `availableDataOriginalSquareSize` field in the [block header](./data_structures.md#header).
+Before [arranging available data into shares](./data_structures.md#arranging-available-data-into-shares), the size of the original data's square must be determined.
 
 There are two restrictions on the original data's square size:
 1. It must be at most [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants).

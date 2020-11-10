@@ -105,23 +105,32 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                              | type                      | description                                                                                                                                                                                          |
-| --------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                                                    |
-| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                                                             |
-| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                                                                 |
-| `lastCommitHash`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit hash.                                                                                                                                                             |
-| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                                                         |
-| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                                                                |
-| `availableDataOriginalSquareSize` | `uint64`                  | The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares) for this block. Must be a power of 2. |
-| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                                                   |
-| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                                                    |
+| name                              | type                      | description                                                                                                                                                        |
+| --------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                  |
+| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                           |
+| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                               |
+| `lastCommitHash`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit hash.                                                                                                                           |
+| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                       |
+| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                              |
+| `availableDataOriginalSharesUsed` | `uint64`                  | The number of shares used in the [original data square](#arranging-available-data-into-shares) that are not [tail padding](./consensus.md#reserved-namespace-ids). |
+| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                 |
+| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                  |
+
+The size of the [original data square](#arranging-available-data-into-shares), `availableDataOriginalSquareSize`, isn't explicitly declared in the block header. Instead, it is implicitly computed as the smallest power of 2 whose square is at least `availableDataOriginalSharesUsed` (in other words, the smallest power of 4 that is at least `availableDataOriginalSharesUsed`).
 
 ### AvailableDataHeader
 
-| name                       | type                          | description                            |
-| -------------------------- | ----------------------------- | -------------------------------------- |
-| `availableDataCommitments` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
+| name       | type                          | description                            |
+| ---------- | ----------------------------- | -------------------------------------- |
+| `rowRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
+| `colRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
+
+The `availableDataRoot` of the [header](#header) is computed using the compact row and column roots as described [here](#2d-reed-solomon-encoding-scheme).
+
+The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](#arranging-available-data-into-shares) for this block. Must be a power of 2.
+
+The number of column roots is `availableDataOriginalSquareSize * 2`, and the number of row roots is `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize) + availableDataOriginalSquareSize`. Rows containing only [tail padding](./consensus.md#reserved-namespace-ids) are implicitly available, and so do not need to be committed to here.
 
 ### AvailableData
 
@@ -417,11 +426,11 @@ As an example, the parity data in the second column of `Q2` (in striped purple) 
 
 ![fig: RS2D encoding: extending a column.](./figures/rs2d_extend.svg)
 
-Now that all four quadrants of the `2k * 2k` matrix are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
+Now that all four quadrants of the `2k * 2k` matrix are filled, the row and column roots can be computed. To do so, each row/column is used as the leaves of a [NMT](#namespace-merkle-tree), for which the compact root is computed (i.e. an extra hash operation over the NMT root is used to produce a single [HashDigest](#hashdigest)). In this example, the fourth row root value is computed as the NMT root of the fourth row of `Q0` and the fourth row of `Q1` as leaves.
 
 ![fig: RS2D encoding: a row root.](./figures/rs2d_row.svg)
 
-Finally, the `availableDataRoot` of the block [Header](#header) is computed as the Merkle root of the [binary Merkle tree](#binary-merkle-tree) with the row and column roots as leaves.
+Finally, the `availableDataRoot` of the block [Header](#header) is computed as the Merkle root of the [binary Merkle tree](#binary-merkle-tree) with the row and column roots as leaves, in that order.
 
 ![fig: Available data root.](./figures/data_root.svg)
 
