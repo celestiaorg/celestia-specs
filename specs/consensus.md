@@ -96,7 +96,7 @@ If the above fields are parsed successfully, the available data `block.available
 
 #### `block.header`
 
-The block header `block.header` (`header` for short) is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
+The [block header](./data_structures.md#header) `block.header` (`header` for short) is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
 
 1. `header.height` == `prev.header.height + 1`.
 1. `header.timestamp` > `prev.header.timestamp`.
@@ -113,14 +113,23 @@ TODO define the genesis block
 
 #### `block.availableDataHeader`
 
-The available data header `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be true:
+The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be true:
 
 1. Length of `availableDataHeader.availableDataCommitments` == `2 * header.availableDataOriginalSquareSize`.
 1. The length of each element in `availableDataHeader.availableDataCommitments` must be [`32`](./consensus.md#hashing).
 
 #### `block.lastCommit`
 
+The last [commit](./data_structures.md#commit) `block.lastCommit` (`lastCommit` for short) is processed next. This is the Tendermint commit (i.e. polka of votes) _for the previous block_. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
 
+1. `lastCommit.height` == `prev.header.height`.
+1. `lastCommit.round` >= `1`.
+1. `lastCommit.blockID` == the [block ID](./data_structures.md#blockid) of `prev`.
+1. Length of `lastCommit.signatures` <= [`MAX_VALIDATORS`](#constants).
+1. Each of `lastCommit.signatures` must be a valid [CommitSig](./data_structures.md#commitsig)
+1. The sum of the votes for `prev` in `lastCommit` must be at least 2/3 (rounded up) of the voting power of `prev`'s next validator set.
+
+TODO define specifically how to validate commitsigs
 
 #### `block.availableData`
 

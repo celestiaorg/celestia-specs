@@ -136,12 +136,12 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 
 ### Commit
 
-| name         | type                        | description |
-| ------------ | --------------------------- | ----------- |
-| `height`     | [Height](#type-aliases)     |             |
-| `round`      | [Round](#type-aliases)      |             |
-| `blockID`    | [BlockID](#blockid)         |             |
-| `signatures` | [CommitSig](#commitsig)`[]` |             |
+| name         | type                        | description                        |
+| ------------ | --------------------------- | ---------------------------------- |
+| `height`     | [Height](#type-aliases)     | Block height.                      |
+| `round`      | [Round](#type-aliases)      | Round. Incremented on view change. |
+| `blockID`    | [BlockID](#blockid)         | Block ID of the previous block.    |
+| `signatures` | [CommitSig](#commitsig)`[]` | List of signatures.                |
 
 ### Timestamp
 
