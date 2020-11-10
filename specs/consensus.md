@@ -92,7 +92,7 @@ The following block fields are acquired from the network and parsed (i.e. [deser
 1. [block.availableDataHeader](./data_structures.md#availabledataheader)
 1. [block.lastCommit](./data_structures.md#commit)
 
-If the above fields are parsed successfully, the available data `block.availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#arranging-available-data-into-shares), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
+If the above fields are parsed successfully, the available data `block.availableData` is acquired in erasure-coded form as [a list of share rows](./networking.md#availabledata), then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.
 
 #### `block.header`
 
@@ -133,7 +133,7 @@ TODO define specifically how to validate commitsigs
 
 #### `block.availableData`
 
-The block's [available data](./data_structures.md#availabledata) (analogous to transactions in contemporary blockchain designs) `block.availableData` (`availableData` for short) is finally processed. The [list of share rows](./networking.md#arranging-available-data-into-shares) is parsed into actual data structures; if parsing fails here, the block is invalid.
+The block's [available data](./data_structures.md#availabledata) (analogous to transactions in contemporary blockchain designs) `block.availableData` (`availableData` for short) is finally processed. The [list of share rows](./networking.md#availabledata) is parsed into the [actual data structures](./data_structures.md#availabledata); if parsing fails here, the block is invalid.
 
 TODO define fraud proof for invalid block here
 
