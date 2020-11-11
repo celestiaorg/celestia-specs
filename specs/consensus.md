@@ -141,6 +141,7 @@ TODO define fraud proof for invalid block here
 Once parsed, the following checks must be `true`:
 
 1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`.
+1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData`.
 
 ### State Transitions
 
