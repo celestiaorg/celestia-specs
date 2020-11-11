@@ -48,7 +48,6 @@ Consensus Rules
 | `UNBONDING_DURATION`                 | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
 | `VERSION`                            | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
 
-
 ### Reserved Namespace IDs
 
 | name                                   | type          | value                | description                                                                   |
@@ -67,7 +66,6 @@ Consensus Rules
 | `ACTIVE_VALIDATORS_SUBTREE_ID`   | `StateSubtreeID` | `0x02` |
 | `INACTIVE_VALIDATORS_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
 
-
 ### Rewards and Penalties
 
 | name                 | type     | value | unit | description                      |
@@ -77,7 +75,11 @@ Consensus Rules
 
 ## Leader Selection
 
+TODO
+
 ## Fork Choice
+
+TODO
 
 ## Block Validity
 
