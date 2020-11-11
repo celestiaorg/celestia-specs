@@ -98,14 +98,15 @@ If the above fields are parsed successfully, the available data `block.available
 
 The [block header](./data_structures.md#header) `block.header` (`header` for short) is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block `prev` (if `prev` is not known, then the block is ignored), and previous block header `prev.header`, the following checks must be `true`:
 
+`availableDataOriginalSquareSize` is computed as described [here](./data_structures.md#header).
+
 1. `header.height` == `prev.header.height + 1`.
 1. `header.timestamp` > `prev.header.timestamp`.
 1. `header.lastBlockID` == the [block ID](./data_structures.md#blockid) of `prev`.
 1. `header.lastCommitHash` == the [hash](./data_structures.md#hashing) of `lastCommit`.
 1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
 1. `header.stateCommitment` == the root of the state, computed [with the application of all state transitions in this block](#state-transitions).
-1. `header.availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
-1. `header.availableDataOriginalSquareSize` is a power of `2`.
+1. `availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
 1. `header.availableDataRoot` == TODO available data root
 1. `header.proposerAddress` == the [leader](#leader-selection) for `header.height`.
 
@@ -115,7 +116,7 @@ TODO define the genesis block
 
 The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be `true`:
 
-1. Length of `availableDataHeader.availableDataCommitments` == `2 * header.availableDataOriginalSquareSize`.
+1. Length of `availableDataHeader.availableDataCommitments` == `2 * availableDataOriginalSquareSize`.
 1. The length of each element in `availableDataHeader.availableDataCommitments` must be [`32`](./consensus.md#hashing).
 
 #### `block.lastCommit`
