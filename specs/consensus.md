@@ -118,8 +118,9 @@ TODO define the genesis block
 
 The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be `true`:
 
-1. Length of `availableDataHeader.availableDataCommitments` == `2 * availableDataOriginalSquareSize`.
-1. The length of each element in `availableDataHeader.availableDataCommitments` must be [`32`](./consensus.md#hashing).
+1. Length of `availableDataHeader.rowRoots` == `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize) + availableDataOriginalSquareSize`.
+1. Length of `availableDataHeader.colRoots` == `availableDataOriginalSquareSize * 2`.
+1. The length of each element in `availableDataHeader.rowRoots` and `availableDataHeader.colRoots` must be [`32`](./consensus.md#hashing).
 
 #### `block.lastCommit`
 
@@ -158,8 +159,6 @@ TODO process evidence
 #### `block.availableData.transactionData`
 
 Once [evidence has been processed](#blockavailabledataevidencedata), transactions are applied to the state. Note that _transactions_ mutate the state (essentially, the validator set and minimal balances), while _messages_ do not. See [the architecture documentation](./architecture.md) for more info.
-
-
 
 #### Validators and Delegations
 
