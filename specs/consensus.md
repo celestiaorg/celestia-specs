@@ -16,9 +16,9 @@ Consensus Rules
     - [`block.lastCommit`](#blocklastcommit)
     - [`block.availableData`](#blockavailabledata)
   - [State Transitions](#state-transitions)
+    - [`block.availableData.evidenceData`](#blockavailabledataevidencedata)
+    - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
     - [Validators and Delegations](#validators-and-delegations)
-  - [Formatting](#formatting)
-  - [Availability](#availability)
 
 ## System Parameters
 
@@ -140,10 +140,18 @@ TODO define fraud proof for invalid block here
 
 Once parsed, the following checks must be `true`:
 
-1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`.
+1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree).
 1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData`.
 
 ### State Transitions
+
+#### `block.availableData.evidenceData`
+
+
+
+#### `block.availableData.transactionData`
+
+
 
 #### Validators and Delegations
 
@@ -217,9 +225,3 @@ then updates the target validator's voting power:
 validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
 ```
-
-### Formatting
-
-Leaves in the message [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree) must be ordered lexicographically by namespace ID.
-
-### Availability
