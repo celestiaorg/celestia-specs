@@ -147,11 +147,17 @@ Once parsed, the following checks must be `true`:
 
 ### State Transitions
 
+Once the basic structure of the block [has been validated](#block-structure), state transitions must be applied to compute the new state and state root.
+
 #### `block.availableData.evidenceData`
 
+Evidence is the first set of state transitions that are applied, and represent proof of validator misbehavior.
 
+TODO process evidence
 
 #### `block.availableData.transactionData`
+
+Once [evidence has been processed](#blockavailabledataevidencedata), transactions are applied to the state. Note that _transactions_ mutate the state (essentially, the validator set and minimal balances), while _messages_ do not. See [the architecture documentation](./architecture.md) for more info.
 
 
 
