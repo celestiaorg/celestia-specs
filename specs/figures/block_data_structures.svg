@@ -96,7 +96,7 @@
 </g>
 <!-- struct1&#45;&gt;struct4 -->
 <g id="edge2" class="edge">
-<title>struct1:f6&#45;&gt;struct4</title>
+<title>struct1:f7&#45;&gt;struct4</title>
 <path fill="none" stroke="#000000" d="M229.8465,-62C286.1347,-62 350.4939,-63.3197 395.0809,-64.4431"/>
 <polygon fill="#000000" stroke="#000000" points="395.0404,-67.9431 405.1271,-64.7013 395.2203,-60.9454 395.0404,-67.9431"/>
 <text text-anchor="middle" x="307.5114" y="-67.2" font-family="Times,serif" font-size="14.00" fill="#000000">Merkle root of</text>
