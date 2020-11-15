@@ -18,6 +18,16 @@ Consensus Rules
 - [State Transitions](#state-transitions)
   - [`block.availableData.evidenceData`](#blockavailabledataevidencedata)
   - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
+    - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
+    - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+    - [SignedTransactionDataPayForPadding](#signedtransactiondatapayforpadding)
+    - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
+    - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
+    - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
+    - [SignedTransactionDataCreateDelegation](#signedtransactiondatacreatedelegation)
+    - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
+    - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
+    - [SignedTransactionDataBurn](#signedtransactiondataburn)
   - [Validators and Delegations](#validators-and-delegations)
 
 ## System Parameters
@@ -171,6 +181,48 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
 TODO add some logic for signing over implicit data, e.g. chain ID
+
+Finally, each `wrappedTransaction` is processed depending on [its type](./data_structures.mdsignedtransactiondata). These are specified in the next subsections.
+
+#### SignedTransactionDataTransfer
+
+TODO
+
+#### SignedTransactionDataPayForMessage
+
+TODO
+
+#### SignedTransactionDataPayForPadding
+
+TODO
+
+#### SignedTransactionDataCreateValidator
+
+TODO
+
+#### SignedTransactionDataBeginUnbondingValidator
+
+TODO
+
+#### SignedTransactionDataUnbondValidator
+
+TODO
+
+#### SignedTransactionDataCreateDelegation
+
+TODO
+
+#### SignedTransactionDataBeginUnbondingDelegation
+
+TODO
+
+#### SignedTransactionDataUnbondDelegation
+
+TODO
+
+#### SignedTransactionDataBurn
+
+TODO
 
 ### Validators and Delegations
 
