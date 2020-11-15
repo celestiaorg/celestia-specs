@@ -160,6 +160,16 @@ TODO process evidence
 
 Once [evidence has been processed](#blockavailabledataevidencedata), transactions are applied to the state. Note that _transactions_ mutate the state (essentially, the validator set and minimal balances), while _messages_ do not. See [the architecture documentation](./architecture.md) for more info.
 
+`block.availableData.transactionData` is simply a list of [WrappedTransaction](./data_structures.md#wrappedtransaction)s. For each wrapped transaction in this list, `wrappedTransaction`, with index `i` (starting from `0`), the following checks must be `true`:
+
+1. `wrappedTransaction.index` == `i`.
+
+For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `transaction`, the following checks must be `true`:
+
+1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
+
+TODO add some logic for signing over implicit data, e.g. chain ID
+
 #### Validators and Delegations
 
 A transaction `tx` that requests a new validator initializes a new [Validator](data_structures.md#validator) leaf in the inactive validators subtree for that account as follows:
