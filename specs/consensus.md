@@ -182,7 +182,7 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 
 TODO add some logic for signing over implicit data, e.g. chain ID
 
-Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.mdsignedtransactiondata). These are specified in the next subsections.
+Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections.
 
 #### SignedTransactionDataTransfer
 
