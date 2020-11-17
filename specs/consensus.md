@@ -162,6 +162,8 @@ Once parsed, the following checks must be `true`:
 
 Once the basic structure of the block [has been validated](#block-structure), state transitions must be applied to compute the new state and state root.
 
+For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.accounts[k]`, and `state.accounts[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with key `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & a)]`.
+
 ### `block.availableData.evidenceData`
 
 Evidence is the first set of state transitions that are applied, and represent proof of validator misbehavior.
@@ -183,6 +185,8 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 TODO add some logic for signing over implicit data, e.g. chain ID
 
 Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections.
+
+TODO handle fees
 
 #### SignedTransactionDataTransfer
 
