@@ -162,7 +162,7 @@ Once parsed, the following checks must be `true`:
 
 Once the basic structure of the block [has been validated](#block-structure), state transitions must be applied to compute the new state and state root.
 
-For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.accounts[k]`, and `state.accounts[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with key `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & a)]`.
+For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.accounts[k]`, and `state.accounts[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
 
 ### `block.availableData.evidenceData`
 
@@ -184,49 +184,150 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 
 TODO add some logic for signing over implicit data, e.g. chain ID
 
-Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections.
+Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). After applying a transaction, the new state state root is computed.
 
-TODO handle fees
+TODO **handle fees**
+
+TODO logic to handle intermediate state roots
 
 #### SignedTransactionDataTransfer
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.Transfer`](./data_structures.md#signedtransactiondata).
+1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
+
+Apply the following to the state:
+
+1. `state.accounts[sender].balance -= tx.amount`.
+1. `state.accounts[sender].nonce += 1`.
+1. `state.accounts[tx.to].balance += tx.amount`.
 
 #### SignedTransactionDataPayForMessage
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
+1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
+    1. Have have namespace ID `tx.messageNamespaceID`.
+1. `tx.messageShareCommitment` == computed as described [here](./data_structures.md#signedtransactiondatapayformessage).
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataPayForPadding
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.PayForPadding`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataCreateValidator
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataBeginUnbondingValidator
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataUnbondValidator
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataCreateDelegation
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataBeginUnbondingDelegation
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataUnbondDelegation
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.`
+1. `tx.`
+1. `tx.`
+1. `tx.`
+
+Apply the following to the state:
+
+1. `state.accounts[sender].nonce += 1`.
 
 #### SignedTransactionDataBurn
 
-TODO
+The following checks must be `true`:
+
+1. `tx.type` == [`TransactionType.Burn`](./data_structures.md#signedtransactiondata).
+1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
+
+Apply the following to the state:
+
+1. `state.accounts[sender].balance -= tx.amount`.
+1. `state.accounts[sender].nonce += 1`.
 
 ### Validators and Delegations
 
