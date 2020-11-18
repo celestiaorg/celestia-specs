@@ -28,7 +28,6 @@ Consensus Rules
     - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
     - [SignedTransactionDataBurn](#signedtransactiondataburn)
     - [End Block](#end-block)
-  - [Validators and Delegations](#validators-and-delegations)
 
 ## System Parameters
 
@@ -255,6 +254,8 @@ validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
 
+state.accounts[sender].balance -= tx.amount
+
 state.inactiveValidatorSet[sender] = validator
 ```
 
@@ -279,11 +280,8 @@ else if state.activeValidatorSet[sender].status == ValidatorStatus.Bonded
 
 validator.status = ValidatorStatus.Unbonding
 validator.unbondingHeight = block.height + 1
-
-old_pendingRewards = validator.pendingRewards
-old_votingPower = validator.votingPower
+validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
-validator.latestEntry += old_pendingRewards // old_votingPower
 
 state.inactiveValidatorSet[sender] = validator
 ```
@@ -295,7 +293,7 @@ The following checks must be `true`:
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Unbonding`.
-1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION > block.height`.
+1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION < block.height`.
 
 Apply the following to the state:
 
@@ -304,14 +302,13 @@ state.accounts[sender].nonce += 1
 
 validator = state.inactiveValidatorSet[sender]
 
-old_stakedBalance = validator.stakedBalance
+state.accounts[sender].balance += validator.stakedBalance
+
 validator.status = ValidatorStatus.Unbonded
+validator.votingPower -= validator.stakedBalance
 validator.stakedBalance = 0
-validator.votingPower -= old_stakedBalance
 
 state.inactiveValidatorSet[sender] = validator
-
-state.accounts[sender].balance += old_stakedBalance
 
 if validator.delegatedCount == 0
     state.accounts[sender].isValidator = false
@@ -335,20 +332,14 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 state.accounts[sender].isDelegating = true
 
+state.accounts[sender].balance -= tx.amount
+
+delegation = new Delegation
+
 if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
     validator = state.inactiveValidatorSet[tx.to]
 else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
     validator = state.activeValidatorSet[tx.to]
-
-validator.delegatedCount += 1
-validator.votingPower += tx.amount
-
-if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
-    state.inactiveValidatorSet[tx.to] = validator
-else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
-    state.activeValidatorSet[tx.to] = validator
-
-delegation = new Delegation
 
 delegation.status = DelegationStatus.Bonded
 delegation.validator = tx.to
@@ -357,7 +348,17 @@ delegation.beginEntry = validator.latestEntry
 delegation.endEntry = PeriodEntry(0)
 delegation.unbondingHeight = 0
 
+validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.pendingRewards = 0
+validator.delegatedCount += 1
+validator.votingPower += tx.amount
+
 state.accounts[sender].delegationInfo = delegation
+
+if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
+    state.inactiveValidatorSet[tx.to] = validator
+else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
+    state.activeValidatorSet[tx.to] = validator
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
@@ -366,27 +367,40 @@ The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.`
-1. `tx.`
-1. `tx.`
+1. `state.accounts[sender].isDelegating == true`.
+1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Bonded`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-```
 
-A transaction `tx` that requests withdrawing a delegation first updates the delegation field:
-```
+delegation = state.accounts[sender].delegationInfo
+
+if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Queued ||
+      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonding
+      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonded
+    validator = state.inactiveValidatorSet[delegation.validator]
+else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+    validator = state.activeValidatorSet[delegation.validator]
+
 delegation.status = DelegationStatus.Unbonding
 delegation.endEntry = validator.latestEntry
 delegation.unbondingHeight = block.height + 1
-```
 
-then updates the target validator's voting power:
-```
+validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.pendingRewards = 0
 validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
+
+state.accounts[sender].delegationInfo = delegation
+
+if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Queued ||
+      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonding
+      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonded
+    state.inactiveValidatorSet[delegation.validator] = validator
+else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+    state.activeValidatorSet[delegation.validator] = validator
 ```
 
 #### SignedTransactionDataUnbondDelegation
@@ -395,14 +409,33 @@ The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.`
-1. `tx.`
-1. `tx.`
+1. `state.accounts[sender].isDelegating` == `true`.
+1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Unbonding`.
+1. `state.accounts[sender].delegationInfo.unbondingHeight + UNBONDING_DURATION < block.height`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
+state.accounts[sender].isDelegating = false
+
+delegation = state.accounts[sender].delegationInfo
+
+state.accounts[sender].balance += delegation.stakedBalance
+
+if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Queued ||
+      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonding
+      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonded
+    validator = state.inactiveValidatorSet[delegation.validator]
+else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+    validator = state.activeValidatorSet[delegation.validator]
+
+if validator.delegatedCount == 0
+    if validator.status == ValidatorStatus.Unbonded
+        state.accounts[delegation.validator].isValidator = false
+        delete state.inactiveValidatorSet[delegation.validator]
+
+delete state.accounts[sender].delegationInfo
 ```
 
 #### SignedTransactionDataBurn
@@ -423,24 +456,6 @@ state.accounts[sender].balance -= tx.amount
 
 #### End Block
 
-At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
-```
-validator.status = ValidatorStatus.Bonded
-```
+TODO end block
 
-For validators that were bonded but are no longer (either by being outside the top `MAX_VALIDATORS` validators, through a transaction that requests unbonding, or by being slashing), the validator object is moved to the inactive validators subtree and they begin unbonding.
-```
-validator.status = ValidatorStatus.Unbonding
-validator.unbondingHeight = block.height + 1
-```
-
-### Validators and Delegations
-
-Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rewards per unit of voting power accumulated so far are calculated:
-```
-old_pendingRewards = validator.pendingRewards
-old_votingPower = validator.votingPower
-
-validator.pendingRewards = 0
-validator.latestEntry += old_pendingRewards / old_votingPower
-```
+At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
