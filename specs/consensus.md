@@ -121,10 +121,8 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
 1. `header.stateCommitment` == the root of the state, computed [with the application of all state transitions in this block](#state-transitions).
 1. `availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
-1. `header.availableDataRoot` == TODO available data root
+1. `header.availableDataRoot` == the [Merkle root](./data_structures.md#binary-merkle-tree) of the tree with the row and column roots of `block.availableDataHeader` as leaves.
 1. `header.proposerAddress` == the [leader](#leader-selection) for `header.height`.
-
-TODO define the genesis block
 
 ### `block.availableDataHeader`
 
@@ -145,20 +143,20 @@ The last [commit](./data_structures.md#commit) `block.lastCommit` (`lastCommit` 
 1. Each of `lastCommit.signatures` must be a valid [CommitSig](./data_structures.md#commitsig)
 1. The sum of the votes for `prev` in `lastCommit` must be at least 2/3 (rounded up) of the voting power of `prev`'s next validator set.
 
-TODO define specifically how to validate commitsigs
+<!--TODO define specifically how to validate commitsigs-->
 
 ### `block.availableData`
 
 The block's [available data](./data_structures.md#availabledata) (analogous to transactions in contemporary blockchain designs) `block.availableData` (`availableData` for short) is finally processed. The [list of share rows](./networking.md#availabledata) is parsed into the [actual data structures](./data_structures.md#availabledata) using the reverse of [the process to encode available data into shares](./data_structures.md#arranging-available-data-into-shares); if parsing fails here, the block is invalid.
 
-TODO define fraud proof for invalid block here
+<!--TODO define fraud proof for invalid block here-->
 
 Once parsed, the following checks must be `true`:
 
 1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree).
 1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData`.
 
-TODO add a step for BLOCK_END state transition
+<!--TODO add a step for BLOCK_END state transition-->
 
 ## State Transitions
 
@@ -170,7 +168,7 @@ For this section, the variable `state` represents the [state tree](./data_struct
 
 Evidence is the first set of state transitions that are applied, and represent proof of validator misbehavior.
 
-TODO process evidence
+<!--TODO process evidence-->
 
 ### `block.availableData.transactionData`
 
@@ -184,13 +182,13 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
-TODO add some logic for signing over implicit data, e.g. chain ID
+<!--TODO add some logic for signing over implicit data, e.g. chain ID-->
 
 Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). After applying a transaction, the new state state root is computed.
 
-TODO **handle fees**
+<!--TODO **handle fees**-->
 
-TODO logic to handle intermediate state roots
+<!--TODO logic to handle intermediate state roots-->
 
 #### SignedTransactionDataTransfer
 
@@ -233,7 +231,7 @@ The following checks must be `true`:
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
 1. `tx.amount` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.commissionRate` TODO check some bounds here
+1. `tx.commissionRate` <!--TODO check some bounds here-->
 1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
 
 Apply the following to the state:
@@ -455,7 +453,5 @@ state.accounts[sender].balance -= tx.amount
 ```
 
 #### End Block
-
-TODO end block
 
 At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
