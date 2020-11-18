@@ -235,11 +235,13 @@ The following checks must be `true`:
 1. `tx.amount` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate` TODO check some bounds here
+1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
+state.accounts[sender].isValidator = true
 
 validator = new Validator
 
