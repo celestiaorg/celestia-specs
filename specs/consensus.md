@@ -323,31 +323,41 @@ if validator.delegatedCount == 0
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `state.accounts[tx.to].isValidator == true`.
+1. `state.inactiveValidatorSet[tx.to].status` == `ValidatorStatus.Queued` or `state.activeValidatorSet[tx.to].status` == `ValidatorStatus.Bonded`
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.`
-1. `tx.`
-1. `tx.`
+1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-```
+state.accounts[sender].isDelegating = true
 
-A transaction `tx` that requests a new delegation first updates the target validator's voting power:
-```
+if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
+    validator = state.inactiveValidatorSet[tx.to]
+else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
+    validator = state.activeValidatorSet[tx.to]
+
 validator.delegatedCount += 1
 validator.votingPower += tx.amount
-```
 
-then initializes the [Delegation](data_structures.md#delegation) field of that account as follows:
-```
+if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
+    state.inactiveValidatorSet[tx.to] = validator
+else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
+    state.activeValidatorSet[tx.to] = validator
+
+delegation = new Delegation
+
 delegation.status = DelegationStatus.Bonded
 delegation.validator = tx.to
 delegation.stakedBalance = tx.amount
 delegation.beginEntry = validator.latestEntry
 delegation.endEntry = PeriodEntry(0)
 delegation.unbondingHeight = 0
+
+state.accounts[sender].delegationInfo = delegation
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
