@@ -27,6 +27,7 @@ Consensus Rules
     - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
     - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
     - [SignedTransactionDataBurn](#signedtransactiondataburn)
+    - [End Block](#end-block)
   - [Validators and Delegations](#validators-and-delegations)
 
 ## System Parameters
@@ -202,9 +203,12 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].balance -= tx.amount`.
-1. `state.accounts[sender].nonce += 1`.
-1. `state.accounts[tx.to].balance += tx.amount`.
+```
+state.accounts[sender].nonce += 1
+
+state.accounts[sender].balance -= tx.amount
+state.accounts[tx.to].balance += tx.amount
+```
 
 #### SignedTransactionDataPayForMessage
 
@@ -219,7 +223,9 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+```
 
 #### SignedTransactionDataCreateValidator
 
@@ -232,9 +238,11 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
-1. Initialize a new [Validator](data_structures.md#validator) leaf in the inactive validators subtree for the sender account `state.inactiveValidatorSet[sender]` (`validator` for short):
 ```
+state.accounts[sender].nonce += 1
+
+validator = new Validator
+
 validator.status = ValidatorStatus.Queued
 validator.stakedBalance = tx.amount
 validator.commissionRate = tx.commissionRate
@@ -244,6 +252,8 @@ validator.pendingRewards = 0
 validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
+
+state.inactiveValidatorSet[sender] = validator
 ```
 
 #### SignedTransactionDataBeginUnbondingValidator
@@ -252,13 +262,29 @@ The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.`
-1. `tx.`
-1. `tx.`
+1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Queued` or `state.activeValidatorSet[sender]` == `ValidatorStatus.Bonded`.
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+
+if state.inactiveValidatorSet[sender].status == ValidatorStatus.Queued
+    validator = state.inactiveValidatorSet[sender]
+else if state.activeValidatorSet[sender].status == ValidatorStatus.Bonded
+    validator = state.activeValidatorSet[sender]
+    delete state.activeValidatorSet[sender]
+
+validator.status = ValidatorStatus.Unbonding
+validator.unbondingHeight = block.height + 1
+
+old_pendingRewards = validator.pendingRewards
+old_votingPower = validator.votingPower
+validator.pendingRewards = 0
+validator.latestEntry += old_pendingRewards // old_votingPower
+
+state.inactiveValidatorSet[sender] = validator
+```
 
 #### SignedTransactionDataUnbondValidator
 
@@ -266,13 +292,25 @@ The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.`
-1. `tx.`
-1. `tx.`
+1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Unbonding`.
+1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION > block.height`.
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+
+validator = state.inactiveValidatorSet[sender]
+
+old_stakedBalance = validator.stakedBalance
+validator.status = ValidatorStatus.Unbonded
+validator.stakedBalance = 0
+validator.votingPower -= old_stakedBalance
+
+state.inactiveValidatorSet[sender] = validator
+
+state.accounts[sender].balance += old_stakedBalance
+```
 
 #### SignedTransactionDataCreateDelegation
 
@@ -286,7 +324,9 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+```
 
 #### SignedTransactionDataBeginUnbondingDelegation
 
@@ -300,7 +340,9 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+```
 
 #### SignedTransactionDataUnbondDelegation
 
@@ -314,7 +356,9 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+```
 
 #### SignedTransactionDataBurn
 
@@ -326,8 +370,15 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-1. `state.accounts[sender].balance -= tx.amount`.
-1. `state.accounts[sender].nonce += 1`.
+```
+state.accounts[sender].nonce += 1
+
+state.accounts[sender].balance -= tx.amount
+```
+
+#### End Block
+
+
 
 ### Validators and Delegations
 
@@ -359,6 +410,9 @@ old_votingPower = validator.votingPower
 validator.pendingRewards = 0
 validator.latestEntry += old_pendingRewards / old_votingPower
 ```
+
+
+
 
 A transaction `tx` that requests a new delegation first updates the target validator's voting power:
 ```
