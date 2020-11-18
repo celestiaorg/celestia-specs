@@ -158,6 +158,8 @@ Once parsed, the following checks must be `true`:
 1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree).
 1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData`.
 
+TODO add a step for BLOCK_END state transition
+
 ## State Transitions
 
 Once the basic structure of the block [has been validated](#block-structure), state transitions must be applied to compute the new state and state root.
