@@ -210,6 +210,7 @@ The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
+1. `uint(tx.messageNamespaceID) % 2` == `0`. In other words, the namespace ID interpreted as an unsigned integer is even.
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
     1. Have have namespace ID `tx.messageNamespaceID`.
 1. `tx.messageShareCommitment` == computed as described [here](./data_structures.md#signedtransactiondatapayformessage).
