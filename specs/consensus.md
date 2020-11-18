@@ -312,6 +312,10 @@ validator.votingPower -= old_stakedBalance
 state.inactiveValidatorSet[sender] = validator
 
 state.accounts[sender].balance += old_stakedBalance
+
+if validator.delegatedCount == 0
+    state.accounts[sender].isValidator = false
+    delete state.inactiveValidatorSet[sender]
 ```
 
 #### SignedTransactionDataCreateDelegation
