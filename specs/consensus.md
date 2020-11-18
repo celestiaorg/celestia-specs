@@ -162,7 +162,7 @@ Once parsed, the following checks must be `true`:
 
 Once the basic structure of the block [has been validated](#block-structure), state transitions must be applied to compute the new state and state root.
 
-For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.accounts[k]`, and `state.accounts[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
+For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.inactiveValidatorSet[k]`, and `state.activeValidatorSet[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
 
 ### `block.availableData.evidenceData`
 
@@ -224,21 +224,32 @@ Apply the following to the state:
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.`
-1. `tx.`
-1. `tx.`
-1. `tx.`
+1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
+1. `tx.commissionRate` TODO check some bounds here
 
 Apply the following to the state:
 
 1. `state.accounts[sender].nonce += 1`.
+1. Initialize a new [Validator](data_structures.md#validator) leaf in the inactive validators subtree for the sender account `state.inactiveValidatorSet[sender]` (`validator` for short):
+```
+validator.status = ValidatorStatus.Queued
+validator.stakedBalance = tx.amount
+validator.commissionRate = tx.commissionRate
+validator.delegatedCount = 0
+validator.votingPower = tx.amount
+validator.pendingRewards = 0
+validator.latestEntry = PeriodEntry(0)
+validator.unbondingHeight = 0
+validator.isSlashed = false
+```
 
 #### SignedTransactionDataBeginUnbondingValidator
 
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.`
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.`
 1. `tx.`
 1. `tx.`
@@ -252,7 +263,7 @@ Apply the following to the state:
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.`
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.`
 1. `tx.`
 1. `tx.`
@@ -266,7 +277,7 @@ Apply the following to the state:
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.`
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.`
 1. `tx.`
 1. `tx.`
@@ -280,7 +291,7 @@ Apply the following to the state:
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.`
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.`
 1. `tx.`
 1. `tx.`
@@ -294,7 +305,7 @@ Apply the following to the state:
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.`
+1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.`
 1. `tx.`
 1. `tx.`
@@ -317,19 +328,6 @@ Apply the following to the state:
 1. `state.accounts[sender].nonce += 1`.
 
 ### Validators and Delegations
-
-A transaction `tx` that requests a new validator initializes a new [Validator](data_structures.md#validator) leaf in the inactive validators subtree for that account as follows:
-```
-validator.status = ValidatorStatus.Queued
-validator.stakedBalance = tx.amount
-validator.commissionRate = tx.commissionRate
-validator.delegatedCount = 0
-validator.votingPower = tx.amount
-validator.pendingRewards = 0
-validator.latestEntry = PeriodEntry(0)
-validator.unbondingHeight = 0
-validator.isSlashed = false
-```
 
 At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
 ```
