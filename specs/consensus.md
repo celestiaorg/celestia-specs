@@ -20,7 +20,6 @@ Consensus Rules
   - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
     - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
     - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
-    - [SignedTransactionDataPayForPadding](#signedtransactiondatapayforpadding)
     - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
     - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
     - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
@@ -213,20 +212,6 @@ The following checks must be `true`:
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
     1. Have have namespace ID `tx.messageNamespaceID`.
 1. `tx.messageShareCommitment` == computed as described [here](./data_structures.md#signedtransactiondatapayformessage).
-
-Apply the following to the state:
-
-1. `state.accounts[sender].nonce += 1`.
-
-#### SignedTransactionDataPayForPadding
-
-The following checks must be `true`:
-
-1. `tx.type` == [`TransactionType.PayForPadding`](./data_structures.md#signedtransactiondata).
-1. `tx.`
-1. `tx.`
-1. `tx.`
-1. `tx.`
 
 Apply the following to the state:
 
