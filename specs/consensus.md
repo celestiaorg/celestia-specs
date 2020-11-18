@@ -328,6 +328,22 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 ```
 
+A transaction `tx` that requests a new delegation first updates the target validator's voting power:
+```
+validator.delegatedCount += 1
+validator.votingPower += tx.amount
+```
+
+then initializes the [Delegation](data_structures.md#delegation) field of that account as follows:
+```
+delegation.status = DelegationStatus.Bonded
+delegation.validator = tx.to
+delegation.stakedBalance = tx.amount
+delegation.beginEntry = validator.latestEntry
+delegation.endEntry = PeriodEntry(0)
+delegation.unbondingHeight = 0
+```
+
 #### SignedTransactionDataBeginUnbondingDelegation
 
 The following checks must be `true`:
@@ -342,6 +358,19 @@ Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
+```
+
+A transaction `tx` that requests withdrawing a delegation first updates the delegation field:
+```
+delegation.status = DelegationStatus.Unbonding
+delegation.endEntry = validator.latestEntry
+delegation.unbondingHeight = block.height + 1
+```
+
+then updates the target validator's voting power:
+```
+validator.delegatedCount -= 1
+validator.votingPower -= delegation.votingPower
 ```
 
 #### SignedTransactionDataUnbondDelegation
@@ -378,10 +407,6 @@ state.accounts[sender].balance -= tx.amount
 
 #### End Block
 
-
-
-### Validators and Delegations
-
 At the end of a block at the end of an epoch, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
 ```
 validator.status = ValidatorStatus.Bonded
@@ -393,14 +418,7 @@ validator.status = ValidatorStatus.Unbonding
 validator.unbondingHeight = block.height + 1
 ```
 
-Once an unbonding validator has waited at least `UNBONDING_DURATION` blocks, they can be unbonded, collecting their reward:
-```
-old_stakedBalance = validator.stakedBalance
-
-validator.status = ValidatorStatus.Unbonded
-validator.stakedBalance = 0
-validator.votingPower -= old_stakedBalance
-```
+### Validators and Delegations
 
 Every time a bonded validator's voting power changes (i.e. when a delegation is added or removed), or when a validator begins unbonding, the rewards per unit of voting power accumulated so far are calculated:
 ```
@@ -409,36 +427,4 @@ old_votingPower = validator.votingPower
 
 validator.pendingRewards = 0
 validator.latestEntry += old_pendingRewards / old_votingPower
-```
-
-
-
-
-A transaction `tx` that requests a new delegation first updates the target validator's voting power:
-```
-validator.delegatedCount += 1
-validator.votingPower += tx.amount
-```
-
-then initializes the [Delegation](data_structures.md#delegation) field of that account as follows:
-```
-delegation.status = DelegationStatus.Bonded
-delegation.validator = tx.to
-delegation.stakedBalance = tx.amount
-delegation.beginEntry = validator.latestEntry
-delegation.endEntry = PeriodEntry(0)
-delegation.unbondingHeight = 0
-```
-
-A transaction `tx` that requests withdrawing a delegation first updates the delegation field:
-```
-delegation.status = DelegationStatus.Unbonding
-delegation.endEntry = validator.latestEntry
-delegation.unbondingHeight = block.height + 1
-```
-
-then updates the target validator's voting power:
-```
-validator.delegatedCount -= 1
-validator.votingPower -= delegation.votingPower
 ```
