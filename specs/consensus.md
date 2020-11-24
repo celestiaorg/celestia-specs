@@ -160,7 +160,8 @@ For this section, the variable `state` represents the [state tree](./data_struct
 
 ### `block.availableData.evidenceData`
 
-Evidence is the first set of state transitions that are applied, and represent proof of validator misbehavior.
+Evidence is the first set of state transitions that are applied, ahead of [transactions](#blockavailabledatatransactiondata).
+Each evidence represents proof of validator misbehavior, and causes a penalty against the validator(s).
 
 ### `block.availableData.transactionData`
 
