@@ -46,9 +46,4 @@ The last piece of the puzzle is determining _which_ row the message is placed at
 
 ### Caveats
 
-The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved with some rules:
-1. the namespace ID for message shares must be "even" (i.e. the lowest bit must be `0`), and
-1. the namespace ID for shares between messages must be exactly `1` more than the namespace ID of the preceding message (i.e. must be identical save for the lowest bit being `1` instead of `0`), and.
-1. the namespace ID for shares between requests with a reserved namespace ID and messages must be [`TAIL_TRANSACTION_PADDING_NAMESPACE_ID`](../specs/consensus.md#constants). Note that this only applies for shares _between_ requests with a reserved namespace ID and messages, i.e. if there are no messages in the block then this rule does not apply.
-
-If we interpret namespace IDs as unsigned integers, this can be thought of as restricting the namespace IDs of shares belonging to messages to even namespace IDs and padding shares to odd namespace IDs, further restricted to deterministic values.
+The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by having [special transactions](./../specs/data_structures.md#signedtransactiondatapayforpadding) the block producer includes that specify a range a zero-padding shares for a given namespace ID (which must be between the namespace IDs of the surrounding real shares, inclusive).
