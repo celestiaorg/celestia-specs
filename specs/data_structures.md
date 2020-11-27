@@ -78,7 +78,7 @@ Data Structures
 | `Amount`                    | `uint64`                   |
 | [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
 | `FeeRate`                   | `uint64`                   |
-| `Graffiti`                  | `byte[GRAFFITI_BYTES]`     |
+| `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]` |
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
@@ -110,7 +110,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                  |
 | `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                           |
 | `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                               |
-| `lastCommitRoot`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit root.                                                                                                                           |
+| `lastCommitHash`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit hash.                                                                                                                           |
 | `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                       |
 | `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                              |
 | `availableDataOriginalSharesUsed` | `uint64`                  | The number of shares used in the [original data square](#arranging-available-data-into-shares) that are not [tail padding](./consensus.md#reserved-namespace-ids). |
@@ -145,12 +145,12 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 
 ### Commit
 
-| name         | type                        | description |
-| ------------ | --------------------------- | ----------- |
-| `height`     | [Height](#type-aliases)     |             |
-| `round`      | [Round](#type-aliases)      |             |
-| `blockID`    | [BlockID](#blockid)         |             |
-| `signatures` | [CommitSig](#commitsig)`[]` |             |
+| name         | type                        | description                        |
+| ------------ | --------------------------- | ---------------------------------- |
+| `height`     | [Height](#type-aliases)     | Block height.                      |
+| `round`      | [Round](#type-aliases)      | Round. Incremented on view change. |
+| `blockID`    | [BlockID](#blockid)         | Block ID of the previous block.    |
+| `signatures` | [CommitSig](#commitsig)`[]` | List of signatures.                |
 
 ### Timestamp
 
@@ -204,7 +204,11 @@ Output of the [signing](#public-key-cryptography) process.
 
 ## Serialization
 
-Objects that are committed to or signed over require a canonical serialization. This is done using TODO.
+Objects that are committed to or signed over require a canonical serialization. This is done using a deterministic (and thus, bijective) variant of protobuf defined [here](https://github.com/cosmos/cosmos-sdk/blob/master/docs/architecture/adr-027-deterministic-protobuf-serialization.md).
+
+Note: there are two requirements for a serialization scheme, should this need to be changed:
+1. Must be bijective.
+1. Serialization must include the length of dynamic structures (e.g. arrays with variable length).
 
 ## Hashing
 
@@ -503,7 +507,7 @@ In the example below, two messages (of lengths 2 and 1, respectively) are placed
 
 ![fig: Original data: messages.](./figures/rs2d_originaldata_message.svg)
 
-The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These must be explicitly disclaimed by the block producer using [special transactions](#signedtransactiondata-payforpadding).
+The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These are zeroes with namespace ID equal to the either [`TAIL_TRANSACTION_PADDING_NAMESPACE_ID`](./consensus.md#constants) if between a request with a reserved namespace ID and a message, or the namespace ID of the previous message plus `1`. See the [rationale doc](../rationale/message_block_layout.md) for more info.
 
 ## Available Data
 

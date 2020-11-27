@@ -46,4 +46,4 @@ The last piece of the puzzle is determining _which_ row the message is placed at
 
 ### Caveats
 
-The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by having special transactions the block producer includes that specify a range a zero-padding shares for a given namespace ID (which must be between the namespace IDs of the surrounding real shares, inclusive).
+The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by having [special transactions](./../specs/data_structures.md#signedtransactiondatapayforpadding) the block producer includes that specify a range a zero-padding shares for a given namespace ID (which must be between the namespace IDs of the surrounding real shares, inclusive).
