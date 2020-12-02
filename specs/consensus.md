@@ -122,6 +122,7 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 1. `header.lastBlockID` == the [block ID](./data_structures.md#blockid) of `prev`.
 1. `header.lastCommitHash` == the [hash](./data_structures.md#hashing) of `lastCommit`.
 1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
+1. `header.feeHeader.baseRate` == `prev.header.feeHeader.baseRate * floor(1 + (prev.header.availableDataOriginalSharesUsed - AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET) / (BASE_FEE_CHANGE_RATE * AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET))`.
 1. `header.stateCommitment` == the root of the state, computed [with the application of all state transitions in this block](#state-transitions).
 1. `availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
 1. `header.availableDataRoot` == the [Merkle root](./data_structures.md#binary-merkle-tree) of the tree with the row and column roots of `block.availableDataHeader` as leaves.
