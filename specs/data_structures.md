@@ -12,6 +12,7 @@ Data Structures
   - [Timestamp](#timestamp)
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
+  - [FeeHeader](#feeheader)
   - [Address](#address)
   - [CommitSig](#commitsig)
   - [Signature](#signature)
@@ -112,6 +113,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                               |
 | `lastCommitHash`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit hash.                                                                                                                           |
 | `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                       |
+| `feeHeader`                       | [FeeHeader](#feeheader)   | Header data pertaining to fees.                                                                                                                                    |
 | `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                              |
 | `availableDataOriginalSharesUsed` | `uint64`                  | The number of shares used in the [original data square](#arranging-available-data-into-shares) that are not [tail padding](./consensus.md#reserved-namespace-ids). |
 | `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                 |
@@ -169,6 +171,15 @@ The block ID is a single Merkle root: the root of the [block header](#header)'s 
 HashDigest is a [type alias](#type-aliases).
 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
+
+### FeeHeader
+
+| name       | type     | description                                      |
+| ---------- | -------- | ------------------------------------------------ |
+| `baseRate` | `uint64` | The base fee rate for this block.                |
+| `tipRate`  | `uint64` | The tip rate for all transactions in this block. |
+
+See the [rationale document](../rationale/fees.md) for more information on base fees.
 
 ### Address
 
