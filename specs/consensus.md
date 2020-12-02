@@ -197,6 +197,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Transfer`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
@@ -219,6 +221,8 @@ bytesPaid = len(tx) + tx.messageSize
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
@@ -254,6 +258,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate` <!--TODO check some bounds here-->
@@ -293,6 +299,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Queued` or `state.activeValidatorSet[sender]` == `ValidatorStatus.Bonded`.
@@ -327,6 +335,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Unbonding`.
@@ -363,6 +373,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `state.accounts[tx.to].isValidator == true`.
 1. `state.inactiveValidatorSet[tx.to].status` == `ValidatorStatus.Queued` or `state.activeValidatorSet[tx.to].status` == `ValidatorStatus.Bonded`
@@ -415,6 +427,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].isDelegating == true`.
@@ -464,6 +478,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].isDelegating` == `true`.
@@ -506,6 +522,8 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Burn`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
