@@ -13,6 +13,7 @@ Data Structures
   - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [FeeHeader](#feeheader)
+  - [TransactionFee](#transactionfee)
   - [Address](#address)
   - [CommitSig](#commitsig)
   - [Signature](#signature)
@@ -78,7 +79,6 @@ Data Structures
 | [`Address`](#address)       | `byte[32]`                 |
 | `Amount`                    | `uint64`                   |
 | [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
-| `FeeRate`                   | `uint64`                   |
 | `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]` |
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
@@ -178,6 +178,15 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 | ---------- | -------- | ------------------------------------------------ |
 | `baseRate` | `uint64` | The base fee rate for this block.                |
 | `tipRate`  | `uint64` | The tip rate for all transactions in this block. |
+
+See the [rationale document](../rationale/fees.md) for more information on base fees.
+
+### TransactionFee
+
+| name          | type     | description                                     |
+| ------------- | -------- | ----------------------------------------------- |
+| `baseRateMax` | `uint64` | The maximum base fee rate for this transaction. |
+| `tipRateMax`  | `uint64` | The maximum tip rate for this transaction.      |
 
 See the [rationale document](../rationale/fees.md) for more information on base fees.
 
@@ -576,36 +585,36 @@ Signed transaction data comes in a number of types:
 
 Common fields are denoted here to avoid repeating descriptions:
 
-| name         | type                     | description                                                                |
-| ------------ | ------------------------ | -------------------------------------------------------------------------- |
-| `type`       | `TransactionType`        | Type of the transaction. Each type indicates a different state transition. |
-| `amount`     | [Amount](#type-aliases)  | Amount of coins to send, in `1u`.                                          |
-| `to`         | [Address](#address)      | Recipient's address.                                                       |
-| `maxFeeRate` | [FeeRate](#type-aliases) | The maximum fee rate the sender is willing to pay.                         |
-| `nonce`      | [Nonce](#type-aliases)   | Nonce of sender.                                                           |
+| name     | type                              | description                                                                |
+| -------- | --------------------------------- | -------------------------------------------------------------------------- |
+| `type`   | `TransactionType`                 | Type of the transaction. Each type indicates a different state transition. |
+| `amount` | [Amount](#type-aliases)           | Amount of coins to send, in `1u`.                                          |
+| `to`     | [Address](#address)               | Recipient's address.                                                       |
+| `fee`    | [TransactionFee](#transactionfee) | The fee information for this transaction.                                  |
+| `nonce`  | [Nonce](#type-aliases)            | Nonce of sender.                                                           |
 
 ##### SignedTransactionDataTransfer
 
-| name         | type                     | description                         |
-| ------------ | ------------------------ | ----------------------------------- |
-| `type`       | `TransactionType`        | Must be `TransactionType.Transfer`. |
-| `amount`     | [Amount](#type-aliases)  |                                     |
-| `to`         | [Address](#address)      |                                     |
-| `maxFeeRate` | [FeeRate](#type-aliases) |                                     |
-| `nonce`      | [Nonce](#type-aliases)   |                                     |
+| name     | type                              | description                         |
+| -------- | --------------------------------- | ----------------------------------- |
+| `type`   | `TransactionType`                 | Must be `TransactionType.Transfer`. |
+| `amount` | [Amount](#type-aliases)           |                                     |
+| `to`     | [Address](#address)               |                                     |
+| `fee`    | [TransactionFee](#transactionfee) |                                     |
+| `nonce`  | [Nonce](#type-aliases)            |                                     |
 
 Transfers `amount` coins to `to`.
 
 ##### SignedTransactionDataPayForMessage
 
-| name                     | type                           | description                                                  |
-| ------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| `type`                   | `TransactionType`              | Must be `TransactionType.PayForMessage`.                     |
-| `maxFeeRate`             | [FeeRate](#type-aliases)       |                                                              |
-| `nonce`                  | [Nonce](#type-aliases)         |                                                              |
-| `messageNamespaceID`     | [`NamespaceID`](#type-aliases) | Namespace ID of message this transaction pays a fee for.     |
-| `messageSize`            | `uint64`                       | Size of message this transaction pays a fee for, in `byte`s. |
-| `messageShareCommitment` | [HashDigest](#hashdigest)      | Commitment to message shares (details below).                |
+| name                     | type                              | description                                                  |
+| ------------------------ | --------------------------------- | ------------------------------------------------------------ |
+| `type`                   | `TransactionType`                 | Must be `TransactionType.PayForMessage`.                     |
+| `fee`                    | [TransactionFee](#transactionfee) |                                                              |
+| `nonce`                  | [Nonce](#type-aliases)            |                                                              |
+| `messageNamespaceID`     | [`NamespaceID`](#type-aliases)    | Namespace ID of message this transaction pays a fee for.     |
+| `messageSize`            | `uint64`                          | Size of message this transaction pays a fee for, in `byte`s. |
+| `messageShareCommitment` | [HashDigest](#hashdigest)         | Commitment to message shares (details below).                |
 
 Pays for the inclusion of a [message](#message) in the same block.
 
@@ -623,77 +632,77 @@ Pays for the inclusion of a padding shares in the same block. Padding shares are
 
 ##### SignedTransactionDataCreateValidator
 
-| name             | type                     | description                                |
-| ---------------- | ------------------------ | ------------------------------------------ |
-| `type`           | `TransactionType`        | Must be `TransactionType.CreateValidator`. |
-| `amount`         | [Amount](#type-aliases)  |                                            |
-| `maxFeeRate`     | [FeeRate](#type-aliases) |                                            |
-| `nonce`          | [Nonce](#type-aliases)   |                                            |
-| `commissionRate` | [Decimal](#decimal)      |                                            |
+| name             | type                              | description                                |
+| ---------------- | --------------------------------- | ------------------------------------------ |
+| `type`           | `TransactionType`                 | Must be `TransactionType.CreateValidator`. |
+| `amount`         | [Amount](#type-aliases)           |                                            |
+| `fee`            | [TransactionFee](#transactionfee) |                                            |
+| `nonce`          | [Nonce](#type-aliases)            |                                            |
+| `commissionRate` | [Decimal](#decimal)               |                                            |
 
 Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
 
 ##### SignedTransactionDataBeginUnbondingValidator
 
-| name         | type                     | description                                        |
-| ------------ | ------------------------ | -------------------------------------------------- |
-| `type`       | `TransactionType`        | Must be `TransactionType.BeginUnbondingValidator`. |
-| `maxFeeRate` | [FeeRate](#type-aliases) |                                                    |
-| `nonce`      | [Nonce](#type-aliases)   |                                                    |
+| name    | type                              | description                                        |
+| ------- | --------------------------------- | -------------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.BeginUnbondingValidator`. |
+| `fee`   | [TransactionFee](#transactionfee) |                                                    |
+| `nonce` | [Nonce](#type-aliases)            |                                                    |
 
 Begin unbonding the [Validator](#validator) at this address.
 
 ##### SignedTransactionDataUnbondValidator
 
-| name         | type                     | description                                |
-| ------------ | ------------------------ | ------------------------------------------ |
-| `type`       | `TransactionType`        | Must be `TransactionType.UnbondValidator`. |
-| `maxFeeRate` | [FeeRate](#type-aliases) |                                            |
-| `nonce`      | [Nonce](#type-aliases)   |                                            |
+| name    | type                              | description                                |
+| ------- | --------------------------------- | ------------------------------------------ |
+| `type`  | `TransactionType`                 | Must be `TransactionType.UnbondValidator`. |
+| `fee`   | [TransactionFee](#transactionfee) |                                            |
+| `nonce` | [Nonce](#type-aliases)            |                                            |
 
 Finish unbonding the [Validator](#validator) at this address.
 
 ##### SignedTransactionDataCreateDelegation
 
-| name         | type                     | description                                 |
-| ------------ | ------------------------ | ------------------------------------------- |
-| `type`       | `TransactionType`        | Must be `TransactionType.CreateDelegation`. |
-| `amount`     | [Amount](#type-aliases)  |                                             |
-| `to`         | [Address](#address)      |                                             |
-| `maxFeeRate` | [FeeRate](#type-aliases) |                                             |
-| `nonce`      | [Nonce](#type-aliases)   |                                             |
+| name     | type                              | description                                 |
+| -------- | --------------------------------- | ------------------------------------------- |
+| `type`   | `TransactionType`                 | Must be `TransactionType.CreateDelegation`. |
+| `amount` | [Amount](#type-aliases)           |                                             |
+| `to`     | [Address](#address)               |                                             |
+| `fee`    | [TransactionFee](#transactionfee) |                                             |
+| `nonce`  | [Nonce](#type-aliases)            |                                             |
 
 Create a new [Delegation](#delegation) of `amount` coins worth of voting power for validator with address `to`.
 
 ##### SignedTransactionDataBeginUnbondingDelegation
 
-| name         | type                     | description                                         |
-| ------------ | ------------------------ | --------------------------------------------------- |
-| `type`       | `TransactionType`        | Must be `TransactionType.BeginUnbondingDelegation`. |
-| `maxFeeRate` | [FeeRate](#type-aliases) |                                                     |
-| `nonce`      | [Nonce](#type-aliases)   |                                                     |
+| name    | type                              | description                                         |
+| ------- | --------------------------------- | --------------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.BeginUnbondingDelegation`. |
+| `fee`   | [TransactionFee](#transactionfee) |                                                     |
+| `nonce` | [Nonce](#type-aliases)            |                                                     |
 
 Begin unbonding the [Delegation](#delegation) at this address.
 
 ##### SignedTransactionDataUnbondDelegation
 
-| name         | type                     | description                                 |
-| ------------ | ------------------------ | ------------------------------------------- |
-| `type`       | `TransactionType`        | Must be `TransactionType.UnbondDelegation`. |
-| `maxFeeRate` | [FeeRate](#type-aliases) |                                             |
-| `nonce`      | [Nonce](#type-aliases)   |                                             |
+| name    | type                              | description                                 |
+| ------- | --------------------------------- | ------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.UnbondDelegation`. |
+| `fee`   | [TransactionFee](#transactionfee) |                                             |
+| `nonce` | [Nonce](#type-aliases)            |                                             |
 
 Finish unbonding the [Delegation](#delegation) at this address.
 
 ##### SignedTransactionDataBurn
 
-| name         | type                      | description                                  |
-| ------------ | ------------------------- | -------------------------------------------- |
-| `type`       | `TransactionType`         | Must be `TransactionType.Burn`.              |
-| `amount`     | [Amount](#type-aliases)   |                                              |
-| `maxFeeRate` | [FeeRate](#type-aliases)  |                                              |
-| `nonce`      | [Nonce](#type-aliases)    |                                              |
-| `graffiti`   | [Graffiti](#type-aliases) | Graffiti to indicate the reason for burning. |
+| name       | type                              | description                                  |
+| ---------- | --------------------------------- | -------------------------------------------- |
+| `type`     | `TransactionType`                 | Must be `TransactionType.Burn`.              |
+| `amount`   | [Amount](#type-aliases)           |                                              |
+| `fee`      | [TransactionFee](#transactionfee) |                                              |
+| `nonce`    | [Nonce](#type-aliases)            |                                              |
+| `graffiti` | [Graffiti](#type-aliases)         | Graffiti to indicate the reason for burning. |
 
 ### IntermediateStateRootData
 
