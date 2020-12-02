@@ -30,6 +30,7 @@ Since blocks grow in size by a power of 4 due to the arrangement of data in a sq
 $$
 b_{cur} = b_{prev} \cdot \left( 1 + R \cdot \frac{s_{prev} - S_{target}}{S_{target}} \right)
 $$
+
 , where $b_{cur}$ is the base fee of the current block, $b_{prev}$ is the base fee of the previous block, $R$ is the rate of change in base fee, $s_{prev}$ is the size of the previous block, and $S_{target}$ is the target block size. In other words, the base fee is only dependent on the current and previous blocks.
 
 As an example, if $R = \frac{1}{8}$ (the rate defined by EIP-1559), the base fee can reduce by up to $12.5\%$ if the current block is completely empty and increase by up to $37.5\%$ if the current block is full.
