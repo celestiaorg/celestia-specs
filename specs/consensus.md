@@ -179,14 +179,25 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
-Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). After applying a transaction, the new state state root is computed.
+Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a helper functions:
+```
+baseCost(y) = block.header.feeHeader.baseRate * y
+tipCost(y) = block.header.feeHeader.tipRate * y
+totalCost(x, y) = x + baseCost(y) + tipCost(y)
+```
+
+After applying a transaction, the new state state root is computed.
 
 #### SignedTransactionDataTransfer
+
+```
+bytesPaid = len(tx)
+```
 
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Transfer`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
 Apply the following to the state:
@@ -194,15 +205,21 @@ Apply the following to the state:
 ```
 state.accounts[sender].nonce += 1
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 state.accounts[tx.to].balance += tx.amount
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataPayForMessage
 
+```
+bytesPaid = len(tx) + tx.messageSize
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
     1. Have namespace ID `tx.messageNamespaceID`.
@@ -212,6 +229,9 @@ Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
+
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataPayForPadding
@@ -227,10 +247,14 @@ Apply the following to the state:
 
 #### SignedTransactionDataCreateValidator
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate` <!--TODO check some bounds here-->
 1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
@@ -253,16 +277,23 @@ validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
 state.inactiveValidatorSet[sender] = validator
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingValidator
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Queued` or `state.activeValidatorSet[sender]` == `ValidatorStatus.Bonded`.
 
@@ -283,13 +314,20 @@ validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 
 state.inactiveValidatorSet[sender] = validator
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondValidator
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Unbonding`.
 1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION < block.height`.
@@ -312,14 +350,20 @@ state.inactiveValidatorSet[sender] = validator
 if validator.delegatedCount == 0
     state.accounts[sender].isValidator = false
     delete state.inactiveValidatorSet[sender]
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataCreateDelegation
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `state.accounts[tx.to].isValidator == true`.
 1. `state.inactiveValidatorSet[tx.to].status` == `ValidatorStatus.Queued` or `state.activeValidatorSet[tx.to].status` == `ValidatorStatus.Bonded`
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
@@ -331,7 +375,7 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 state.accounts[sender].isDelegating = true
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
 delegation = new Delegation
 
@@ -358,13 +402,20 @@ if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
     state.inactiveValidatorSet[tx.to] = validator
 else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
     state.activeValidatorSet[tx.to] = validator
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].isDelegating == true`.
 1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Bonded`.
@@ -400,13 +451,20 @@ if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Qu
     state.inactiveValidatorSet[delegation.validator] = validator
 else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
     state.activeValidatorSet[delegation.validator] = validator
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondDelegation
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].isDelegating` == `true`.
 1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Unbonding`.
@@ -435,14 +493,20 @@ if validator.delegatedCount == 0
         delete state.inactiveValidatorSet[delegation.validator]
 
 delete state.accounts[sender].delegationInfo
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBurn
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Burn`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
 Apply the following to the state:
@@ -450,7 +514,8 @@ Apply the following to the state:
 ```
 state.accounts[sender].nonce += 1
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### End Block
