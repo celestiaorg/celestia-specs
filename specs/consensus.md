@@ -288,6 +288,8 @@ validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 
 state.inactiveValidatorSet[sender] = validator
+
+state.activeValidatorSet.votingPower -= validator.votingPower
 ```
 
 #### SignedTransactionDataUnbondValidator
@@ -363,6 +365,8 @@ if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
     state.inactiveValidatorSet[tx.to] = validator
 else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
     state.activeValidatorSet[tx.to] = validator
+
+state.activeValidatorSet.votingPower -= validator.votingPower
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
@@ -405,6 +409,9 @@ if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Qu
     state.inactiveValidatorSet[delegation.validator] = validator
 else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
     state.activeValidatorSet[delegation.validator] = validator
+
+state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+    state.activeValidatorSet.votingPower -= delegation.votingPower
 ```
 
 #### SignedTransactionDataUnbondDelegation
