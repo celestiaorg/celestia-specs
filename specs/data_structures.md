@@ -62,6 +62,7 @@ Data Structures
   - [Delegation](#delegation)
   - [Validator](#validator)
   - [ActiveValidatorCount](#activevalidatorcount)
+  - [ActiveVotingPower](#activevotingpower)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
@@ -842,7 +843,15 @@ In the validators subtrees, validators are keyed by the [hash](#hashdigest) of t
 | --------------- | -------- | ---------------------------- |
 | `numValidators` | `uint32` | Number of active validators. |
 
-Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with zero (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+### ActiveVotingPower
+
+| name          | type     | description          |
+| ------------- | -------- | -------------------- |
+| `votingPower` | `uint64` | Active voting power. |
+
+Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving the active voting power. The active voting power is stored in the active validators subtree, and is keyed with `1` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000001`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
 ### PeriodEntry
 
