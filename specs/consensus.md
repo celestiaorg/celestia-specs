@@ -466,7 +466,7 @@ Apply the following to the state:
 
 ```
 rewardFactor = TARGET_ANNUAL_ISSUANCE * BLOCK_TIME * sqrt(GENESIS_COIN_COUNT) // SECONDS_PER_YEAR
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor // sqrt(state.activeVotingPower)
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor // sqrt(state.activeValidatorSet.votingPower)
 ```
 
 #### End Block
