@@ -47,6 +47,7 @@ Consensus Rules
 | name                                 | type     | value   | unit    | description                                                                                                                                                         |
 | ------------------------------------ | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX` | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
+| `BLOCK_TIME`                         | `uint64` |         | second  | Block time, in seconds.                                                                                                                                             |
 | `CHAIN_ID`                           | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
 | `GENESIS_COIN_COUNT`                 | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
 | `MAX_GRAFFITI_BYTES`                 | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
@@ -80,10 +81,10 @@ Consensus Rules
 
 ### Rewards and Penalties
 
-| name                 | type     | value | unit | description                      |
-| -------------------- | -------- | ----- | ---- | -------------------------------- |
-| `BASE_REWARD`        | `uint64` |       |      | Base reward per block.           |
-| `BASE_REWARD_FACTOR` | `uint64` |       |      | Factor that scales base rewards. |
+| name                     | type     | value       | unit   | description                                             |
+| ------------------------ | -------- | ----------- | ------ | ------------------------------------------------------- |
+| `SECONDS_PER_YEAR`       | `uint64` | `31536000`  | second | Seconds per year. Omit leap seconds.                    |
+| `TARGET_ANNUAL_ISSUANCE` | `uint64` | `2 * 10**6` | `4u`   | `(= 2000000)` Target number of coins to issue per year. |
 
 ## Leader Selection
 
@@ -464,7 +465,8 @@ At the beginning of the block, rewards are distributed to the block proposer.
 Apply the following to the state:
 
 ```
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += BASE_REWARD_FACTOR
+rewardFactor = TARGET_ANNUAL_ISSUANCE * BLOCK_TIME * sqrt(GENESIS_COIN_COUNT) // SECONDS_PER_YEAR
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor // sqrt(state.activeVotingPower)
 ```
 
 #### End Block
