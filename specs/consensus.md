@@ -28,6 +28,7 @@ Consensus Rules
         - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
         - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
         - [SignedTransactionDataBurn](#signedtransactiondataburn)
+        - [Begin Block](#begin-block)
         - [End Block](#end-block)
 
 ## System Parameters
@@ -81,7 +82,7 @@ Consensus Rules
 
 | name                 | type     | value | unit | description                      |
 | -------------------- | -------- | ----- | ---- | -------------------------------- |
-| `BASE_REWARD`        | `uint64` |       |      |                                  |
+| `BASE_REWARD`        | `uint64` |       |      | Base reward per block.           |
 | `BASE_REWARD_FACTOR` | `uint64` |       |      | Factor that scales base rewards. |
 
 ## Leader Selection
@@ -151,7 +152,7 @@ The block's [available data](./data_structures.md#availabledata) (analogous to t
 Once parsed, the following checks must be `true`:
 
 1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree).
-1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData`.
+1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData` + 2. (Two additional state transitions are the [begin](#begin-block) and [end block](#end-block) implicit transitions.)
 
 ## State Transitions
 
@@ -159,9 +160,15 @@ Once the basic structure of the block [has been validated](#block-structure), st
 
 For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.inactiveValidatorSet[k]`, and `state.activeValidatorSet[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
 
+State transitions are applied in the following order:
+1. [Begin block](#begin-block).
+1. [Evidence](#blockavailabledataevidencedata).
+1. [Transactions](#blockavailabledatatransactiondata).
+1. [End block](#end-block).
+
 ### `block.availableData.evidenceData`
 
-Evidence is the first set of state transitions that are applied, ahead of [transactions](#blockavailabledatatransactiondata).
+Evidence is the second set of state transitions that are applied, ahead of [transactions](#blockavailabledatatransactiondata).
 Each evidence represents proof of validator misbehavior, and causes a penalty against the validator(s).
 
 ### `block.availableData.transactionData`
@@ -448,6 +455,16 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 
 state.accounts[sender].balance -= tx.amount
+```
+
+#### Begin Block
+
+At the beginning of the block, rewards are distributed to the block proposer.
+
+Apply the following to the state:
+
+```
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += BASE_REWARD_FACTOR
 ```
 
 #### End Block
