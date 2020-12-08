@@ -25,7 +25,11 @@ From this, we see that there is nothing inherent in half-fullness, and indeed th
 
 ## Fee Burning
 
-Since blocks grow in size by a power of 4 due to the arrangement of data in a square, a more reasonable initial choice of parameters would be 1:4 target:maximum block size limits. We can then define the base fee as
+The scheme described here is fundamentally identical to EIP-1559, save for the choice of parameters:
+1. Target block size: since blocks grow in size by a power of 4 due to the arrangement of data in a square, a reasonable initial choice would be 1:4 target:maximum block size limits.
+1. Rate of change: there is nothing inherently wrong (or especially right) with the $\frac{1}{8}$ rate of change prescribed by EIP-1559, so this parameter remains unchanged.
+
+We can now define the base fee as
 
 $$
 b_{cur} = b_{prev} \cdot \left( 1 + R \cdot \frac{s_{prev} - S_{target}}{S_{target}} \right)
@@ -33,4 +37,4 @@ $$
 
 , where $b_{cur}$ is the base fee of the current block, $b_{prev}$ is the base fee of the previous block, $R$ is the rate of change in base fee, $s_{prev}$ is the size of the previous block, and $S_{target}$ is the target block size. In other words, the base fee is only dependent on the current and previous blocks.
 
-As an example, if $R = \frac{1}{8}$ (the rate defined by EIP-1559), the base fee can reduce by up to $12.5\%$ if the current block is completely empty and increase by up to $37.5\%$ if the current block is full.
+With $R = \frac{1}{8}$ (the rate defined by EIP-1559 and used here), the base fee can reduce by up to $12.5\%$ if the current block is completely empty and increase by up to $37.5\%$ if the current block is full.
