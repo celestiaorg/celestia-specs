@@ -185,6 +185,7 @@ baseCost(y) = block.header.feeHeader.baseRate * y
 tipCost(y) = block.header.feeHeader.tipRate * y
 totalCost(x, y) = x + baseCost(y) + tipCost(y)
 ```
+, where `x` above represents the amount of coins sent by the transaction authorizer and `y` above represents the a measure of the block space used by the transaction (i.e. size in bytes).
 
 After applying a transaction, the new state state root is computed.
 
