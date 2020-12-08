@@ -179,7 +179,7 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
-Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a helper functions:
+Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a few helper functions:
 ```
 baseCost(y) = block.header.feeHeader.baseRate * y
 tipCost(y) = block.header.feeHeader.tipRate * y
