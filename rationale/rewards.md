@@ -13,12 +13,12 @@ The formula to calculate the reward per block uses the following symbols:
 | $t_B$  | Block time, in seconds.           |
 | $t_Y$  | Seconds per year.                 |
 | $S_0$  | Initial coin supply.              |
-| $s_T$  | Total staked coins.               |
+| $S_T$  | Total staked coins.               |
 
 Note that for the seconds per year we use a fixed `31,536,000`, omitting leap seconds for simplicity.
 
 The reward for a given block is thus only dependent on the validating stake, with remaining terms being constant:
 
 $$
-R_B(s_T) = I_T \frac{t_B}{t_Y} \frac{\sqrt{S_T}}{\sqrt{s_0}} = \frac{I_T t_B \sqrt{S_T}}{t_Y} \frac{1}{\sqrt{s_0}}
+R_B(S_T) = I_T \frac{t_B}{t_Y} \frac{\sqrt{S_T}}{\sqrt{S_0}} = \left( \frac{I_T t_B }{t_Y \sqrt{S_0}} \right) \sqrt{S_T}
 $$
