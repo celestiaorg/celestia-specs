@@ -22,3 +22,5 @@ The reward for a given block is thus only dependent on the validating stake, wit
 $$
 R_B(S_T) = I_T \frac{t_B}{t_Y} \frac{\sqrt{S_T}}{\sqrt{S_0}} = \left( \frac{I_T t_B }{t_Y \sqrt{S_0}} \right) \sqrt{S_T}
 $$
+
+If 100% of the initial supply of coins stake, then exactly $I_T$ new coins will be issued per $\frac{t_Y}{t_B}$ blocks. If fewer than 100% of the initial supply of coins stake, then fewer than $I_T$ new coins will be issued, but the decrease will be square-root rather than linear. If greater than 100% of the initial supply of coins stake (e.g. after some time, additional coins will be in circulation due to previous issuance), then greater than $I_T$ new coins will be issued, but again scaling sub-linearly.
