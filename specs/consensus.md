@@ -472,8 +472,8 @@ At the beginning of the block, rewards are distributed to the block proposer.
 Apply the following to the state:
 
 ```
-rewardFactor = TARGET_ANNUAL_ISSUANCE * BLOCK_TIME * sqrt(GENESIS_COIN_COUNT) // SECONDS_PER_YEAR
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor // sqrt(state.activeValidatorSet.votingPower)
+rewardFactor = (TARGET_ANNUAL_ISSUANCE * BLOCK_TIME) / (SECONDS_PER_YEAR * sqrt(GENESIS_COIN_COUNT))
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor * sqrt(state.activeValidatorSet.votingPower)
 ```
 
 #### End Block
