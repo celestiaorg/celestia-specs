@@ -231,9 +231,9 @@ Note: there are two requirements for a serialization scheme, should this need to
 
 ## Hashing
 
-All protocol-level hashing is done using [Keccak-256](https://keccak.team/keccak.html), and not SHA3-256 ([FIPS 202](https://keccak.team/specifications.html#FIPS_202)). This is to enable compatibility with [Ethereum](https://ethereum.org)'s EVM. Keccak-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
+All protocol-level hashing is done using SHA-2-256 as defined in [FIPS 180-4](https://doi.org/10.6028/NIST.FIPS.180-4). SHA-2-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.
 
-Libraries implementing Keccak-256 are available in Go (https://godoc.org/golang.org/x/crypto/sha3) and Rust (https://docs.rs/sha3).
+Libraries implementing SHA-2-256 are available in Go (https://pkg.go.dev/crypto/sha256) and Rust (https://docs.rs/sha2).
 
 Unless otherwise indicated explicitly, objects are first [serialized](#serialization) before being hashed.
 
