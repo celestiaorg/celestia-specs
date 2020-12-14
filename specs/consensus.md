@@ -27,6 +27,7 @@ Consensus Rules
         - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
         - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
         - [SignedTransactionDataBurn](#signedtransactiondataburn)
+        - [Begin Block](#begin-block)
         - [End Block](#end-block)
 
 ## System Parameters
@@ -47,6 +48,7 @@ Consensus Rules
 | `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`    | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
 | `AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET` | `uint64` |         | `share` | Target number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares).  |
 | `BASE_FEE_CHANGE_RATE`                  | `uint64` | `8`     |         | Inverse of rate at which the [base fee](../rationale/fees.md) changes.                                                                                              |
+| `BLOCK_TIME`                            | `uint64` |         | second  | Block time, in seconds.                                                                                                                                             |
 | `CHAIN_ID`                              | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
 | `GENESIS_COIN_COUNT`                    | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
 | `MAX_GRAFFITI_BYTES`                    | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
@@ -80,10 +82,10 @@ Consensus Rules
 
 ### Rewards and Penalties
 
-| name                 | type     | value | unit | description                      |
-| -------------------- | -------- | ----- | ---- | -------------------------------- |
-| `BASE_REWARD`        | `uint64` |       |      |                                  |
-| `BASE_REWARD_FACTOR` | `uint64` |       |      | Factor that scales base rewards. |
+| name                     | type     | value       | unit   | description                                             |
+| ------------------------ | -------- | ----------- | ------ | ------------------------------------------------------- |
+| `SECONDS_PER_YEAR`       | `uint64` | `31536000`  | second | Seconds per year. Omit leap seconds.                    |
+| `TARGET_ANNUAL_ISSUANCE` | `uint64` | `2 * 10**6` | `4u`   | `(= 2000000)` Target number of coins to issue per year. |
 
 ## Leader Selection
 
@@ -153,7 +155,7 @@ The block's [available data](./data_structures.md#availabledata) (analogous to t
 Once parsed, the following checks must be `true`:
 
 1. The commitments of the [erasure-coded extended](./data_structures.md#2d-reed-solomon-encoding-scheme) `availableData` must match those in `header.availableDataHeader`. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a [Namespace Merkle Tree](data_structures.md#namespace-merkle-tree).
-1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData`.
+1. Length of `availableData.intermediateStateRootData` == length of `availableData.transactionData` + length of `availableData.evidenceData` + 2. (Two additional state transitions are the [begin](#begin-block) and [end block](#end-block) implicit transitions.)
 
 ## State Transitions
 
@@ -161,9 +163,15 @@ Once the basic structure of the block [has been validated](#block-structure), st
 
 For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.inactiveValidatorSet[k]`, and `state.activeValidatorSet[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
 
+State transitions are applied in the following order:
+1. [Begin block](#begin-block).
+1. [Evidence](#blockavailabledataevidencedata).
+1. [Transactions](#blockavailabledatatransactiondata).
+1. [End block](#end-block).
+
 ### `block.availableData.evidenceData`
 
-Evidence is the first set of state transitions that are applied, ahead of [transactions](#blockavailabledatatransactiondata).
+Evidence is the second set of state transitions that are applied, ahead of [transactions](#blockavailabledatatransactiondata).
 Each evidence represents proof of validator misbehavior, and causes a penalty against the validator(s).
 
 ### `block.availableData.transactionData`
@@ -312,6 +320,7 @@ validator.pendingRewards = 0
 
 state.inactiveValidatorSet[sender] = validator
 
+state.activeValidatorSet.votingPower -= validator.votingPower
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
@@ -404,6 +413,7 @@ if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
 else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
     state.activeValidatorSet[tx.to] = validator
 
+state.activeValidatorSet.votingPower -= validator.votingPower
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
@@ -455,6 +465,8 @@ if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Qu
 else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
     state.activeValidatorSet[delegation.validator] = validator
 
+state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+    state.activeValidatorSet.votingPower -= delegation.votingPower
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
@@ -523,6 +535,17 @@ state.accounts[sender].nonce += 1
 
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+```
+
+#### Begin Block
+
+At the beginning of the block, rewards are distributed to the block proposer.
+
+Apply the following to the state:
+
+```
+rewardFactor = (TARGET_ANNUAL_ISSUANCE * BLOCK_TIME) / (SECONDS_PER_YEAR * sqrt(GENESIS_COIN_COUNT))
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor * sqrt(state.activeValidatorSet.votingPower)
 ```
 
 #### End Block
