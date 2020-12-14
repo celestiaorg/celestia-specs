@@ -42,7 +42,6 @@ Data Structures
     - [SignedTransactionData](#signedtransactiondata)
       - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
       - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
-      - [SignedTransactionDataPayForPadding](#signedtransactiondatapayforpadding)
       - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
       - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
       - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
@@ -560,21 +559,19 @@ Wrapped transactions include additional metadata by the block proposer that is c
 enum TransactionType : uint8_t {
     Transfer = 1,
     PayForMessage = 2,
-    PayForPadding = 3,
-    CreateValidator = 4,
-    BeginUnbondingValidator = 5,
-    UnbondValidator = 6,
-    CreateDelegation = 7,
-    BeginUnbondingDelegation = 8,
-    UnbondDelegation = 9,
-    Burn = 10,
+    CreateValidator = 3,
+    BeginUnbondingValidator = 4,
+    UnbondValidator = 5,
+    CreateDelegation = 6,
+    BeginUnbondingDelegation = 7,
+    UnbondDelegation = 8,
+    Burn = 9,
 };
 ```
 
 Signed transaction data comes in a number of types:
 1. [Transfer](#signedtransactiondatatransfer)
 1. [PayForMessage](#signedtransactiondatapayformessage)
-1. [PayForPadding](#signedtransactiondatapayforpadding)
 1. [CreateValidator](#signedtransactiondatacreatevalidator)
 1. [BeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
 1. [UnbondValidator](#signedtransactiondataunbondvalidator)
@@ -619,16 +616,6 @@ Transfers `amount` coins to `to`.
 Pays for the inclusion of a [message](#message) in the same block.
 
 The commitment to message shares `messageShareCommitment` is a [Merkle root](#binary-merkle-tree) of message share roots. Each message share root is [a subtree root in a row NMT](#arranging-available-data-into-shares). For rationale, see [rationale doc](../rationale/message_block_layout.md).
-
-##### SignedTransactionDataPayForPadding
-
-| name                 | type                           | description                                                  |
-| -------------------- | ------------------------------ | ------------------------------------------------------------ |
-| `type`               | `TransactionType`              | Must be `TransactionType.PayForPadding`.                     |
-| `messageNamespaceID` | [`NamespaceID`](#type-aliases) | Namespace ID of padding this transaction pays a fee for.     |
-| `messageSize`        | `uint64`                       | Size of padding this transaction pays a fee for, in `byte`s. |
-
-Pays for the inclusion of a padding shares in the same block. Padding shares are used between real messages that are not tightly packed. For rationale, see [rationale doc](../rationale/message_block_layout.md).
 
 ##### SignedTransactionDataCreateValidator
 
