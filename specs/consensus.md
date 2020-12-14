@@ -20,7 +20,6 @@ Consensus Rules
     - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
         - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
         - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
-        - [SignedTransactionDataPayForPadding](#signedtransactiondatapayforpadding)
         - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
         - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
         - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
@@ -44,21 +43,23 @@ Consensus Rules
 
 ### Constants
 
-| name                                 | type     | value   | unit    | description                                                                                                                                                         |
-| ------------------------------------ | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX` | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
-| `BLOCK_TIME`                         | `uint64` |         | second  | Block time, in seconds.                                                                                                                                             |
-| `CHAIN_ID`                           | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
-| `GENESIS_COIN_COUNT`                 | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
-| `MAX_GRAFFITI_BYTES`                 | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
-| `MAX_VALIDATORS`                     | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                                |
-| `NAMESPACE_ID_BYTES`                 | `uint64` | `8`     | `byte`  | Size of namespace ID, in bytes.                                                                                                                                     |
-| `NAMESPACE_ID_MAX_RESERVED`          | `uint64` | `255`   |         | Value of maximum reserved namespace ID (inclusive). 1 byte worth of IDs.                                                                                            |
-| `SHARE_RESERVED_BYTES`               | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                            |
-| `SHARE_SIZE`                         | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                                       |
-| `STATE_SUBTREE_RESERVED_BYTES`       | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                                |
-| `UNBONDING_DURATION`                 | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
-| `VERSION`                            | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
+| name                                    | type     | value   | unit    | description                                                                                                                                                         |
+| --------------------------------------- | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`    | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
+| `AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET` | `uint64` |         | `share` | Target number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares).  |
+| `BASE_FEE_CHANGE_RATE`                  | `uint64` | `8`     |         | Inverse of rate at which the [base fee](../rationale/fees.md) changes.                                                                                              |
+| `BLOCK_TIME`                            | `uint64` |         | second  | Block time, in seconds.                                                                                                                                             |
+| `CHAIN_ID`                              | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
+| `GENESIS_COIN_COUNT`                    | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
+| `MAX_GRAFFITI_BYTES`                    | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
+| `MAX_VALIDATORS`                        | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                                |
+| `NAMESPACE_ID_BYTES`                    | `uint64` | `8`     | `byte`  | Size of namespace ID, in bytes.                                                                                                                                     |
+| `NAMESPACE_ID_MAX_RESERVED`             | `uint64` | `255`   |         | Value of maximum reserved namespace ID (inclusive). 1 byte worth of IDs.                                                                                            |
+| `SHARE_RESERVED_BYTES`                  | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                            |
+| `SHARE_SIZE`                            | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                                       |
+| `STATE_SUBTREE_RESERVED_BYTES`          | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                                |
+| `UNBONDING_DURATION`                    | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
+| `VERSION`                               | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
 
 ### Reserved Namespace IDs
 
@@ -122,6 +123,7 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 1. `header.lastBlockID` == the [block ID](./data_structures.md#blockid) of `prev`.
 1. `header.lastCommitHash` == the [hash](./data_structures.md#hashing) of `lastCommit`.
 1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
+1. `header.feeHeader.baseRate` == `prev.header.feeHeader.baseRate * floor(1 + (prev.header.availableDataOriginalSharesUsed - AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET) / (BASE_FEE_CHANGE_RATE * AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET))`.
 1. `header.stateCommitment` == the root of the state, computed [with the application of all state transitions in this block](#state-transitions).
 1. `availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
 1. `header.availableDataRoot` == the [Merkle root](./data_structures.md#binary-merkle-tree) of the tree with the row and column roots of `block.availableDataHeader` as leaves.
@@ -184,14 +186,28 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
-Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). After applying a transaction, the new state state root is computed.
+Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a few helper functions:
+```
+baseCost(y) = block.header.feeHeader.baseRate * y
+tipCost(y) = block.header.feeHeader.tipRate * y
+totalCost(x, y) = x + baseCost(y) + tipCost(y)
+```
+, where `x` above represents the amount of coins sent by the transaction authorizer and `y` above represents the a measure of the block space used by the transaction (i.e. size in bytes).
+
+After applying a transaction, the new state state root is computed.
 
 #### SignedTransactionDataTransfer
+
+```
+bytesPaid = len(tx)
+```
 
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Transfer`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
 Apply the following to the state:
@@ -199,15 +215,23 @@ Apply the following to the state:
 ```
 state.accounts[sender].nonce += 1
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 state.accounts[tx.to].balance += tx.amount
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataPayForMessage
 
+```
+bytesPaid = len(tx) + tx.messageSize
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
     1. Have namespace ID `tx.messageNamespaceID`.
@@ -217,25 +241,23 @@ Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-```
 
-#### SignedTransactionDataPayForPadding
-
-1. `tx.type` == [`TransactionType.PayForPadding`](./data_structures.md#signedtransactiondata).
-1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
-    1. Have namespace ID `tx.messageNamespaceID`.
-
-Apply the following to the state:
-
-```
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataCreateValidator
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate` <!--TODO check some bounds here-->
 1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
@@ -258,16 +280,25 @@ validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
 state.inactiveValidatorSet[sender] = validator
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingValidator
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Queued` or `state.activeValidatorSet[sender]` == `ValidatorStatus.Bonded`.
 
@@ -290,13 +321,21 @@ validator.pendingRewards = 0
 state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet.votingPower -= validator.votingPower
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondValidator
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Unbonding`.
 1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION < block.height`.
@@ -319,14 +358,22 @@ state.inactiveValidatorSet[sender] = validator
 if validator.delegatedCount == 0
     state.accounts[sender].isValidator = false
     delete state.inactiveValidatorSet[sender]
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataCreateDelegation
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `state.accounts[tx.to].isValidator == true`.
 1. `state.inactiveValidatorSet[tx.to].status` == `ValidatorStatus.Queued` or `state.activeValidatorSet[tx.to].status` == `ValidatorStatus.Bonded`
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
@@ -338,7 +385,7 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 state.accounts[sender].isDelegating = true
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
 delegation = new Delegation
 
@@ -367,13 +414,21 @@ else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
     state.activeValidatorSet[tx.to] = validator
 
 state.activeValidatorSet.votingPower -= validator.votingPower
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].isDelegating == true`.
 1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Bonded`.
@@ -412,13 +467,21 @@ else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus
 
 state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
     state.activeValidatorSet.votingPower -= delegation.votingPower
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondDelegation
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].isDelegating` == `true`.
 1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Unbonding`.
@@ -447,14 +510,22 @@ if validator.delegatedCount == 0
         delete state.inactiveValidatorSet[delegation.validator]
 
 delete state.accounts[sender].delegationInfo
+
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBurn
 
+```
+bytesPaid = len(tx)
+```
+
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Burn`](./data_structures.md#signedtransactiondata).
-1. `tx.amount` <= `state.accounts[sender].balance`.
+1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
+1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
+1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
 Apply the following to the state:
@@ -462,7 +533,8 @@ Apply the following to the state:
 ```
 state.accounts[sender].nonce += 1
 
-state.accounts[sender].balance -= tx.amount
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
 #### Begin Block
