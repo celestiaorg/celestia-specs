@@ -79,6 +79,7 @@ Consensus Rules
 | `ACCOUNTS_SUBTREE_ID`            | `StateSubtreeID` | `0x01` |
 | `ACTIVE_VALIDATORS_SUBTREE_ID`   | `StateSubtreeID` | `0x02` |
 | `INACTIVE_VALIDATORS_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
+| `DELEGATIONS_SUBTREE_ID`         | `StateSubtreeID` | `0x04` |
 
 ### Rewards and Penalties
 
