@@ -784,12 +784,12 @@ A number of subtrees are maintained:
 ```C++
 enum AccountStatus : uint8_t {
     None = 1,
-    DelegationBonded = 1,
-    DelegationUnbonding = 2,
-    ValidatorQueued = ,
-    ValidatorBonded = ,
-    ValidatorUnbonding = ,
-    ValidatorUnbonded = ,
+    DelegationBonded = 2,
+    DelegationUnbonding = 3,
+    ValidatorQueued = 4,
+    ValidatorBonded = 5,
+    ValidatorUnbonding = 6,
+    ValidatorUnbonded = 7,
 };
 ```
 
