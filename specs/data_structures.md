@@ -64,6 +64,7 @@ Data Structures
   - [Validator](#validator)
   - [ActiveValidatorCount](#activevalidatorcount)
   - [ActiveVotingPower](#activevotingpower)
+  - [ValidatorQueueHead](#validatorqueuehead)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
@@ -854,6 +855,16 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 | `votingPower` | `uint64` | Active voting power. |
 
 Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving the active voting power. The active voting power is stored in the active validators subtree, and is keyed with `1` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000001`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+### ValidatorQueueHead
+
+| name   | type                | description                                                       |
+| ------ | ------------------- | ----------------------------------------------------------------- |
+| `head` | [Address](#address) | Address of inactive validator at the head of the validator queue. |
+
+The head of the queue for validators that are waiting to become active validators is stored in the inactive validators subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `INACTIVE_VALIDATORS_SUBTREE_ID`.
+
+If the queue is empty, `head` is set to the default value (i.e. the hash of the leaf is [the default value for a Sparse Merkle Tree](#sparse-merkle-tree)).
 
 ### PeriodEntry
 
