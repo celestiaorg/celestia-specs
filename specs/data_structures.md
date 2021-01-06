@@ -841,6 +841,8 @@ Validator objects represent all the information needed to be keep track of a val
 
 In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with [`ACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the active validator set or [`INACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the inactive validator set. Active validators are bonded, (i.e. `ValidatorBonded`), while inactive validators are not bonded (i.e. `ValidatorBonded`). By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
 
+The validator queue (i.e. validators with status `ValidatorQueued`) is a subset of the inactive validator set. This queue is represented as a linked list, with each validator pointing to the `next` validator in the queue, and the head of the linked list stored in [ValidatorQueueHead](#validatorqueuehead).
+
 ### ActiveValidatorCount
 
 | name            | type     | description                  |
