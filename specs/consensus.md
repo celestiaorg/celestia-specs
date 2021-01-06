@@ -199,6 +199,8 @@ Two additional helper functions are defined:
 1. `findFromQueue(power)`, which returns the address of the last validator in the [validator queue](./data_structures.md#validator) with voting power greater than or equal to `power`, or `0` if the queue is empty or no validators in the queue have at least `power` voting power.
 1. `parentFromQueue(address)`, which returns the address of the parent in the validator queue of the validator with address `address`, or `0` if `address` is not in the queue or is the head of the queue.
 
+Note that light clients cannot perform a linear search through a linked list, and are instead provided logarithmic proofs (e.g. in the case of `parentFromQueue`, a proof to the parent is provided, which should have `address` as its next validator).
+
 After applying a transaction, the new state state root is computed.
 
 #### SignedTransactionDataTransfer
