@@ -831,6 +831,7 @@ In the delegation subtree, delegations are keyed by the [hash](#hashdigest) of t
 | `unbondingHeight` | [Height](#type-aliases)      | Block height validator began unbonding.                                                |
 | `isSlashed`       | `bool`                       | If this validator has been slashed or not.                                             |
 | `slashRate`       | [Decimal](#decimal)          | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| `next`            | [Address](#type-aliases)     | Next validator in the queue. Zero if this validator is not in the queue.               |
 
 Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
 1. `ValidatorQueued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `ValidatorBonded` validator. Until bonded, this validator can immediately exit the queue.
