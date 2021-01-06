@@ -162,7 +162,7 @@ Once parsed, the following checks must be `true`:
 
 Once the basic structure of the block [has been validated](#block-structure), state transitions must be applied to compute the new state and state root.
 
-For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.inactiveValidatorSet[k]`, and `state.activeValidatorSet[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, and active validator set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
+For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.inactiveValidatorSet[k]`, `state.activeValidatorSet[k]`, and `state.delegationSet[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, active validator set, and delegation set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
 
 State transitions are applied in the following order:
 1. [Begin block](#begin-block).
@@ -248,8 +248,8 @@ Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
@@ -267,17 +267,16 @@ The following checks must be `true`:
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate` <!--TODO check some bounds here-->
-1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
+1. `state.accounts[sender].status` == `AccountStatus.None`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-state.accounts[sender].isValidator = true
+state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].status = AccountStatus.ValidatorQueued
 
 validator = new Validator
-
-validator.status = ValidatorStatus.Queued
 validator.stakedBalance = tx.amount
 validator.commissionRate = tx.commissionRate
 validator.delegatedCount = 0
@@ -286,9 +285,6 @@ validator.pendingRewards = 0
 validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
-
-state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
-
 state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
@@ -307,24 +303,23 @@ The following checks must be `true`:
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Queued` or `state.activeValidatorSet[sender]` == `ValidatorStatus.Bonded`.
+1. `state.accounts[sender].status` == `AccountStatus.ValidatorQueued` or `state.accounts[sender].status` == `AccountStatus.ValidatorBonded`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
+state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].status = ValidatorStatus.Unbonding
 
-if state.inactiveValidatorSet[sender].status == ValidatorStatus.Queued
+if state.accounts[sender].status == AccountStatus.ValidatorQueued
     validator = state.inactiveValidatorSet[sender]
-else if state.activeValidatorSet[sender].status == ValidatorStatus.Bonded
+else if state.accounts[sender].status == AccountStatus.ValidatorBonded
     validator = state.activeValidatorSet[sender]
     delete state.activeValidatorSet[sender]
-
-validator.status = ValidatorStatus.Unbonding
 validator.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
-
 state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet.votingPower -= validator.votingPower
@@ -344,26 +339,26 @@ The following checks must be `true`:
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `state.inactiveValidatorSet[sender]` == `ValidatorStatus.Unbonding`.
-1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION < block.height`.
+1. `state.accounts[sender].status` == `AccountStatus.ValidatorUnbonding`.
+1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION` < `block.height`.
 
 Apply the following to the state:
 
 ```
-state.accounts[sender].nonce += 1
-
 validator = state.inactiveValidatorSet[sender]
 
+state.accounts[sender].nonce += 1
 state.accounts[sender].balance += validator.stakedBalance
+state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].status = AccountStatus.ValidatorUnbonded
 
-validator.status = ValidatorStatus.Unbonded
 validator.votingPower -= validator.stakedBalance
 validator.stakedBalance = 0
 
 state.inactiveValidatorSet[sender] = validator
 
 if validator.delegatedCount == 0
-    state.accounts[sender].isValidator = false
+    state.accounts[sender].status = AccountStatus.None
     delete state.inactiveValidatorSet[sender]
 
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
@@ -381,26 +376,23 @@ The following checks must be `true`:
 1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
-1. `state.accounts[tx.to].isValidator == true`.
-1. `state.inactiveValidatorSet[tx.to].status` == `ValidatorStatus.Queued` or `state.activeValidatorSet[tx.to].status` == `ValidatorStatus.Bonded`
+1. `state.accounts[tx.to].status` == `AccountStatus.ValidatorQueued` or `state.accounts[tx.to].status` == `AccountStatus.ValidatorBonded`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `state.accounts[sender].isValidator` == `false` and `state.accounts[sender].isDelegating` == `false`.
+1. `state.accounts[sender].status` == `AccountStatus.None`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-state.accounts[sender].isDelegating = true
-
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].status = AccountStatus.DelegationBonded
 
-delegation = new Delegation
-
-if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
+if state.accounts[tx.to].status == AccountStatus.ValidatorQueued
     validator = state.inactiveValidatorSet[tx.to]
-else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
+else if state.accounts[tx.to].status == AccountStatus.ValidatorBonded
     validator = state.activeValidatorSet[tx.to]
 
+delegation = new Delegation
 delegation.status = DelegationStatus.Bonded
 delegation.validator = tx.to
 delegation.stakedBalance = tx.amount
@@ -413,14 +405,14 @@ validator.pendingRewards = 0
 validator.delegatedCount += 1
 validator.votingPower += tx.amount
 
-state.accounts[sender].delegationInfo = delegation
+state.delegationSet[sender] = delegation
 
-if state.inactiveValidatorSet[tx.to].status == ValidatorStatus.Queued
+if state.accounts[tx.to].status == AccountStatus.ValidatorQueued
     state.inactiveValidatorSet[tx.to] = validator
-else if state.activeValidatorSet[tx.to].status == ValidatorStatus.Bonded
+else if state.accounts[tx.to].status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[tx.to] = validator
+    state.activeValidatorSet.votingPower += tx.amount
 
-state.activeValidatorSet.votingPower -= validator.votingPower
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
@@ -437,21 +429,22 @@ The following checks must be `true`:
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `state.accounts[sender].isDelegating == true`.
-1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Bonded`.
+1. `state.accounts[sender].status` == `AccountStatus.DelegationBonded`.
 
 Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
+state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].status = AccountStatus.DelegationUnbonding
 
-delegation = state.accounts[sender].delegationInfo
+delegation = state.delegationSet[sender]
 
-if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Queued ||
-      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonding
-      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonded
+if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued ||
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonding ||
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonded
     validator = state.inactiveValidatorSet[delegation.validator]
-else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded
     validator = state.activeValidatorSet[delegation.validator]
 
 delegation.status = DelegationStatus.Unbonding
@@ -463,17 +456,16 @@ validator.pendingRewards = 0
 validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
 
-state.accounts[sender].delegationInfo = delegation
+state.delegationSet[sender] = delegation
 
-if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Queued ||
-      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonding
-      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonded
+if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued ||
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonding ||
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonded
     state.inactiveValidatorSet[delegation.validator] = validator
-else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[delegation.validator] = validator
-
-state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
     state.activeValidatorSet.votingPower -= delegation.votingPower
+
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
@@ -490,31 +482,32 @@ The following checks must be `true`:
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `state.accounts[sender].isDelegating` == `true`.
-1. `state.accounts[sender].delegationInfo.status` == `DelegationStatus.Unbonding`.
-1. `state.accounts[sender].delegationInfo.unbondingHeight + UNBONDING_DURATION < block.height`.
+1. `state.accounts[sender].status` == `AccountStatus.DelegationUnbonding`.
+1. `state.delegationSet[sender].unbondingHeight + UNBONDING_DURATION` < `block.height`.
 
 Apply the following to the state:
 
 ```
-state.accounts[sender].nonce += 1
-state.accounts[sender].isDelegating = false
-
 delegation = state.accounts[sender].delegationInfo
+
+state.accounts[sender].nonce += 1
+state.accounts[sender].balance += delegation.stakedBalance
+state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].status = None
 
 state.accounts[sender].balance += delegation.stakedBalance
 
-if state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Queued ||
-      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonding
-      state.inactiveValidatorSet[delegation.validator].status == ValidatorStatus.Unbonded
+if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued ||
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonding
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonded
     validator = state.inactiveValidatorSet[delegation.validator]
-else if state.activeValidatorSet[delegation.validator].status == ValidatorStatus.Bonded
+else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded
     validator = state.activeValidatorSet[delegation.validator]
 
-if validator.delegatedCount == 0
-    if validator.status == ValidatorStatus.Unbonded
-        state.accounts[delegation.validator].isValidator = false
-        delete state.inactiveValidatorSet[delegation.validator]
+if validator.delegatedCount == 0 &&
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonded
+    state.accounts[delegation.validator].status = AccountStatus.None
+    delete state.inactiveValidatorSet[delegation.validator]
 
 delete state.accounts[sender].delegationInfo
 
@@ -539,8 +532,8 @@ Apply the following to the state:
 
 ```
 state.accounts[sender].nonce += 1
-
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
 
