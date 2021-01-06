@@ -195,6 +195,10 @@ totalCost(x, y) = x + baseCost(y) + tipCost(y)
 ```
 , where `x` above represents the amount of coins sent by the transaction authorizer and `y` above represents the a measure of the block space used by the transaction (i.e. size in bytes).
 
+Two additional helper functions are defined:
+1. `findFromQueue(power)`, which returns the address of the last validator in the [validator queue](./data_structures.md#validator) with voting power greater than or equal to `power`, or `0` if the queue is empty or no validators in the queue have at least `power` voting power.
+1. `parentFromQueue(address)`, which returns the address of the parent in the validator queue of the validator with address `address`, or `0` if `address` is not in the queue or is the head of the queue.
+
 After applying a transaction, the new state state root is computed.
 
 #### SignedTransactionDataTransfer
