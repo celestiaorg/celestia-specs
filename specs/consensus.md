@@ -627,3 +627,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardF
 #### End Block
 
 At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded. For previously-bonded validators that are no longer in the top `MAX_VALIDATORS` validators begin unbonding.
+
+The logic for validator bonding is found [here](#signedtransactiondatacreatevalidator), minus transaction sender updates (nonce, balance, and fee). The logic for validator unbonding is found [here](#signedtransactiondatabeginunbondingvalidator), minus transaction sender updates (nonce, balance, and fee).
+
+This end block implicit state transition is a single state transition, and [only has a single intermediate state root](#blockavailabledata) associated with it.
