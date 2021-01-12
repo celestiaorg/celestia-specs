@@ -431,6 +431,30 @@ validator.pendingRewards = 0
 validator.delegatedCount += 1
 validator.votingPower += tx.amount
 
+parent = parentFromQueue(delegation.validator)
+if parent != 0
+    if state.accounts[parent].status == AccountStatus.ValidatorBonded
+        state.activeValidatorSet[parent].next = validator.next
+        validator.next = 0
+    else
+        state.inactiveValidatorSet[parent].next = validator.next
+        validator.next = 0
+else
+    state.validatorQueueHead = validator.next
+    validator.next = 0
+
+parent = findFromQueue(validator.votingPower)
+if parent != 0
+    if state.accounts[parent].status == AccountStatus.ValidatorBonded
+        validator.next = state.activeValidatorSet[parent].next
+        state.activeValidatorSet[parent].next = delegation.validator
+    else
+        validator.next = state.inactiveValidatorSet[parent].next
+        state.inactiveValidatorSet[parent].next = delegation.validator
+else
+    validator.next = state.validatorQueueHead
+    state.validatorQueueHead = delegation.validator
+
 state.delegationSet[sender] = delegation
 
 if state.accounts[tx.to].status == AccountStatus.ValidatorQueued
@@ -481,6 +505,32 @@ validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
+
+if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded ||
+      state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued
+    parent = parentFromQueue(delegation.validator)
+    if parent != 0
+        if state.accounts[parent].status == AccountStatus.ValidatorBonded
+            state.activeValidatorSet[parent].next = validator.next
+            validator.next = 0
+        else
+            state.inactiveValidatorSet[parent].next = validator.next
+            validator.next = 0
+    else
+        state.validatorQueueHead = validator.next
+        validator.next = 0
+
+    parent = findFromQueue(validator.votingPower)
+    if parent != 0
+        if state.accounts[parent].status == AccountStatus.ValidatorBonded
+            validator.next = state.activeValidatorSet[parent].next
+            state.activeValidatorSet[parent].next = delegation.validator
+        else
+            validator.next = state.inactiveValidatorSet[parent].next
+            state.inactiveValidatorSet[parent].next = delegation.validator
+    else
+        validator.next = state.validatorQueueHead
+        state.validatorQueueHead = delegation.validator
 
 state.delegationSet[sender] = delegation
 
