@@ -13,3 +13,4 @@ LazyLedger Specifications
 - [Block Proposer](specs/block_proposer.md)
 - [Networking](specs/networking.md)
 - [Light client](specs/light_client.md)
+- [Node types](specs/node_types.md)
