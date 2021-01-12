@@ -285,6 +285,19 @@ validator.pendingRewards = 0
 validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
+
+parent = findFromQueue(validator.votingPower)
+if parent != 0
+    if state.accounts[parent].status == AccountStatus.ValidatorBonded
+        validator.next = state.activeValidatorSet[parent].next
+        state.activeValidatorSet[parent].next = sender
+    else
+        validator.next = state.inactiveValidatorSet[parent].next
+        state.inactiveValidatorSet[parent].next = sender
+else
+    validator.next = state.validatorQueueHead
+    state.validatorQueueHead = sender
+
 state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
@@ -320,6 +333,19 @@ else if state.accounts[sender].status == AccountStatus.ValidatorBonded
 validator.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
+
+parent = parentFromQueue(sender)
+if parent != 0
+    if state.accounts[parent].status == AccountStatus.ValidatorBonded
+        state.activeValidatorSet[parent].next = validator.next
+        validator.next = 0
+    else
+        state.inactiveValidatorSet[parent].next = validator.next
+        validator.next = 0
+else
+    state.validatorQueueHead = validator.next
+    validator.next = 0
+
 state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet.votingPower -= validator.votingPower
@@ -550,4 +576,4 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardF
 
 #### End Block
 
-At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded.
+At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded. For previously-bonded validators that are no longer in the top `MAX_VALIDATORS` validators begin unbonding.
