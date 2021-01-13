@@ -286,6 +286,7 @@ validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
 
+# Insert the new validator into the linked list
 parent = findFromQueue(validator.votingPower)
 if parent != 0
     if state.accounts[parent].status == AccountStatus.ValidatorBonded
@@ -334,6 +335,7 @@ validator.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 
+# Remove new validator from the linked list
 parent = parentFromQueue(sender)
 if parent != 0
     if state.accounts[parent].status == AccountStatus.ValidatorBonded
@@ -431,6 +433,7 @@ validator.pendingRewards = 0
 validator.delegatedCount += 1
 validator.votingPower += tx.amount
 
+# Update the validator in the linked list by first removing then inserting
 parent = parentFromQueue(delegation.validator)
 if parent != 0
     if state.accounts[parent].status == AccountStatus.ValidatorBonded
@@ -506,6 +509,7 @@ validator.pendingRewards = 0
 validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
 
+# Update the validator in the linked list by first removing then inserting
 if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded ||
       state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued
     parent = parentFromQueue(delegation.validator)
