@@ -195,9 +195,41 @@ totalCost(x, y) = x + baseCost(y) + tipCost(y)
 ```
 , where `x` above represents the amount of coins sent by the transaction authorizer and `y` above represents the a measure of the block space used by the transaction (i.e. size in bytes).
 
-Two additional helper functions are defined:
+Four additional helper functions are defined to manage the [validator queue](./data_structures.md#validator):
 1. `findFromQueue(power)`, which returns the address of the last validator in the [validator queue](./data_structures.md#validator) with voting power greater than or equal to `power`, or `0` if the queue is empty or no validators in the queue have at least `power` voting power.
 1. `parentFromQueue(address)`, which returns the address of the parent in the validator queue of the validator with address `address`, or `0` if `address` is not in the queue or is the head of the queue.
+3. `validatorQueueInsert`, defined as
+```py
+function validatorQueueInsert(validator)
+    # Insert the new validator into the linked list
+    parent = findFromQueue(validator.votingPower)
+    if parent != 0
+        if state.accounts[parent].status == AccountStatus.ValidatorBonded
+            validator.next = state.activeValidatorSet[parent].next
+            state.activeValidatorSet[parent].next = sender
+        else
+            validator.next = state.inactiveValidatorSet[parent].next
+            state.inactiveValidatorSet[parent].next = sender
+    else
+        validator.next = state.validatorQueueHead
+        state.validatorQueueHead = sender
+```
+4. `validatorQueueRemove`, defined as
+```py
+function validatorQueueRemove(validator, sender)
+    # Remove existing validator from the linked list
+    parent = parentFromQueue(sender)
+    if parent != 0
+        if state.accounts[parent].status == AccountStatus.ValidatorBonded
+            state.activeValidatorSet[parent].next = validator.next
+            validator.next = 0
+        else
+            state.inactiveValidatorSet[parent].next = validator.next
+            validator.next = 0
+    else
+        state.validatorQueueHead = validator.next
+        validator.next = 0
+```
 
 Note that light clients cannot perform a linear search through a linked list, and are instead provided logarithmic proofs (e.g. in the case of `parentFromQueue`, a proof to the parent is provided, which should have `address` as its next validator).
 
@@ -286,18 +318,7 @@ validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
 validator.isSlashed = false
 
-# Insert the new validator into the linked list
-parent = findFromQueue(validator.votingPower)
-if parent != 0
-    if state.accounts[parent].status == AccountStatus.ValidatorBonded
-        validator.next = state.activeValidatorSet[parent].next
-        state.activeValidatorSet[parent].next = sender
-    else
-        validator.next = state.inactiveValidatorSet[parent].next
-        state.inactiveValidatorSet[parent].next = sender
-else
-    validator.next = state.validatorQueueHead
-    state.validatorQueueHead = sender
+validatorQueueInsert(validator)
 
 state.inactiveValidatorSet[sender] = validator
 
@@ -335,18 +356,7 @@ validator.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 
-# Remove new validator from the linked list
-parent = parentFromQueue(sender)
-if parent != 0
-    if state.accounts[parent].status == AccountStatus.ValidatorBonded
-        state.activeValidatorSet[parent].next = validator.next
-        validator.next = 0
-    else
-        state.inactiveValidatorSet[parent].next = validator.next
-        validator.next = 0
-else
-    state.validatorQueueHead = validator.next
-    validator.next = 0
+validatorQueueRemove(validator, sender)
 
 state.inactiveValidatorSet[sender] = validator
 
@@ -434,29 +444,8 @@ validator.delegatedCount += 1
 validator.votingPower += tx.amount
 
 # Update the validator in the linked list by first removing then inserting
-parent = parentFromQueue(delegation.validator)
-if parent != 0
-    if state.accounts[parent].status == AccountStatus.ValidatorBonded
-        state.activeValidatorSet[parent].next = validator.next
-        validator.next = 0
-    else
-        state.inactiveValidatorSet[parent].next = validator.next
-        validator.next = 0
-else
-    state.validatorQueueHead = validator.next
-    validator.next = 0
-
-parent = findFromQueue(validator.votingPower)
-if parent != 0
-    if state.accounts[parent].status == AccountStatus.ValidatorBonded
-        validator.next = state.activeValidatorSet[parent].next
-        state.activeValidatorSet[parent].next = delegation.validator
-    else
-        validator.next = state.inactiveValidatorSet[parent].next
-        state.inactiveValidatorSet[parent].next = delegation.validator
-else
-    validator.next = state.validatorQueueHead
-    state.validatorQueueHead = delegation.validator
+validatorQueueRemove(validator, delegation.validator)
+validatorQueueInsert(validator)
 
 state.delegationSet[sender] = delegation
 
@@ -510,31 +499,11 @@ validator.delegatedCount -= 1
 validator.votingPower -= delegation.votingPower
 
 # Update the validator in the linked list by first removing then inserting
+# Only do this if the validator is actually in the queue (i.e. bonded or queued)
 if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded ||
       state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued
-    parent = parentFromQueue(delegation.validator)
-    if parent != 0
-        if state.accounts[parent].status == AccountStatus.ValidatorBonded
-            state.activeValidatorSet[parent].next = validator.next
-            validator.next = 0
-        else
-            state.inactiveValidatorSet[parent].next = validator.next
-            validator.next = 0
-    else
-        state.validatorQueueHead = validator.next
-        validator.next = 0
-
-    parent = findFromQueue(validator.votingPower)
-    if parent != 0
-        if state.accounts[parent].status == AccountStatus.ValidatorBonded
-            validator.next = state.activeValidatorSet[parent].next
-            state.activeValidatorSet[parent].next = delegation.validator
-        else
-            validator.next = state.inactiveValidatorSet[parent].next
-            state.inactiveValidatorSet[parent].next = delegation.validator
-    else
-        validator.next = state.validatorQueueHead
-        state.validatorQueueHead = delegation.validator
+    validatorQueueRemove(validator, delegation.validator)
+    validatorQueueInsert(validator)
 
 state.delegationSet[sender] = delegation
 
