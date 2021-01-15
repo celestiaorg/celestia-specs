@@ -102,6 +102,8 @@ The validity of a newly-seen block, `block`, is determined by two components, de
 1. [Block structure](#block-structure): whether the block header is valid, and data in a block is arranged into a valid and matching data root (i.e. syntax).
 1. [State transition](#state-transitions): whether the application of transactions in the block produces a matching and valid state root (i.e. semantics).
 
+Pseudocode in this section is not in any specific language and should be interpreted as being in a neutral and sane language.
+
 ## Block Structure
 
 Before executing [state transitions](#state-transitions), the structure of the [block](./data_structures.md#block) must be verified.
@@ -188,7 +190,7 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
 Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a few helper functions:
-```
+```py
 baseCost(y) = block.header.feeHeader.baseRate * y
 tipCost(y) = block.header.feeHeader.tipRate * y
 totalCost(x, y) = x + baseCost(y) + tipCost(y)
@@ -237,7 +239,7 @@ After applying a transaction, the new state state root is computed.
 
 #### SignedTransactionDataTransfer
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -251,7 +253,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
@@ -261,7 +263,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataPayForMessage
 
-```
+```py
 bytesPaid = len(tx) + tx.messageSize
 ```
 
@@ -278,7 +280,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
@@ -287,7 +289,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataCreateValidator
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -303,7 +305,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 state.accounts[sender].status = AccountStatus.ValidatorQueued
@@ -327,7 +329,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataBeginUnbondingValidator
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -342,7 +344,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = ValidatorStatus.Unbonding
@@ -366,7 +368,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataUnbondValidator
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -382,7 +384,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 validator = state.inactiveValidatorSet[sender]
 
 state.accounts[sender].nonce += 1
@@ -404,7 +406,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataCreateDelegation
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -420,7 +422,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 state.accounts[sender].status = AccountStatus.DelegationBonded
@@ -460,7 +462,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataBeginUnbondingDelegation
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -475,7 +477,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = AccountStatus.DelegationUnbonding
@@ -520,7 +522,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataUnbondDelegation
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -536,7 +538,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 delegation = state.accounts[sender].delegationInfo
 
 state.accounts[sender].nonce += 1
@@ -565,7 +567,7 @@ state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost
 
 #### SignedTransactionDataBurn
 
-```
+```py
 bytesPaid = len(tx)
 ```
 
@@ -579,7 +581,7 @@ The following checks must be `true`:
 
 Apply the following to the state:
 
-```
+```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
@@ -592,7 +594,7 @@ At the beginning of the block, rewards are distributed to the block proposer.
 
 Apply the following to the state:
 
-```
+```py
 rewardFactor = (TARGET_ANNUAL_ISSUANCE * BLOCK_TIME) / (SECONDS_PER_YEAR * sqrt(GENESIS_COIN_COUNT))
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor * sqrt(state.activeValidatorSet.votingPower)
 ```
