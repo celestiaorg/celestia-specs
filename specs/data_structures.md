@@ -64,6 +64,7 @@ Data Structures
   - [Validator](#validator)
   - [ActiveValidatorCount](#activevalidatorcount)
   - [ActiveVotingPower](#activevotingpower)
+  - [ValidatorQueueHead](#validatorqueuehead)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
 - [Consensus Parameters](#consensus-parameters)
@@ -773,59 +774,64 @@ The state of the LazyLedger chain is intentionally restricted to containing only
 
 The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
 
-Three subtrees are maintained:
+A number of subtrees are maintained:
 1. [Accounts](#account)
 1. [Active validator set](#validator)
 1. [Inactive validator set](#validator)
+1. [Delegation set](#delegation)
 
 ### Account
 
-| name             | type                      | description                                                                       |
-| ---------------- | ------------------------- | --------------------------------------------------------------------------------- |
-| `balance`        | [Amount](#type-aliases)   | Coin balance.                                                                     |
-| `nonce`          | [Nonce](#type-aliases)    | Account nonce. Every outgoing transaction from this account increments the nonce. |
-| `isValidator`    | `bool`                    | Whether this account is a validator or not.                                       |
-| `isDelegating`   | `bool`                    | Whether this account is delegating its stake or not.                              |
-| `delegationInfo` | [Delegation](#delegation) | _Optional_, only if `isDelegating` is set. Delegation info.                       |
-
-In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACCOUNTS_SUBTREE_ID`.
-
-### Delegation
-
 ```C++
-enum DelegationStatus : uint8_t {
-    Bonded = 1,
-    Unbonding = 2,
+enum AccountStatus : uint8_t {
+    None = 1,
+    DelegationBonded = 2,
+    DelegationUnbonding = 3,
+    ValidatorQueued = 4,
+    ValidatorBonded = 5,
+    ValidatorUnbonding = 6,
+    ValidatorUnbonded = 7,
 };
 ```
 
+| name      | type                    | description                                                                       |
+| --------- | ----------------------- | --------------------------------------------------------------------------------- |
+| `balance` | [Amount](#type-aliases) | Coin balance.                                                                     |
+| `nonce`   | [Nonce](#type-aliases)  | Account nonce. Every outgoing transaction from this account increments the nonce. |
+| `status`  | `AccountStatus`         | Validator or delegation status of this account.                                   |
+
+The `status` of an account indicates weather it is a validator (`AccountStatus.Validator*`), delegating to a validator (`AccountStatus.Delegation*`), or neither (`AccountStatus.None`). Being a validator and delegating are mutually exclusive, and only a single validator can be delegated to.
+
+Delegations have two statuses:
+1. `DelegationBonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
+1. `DelegationUnbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
+
+Validators have four statuses:
+1. `ValidatorQueued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `ValidatorBonded` validator. Until bonded, this validator can immediately exit the queue.
+1. `ValidatorBonded`: This validator is active and bonded. It can propose new blocks and vote on proposed blocks. Once bonded, an active validator must go through an unbonding process until its stake can be freed.
+1. `ValidatorUnbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
+1. `ValidatorUnbonded`: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until `delegatedCount` reaches zero, at which point it is destroyed.
+
+In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with [`ACCOUNTS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids).
+
+### Delegation
+
 | name              | type                         | description                                         |
 | ----------------- | ---------------------------- | --------------------------------------------------- |
-| `status`          | `DelegationStatus`           | Status of this delegation.                          |
 | `validator`       | [Address](#address)          | The validator being delegating to.                  |
 | `stakedBalance`   | [VotingPower](#type-aliases) | Delegated stake, in `4u`.                           |
 | `beginEntry`      | [PeriodEntry](#periodentry)  | Entry when delegation began.                        |
 | `endEntry`        | [PeriodEntry](#periodentry)  | Entry when delegation ended (i.e. began unbonding). |
 | `unbondingHeight` | [Height](#type-aliases)      | Block height delegation began unbonding.            |
 
-Delegation objects represent a delegation. They have two statuses:
-1. `Bonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
-1. `Unbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
+Delegation objects represent a delegation.
+
+In the delegation subtree, delegations are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with [`DELEGATIONS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids).
 
 ### Validator
 
-```C++
-enum ValidatorStatus : uint8_t {
-    Queued = 1,
-    Bonded = 2,
-    Unbonding = 3,
-    Unbonded = 4,
-};
-```
-
 | name              | type                         | description                                                                            |
 | ----------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
-| `status`          | `ValidatorStatus`            | Status of this validator.                                                              |
 | `stakedBalance`   | [VotingPower](#type-aliases) | Validator's personal staked balance, in `4u`.                                          |
 | `commissionRate`  | [Decimal](#decimal)          | Commission rate.                                                                       |
 | `delegatedCount`  | `uint32`                     | Number of accounts delegating to this validator.                                       |
@@ -835,14 +841,13 @@ enum ValidatorStatus : uint8_t {
 | `unbondingHeight` | [Height](#type-aliases)      | Block height validator began unbonding.                                                |
 | `isSlashed`       | `bool`                       | If this validator has been slashed or not.                                             |
 | `slashRate`       | [Decimal](#decimal)          | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| `next`            | [Address](#type-aliases)     | Next validator in the queue. Zero if this validator is not in the queue.               |
 
-Validator objects represent all the information needed to be keep track of a validator. Validators have four statuses:
-1. `Queued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `Bonded` validator. Until bonded, this validator can immediately exit the queue.
-1. `Bonded`: This validator is active and bonded. It can propose new blocks and vote on proposed blocks. Once bonded, an active validator must go through an unbonding process until its stake can be freed.
-1. `Unbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
-1. `Unbonded`: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until `delegatedCount` reaches zero, at which point it is destroyed.
+Validator objects represent all the information needed to be keep track of a validator.
 
-In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with `ACTIVE_VALIDATORS_SUBTREE_ID` for the active validator set or `INACTIVE_VALIDATORS_SUBTREE_ID` for the inactive validator set. Active validators are `Bonded`, while inactive validators are not `Bonded`. By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
+In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with [`ACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the active validator set or [`INACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the inactive validator set. Active validators are bonded, (i.e. `ValidatorBonded`), while inactive validators are not bonded (i.e. `ValidatorBonded`). By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
+
+The validator queue (i.e. validators with status `ValidatorQueued`) is a subset of the inactive validator set. This queue is represented as a linked list, with each validator pointing to the `next` validator in the queue, and the head of the linked list stored in [ValidatorQueueHead](#validatorqueuehead).
 
 ### ActiveValidatorCount
 
@@ -859,6 +864,16 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 | `votingPower` | `uint64` | Active voting power. |
 
 Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving the active voting power. The active voting power is stored in the active validators subtree, and is keyed with `1` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000001`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+### ValidatorQueueHead
+
+| name   | type                | description                                                       |
+| ------ | ------------------- | ----------------------------------------------------------------- |
+| `head` | [Address](#address) | Address of inactive validator at the head of the validator queue. |
+
+The head of the queue for validators that are waiting to become active validators is stored in the inactive validators subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `INACTIVE_VALIDATORS_SUBTREE_ID`.
+
+If the queue is empty, `head` is set to the default value (i.e. the hash of the leaf is [the default value for a Sparse Merkle Tree](#sparse-merkle-tree)).
 
 ### PeriodEntry
 
