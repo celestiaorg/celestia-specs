@@ -87,7 +87,7 @@ For convenience, we will define several common parameter configurations:
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Partial Bodies](#partial-bodies)
     - Transactions: [Full Transactions](#full-transactions)
-1. Light nodes DAS and are secure under an honest minority.
+1. Light nodes perform Data Availability Sampling (DAS) and are secure under an honest minority.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Sampled Bodies](#sampled-bodies)
     - Transactions: [No Transactions](#no-transactions)
