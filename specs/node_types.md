@@ -78,4 +78,28 @@ At most secure under a weak subjectivity assumption.
 
 ## Node Types
 
-[full node](https://en.bitcoin.it/wiki/Full_node)
+For convenience, we will define several common parameter configurations:
+1. [Full nodes](https://en.bitcoin.it/wiki/Full_node) provide the strongest security guarantees. Block bodies are not stored.
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Full Bodies](#full-bodies)
+    - Transactions: [Full Transactions](#full-transactions)
+1. Partial nodes are capable of producing fraud proofs of invalid transactions and contribute to validating the erasure coding of random blocks.
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Partial Bodies](#partial-bodies)
+    - Transactions: [Full Transactions](#full-transactions)
+1. Light nodes DAS and are secure under an honest minority.
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Sampled Bodies](#sampled-bodies)
+    - Transactions: [No Transactions](#no-transactions)
+1. Superlight nodes do not perform DAS and are secure under an honest majority.
+    - Block headers: [Compact Block Headers](#compact-block-headers)
+    - Block bodies: [No Bodies](#no-bodies)
+    - Transactions: [No Transactions](#no-transactions)
+1. Light validator nodes can produce new blocks with strong security guarantees and light resource requirements.
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Sampled Bodies](#sampled-bodies)
+    - Transactions: [Full Transactions](#full-transactions)
+1. Storage nodes provide the same security guarantees as full nodes. Block bodies are stored and served to the network.
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Full Bodies](#full-bodies)
+    - Transactions: [Full Transactions](#full-transactions)
