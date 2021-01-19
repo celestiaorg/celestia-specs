@@ -27,7 +27,7 @@ We define security assumptions as assumptions under which a given node is guaran
 
 Nodes that only process compact block headers will download and validate the [block header](./data_structures.md#header) _without_ downloading or validating the `availableDataHeader` [block](./data_structures.md#block) field that is committed to in the block header. These nodes cannot perform Data Availability Sampling on [block bodies](#block-bodies).
 
-Secure under an honest $\frac{2}{3}+\epsilon$ majority of validator voting power and a weak subjectivity assumption.
+Secure under an honest supermajority of validator voting power and a weak subjectivity assumption.
 
 #### Extended Block Headers
 
@@ -42,7 +42,7 @@ Block bodies (the `availableData` [block](./data_structures.md#block) field) can
 
 Nodes that only process [compact block headers](#compact-block-headers) have no need for block bodies and simply do not process block bodies.
 
-Secure under an honest $\frac{2}{3}+\epsilon$ majority of validator voting power and a weak subjectivity assumption.
+Secure under an honest supermajority majority of validator voting power and a weak subjectivity assumption.
 
 #### Sampled Bodies
 
