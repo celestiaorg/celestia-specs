@@ -79,7 +79,7 @@ At most secure under a weak subjectivity assumption.
 ## Node Types
 
 For convenience, we will define several common parameter configurations:
-1. [Full nodes](https://en.bitcoin.it/wiki/Full_node) provide the strongest security guarantees. Block bodies are not stored.
+1. [Full nodes](https://en.bitcoin.it/wiki/Full_node) provide the strongest security guarantees. Block bodies do not need to be stored.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Full Bodies](#full-bodies)
     - Transactions: [Full Transactions](#full-transactions)
