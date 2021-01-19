@@ -99,7 +99,7 @@ For convenience, we will define several common parameter configurations:
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Sampled Bodies](#sampled-bodies)
     - Transactions: [Full Transactions](#full-transactions)
-1. Storage nodes provide the same security guarantees as full nodes. Block bodies are stored and served to the network.
+1. Storage nodes provide the same security guarantees as full nodes. Block bodies (in [erasure-coded form](./data_structures.md#2d-reed-solomon-encoding-scheme)) are stored and served to the network.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Full Bodies](#full-bodies)
     - Transactions: [Full Transactions](#full-transactions)
