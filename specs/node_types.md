@@ -19,7 +19,7 @@ Node Types
 
 Nodes that run the [LazyLedger protocol](./consensus.md) have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the `header` and `lastCommit` fields of each [block](./data_structures.md#block), but can handle the `availableDataHeader` and `availableData` fields differently.
 
-We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority of validator voting power performs an attributable—and thus [penalizable](./consensus.md#blockavailabledataevidencedata)—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).
+We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority (> 2/3) of validator voting power performs an attributable—and thus [penalizable](./consensus.md#blockavailabledataevidencedata)—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).
 
 ### Block Headers
 
