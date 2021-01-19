@@ -284,7 +284,7 @@ node.v = h(0x00, serialize(d))
 
 For internal node `node` with children `l` and `r`:
 ```C++
-node.v = h(0x01, serialize(l), serialize(r))
+node.v = h(0x01, l.v, r.v)
 ```
 
 Note that rather than duplicating the last node if there are an odd number of nodes (the [Bitcoin design](https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43)), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3 of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962#section-2.1.3).
@@ -320,11 +320,11 @@ node.n_max = 0x0000000000000000000000000000000000000000000000000000000000000000
 node.v = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ```
 
-For leaf node `node` of data `d`:
+For leaf node `node` of [share](#share) data `d`:
 ```C++
 node.n_min = d.namespaceID
 node.n_max = d.namespaceID
-node.v = h(0x00, serialize(d))
+node.v = h(0x00, d.rawData)
 ```
 
 The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
@@ -340,7 +340,7 @@ else if r.n_min == PARITY_SHARE_NAMESPACE_ID
   node.n_max = l.n_max
 else
   node.n_max = max(l.n_max, r.n_max)
-node.v = h(l, r) = h(0x01, serialize(l), serialize(r))
+node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 ```
 Note that the above snippet leverages the property that leaves are sorted by namespace ID: if `l.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `{l,r}.n_max`. By construction, either both the min and max namespace IDs of a node will be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), or neither will: if `r.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `r.n_max`.
 
@@ -390,7 +390,7 @@ The key of leaf nodes must be prepended, since the index of a leaf node that is 
 
 For internal node `node` with children `l` and `r`:
 ```C++
-node.v = h(0x01, serialize(l), serialize(r))
+node.v = h(0x01, l.v, r.v)
 ```
 
 #### SparseMerkleTreeProof
