@@ -19,7 +19,7 @@ This forms the primary motivation of the scheme discussed here: a mechanism for 
 
 The scheme presented here is an incarnation of Cosmos' [F1 fee distribution scheme](https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/fee_distribution/f1_fee_distr.pdf). F1 has the nice property of being approximation-free and, with proper implementation details, can be highly efficient with state usage and completely iteration-free in all cases.
 
-Naively, when considering a single block, the reward that should be given to a delegator with stake $x$, who's delegating to a validator with total voting power $n$, whose reward in that block is $T$, is:
+Naively, when considering a single block, the reward that should be given to a delegator with stake $x$, who is delegating to a validator with total voting power $n$, whose reward in that block is $T$, is:
 
 $$
 \text{naive reward} = x \frac{T}{n}
@@ -35,6 +35,8 @@ Entry_f = \begin{cases}
     Entry_{f-1} + \frac{T_f}{n_f} & f > 0 \\
 \end{cases}
 $$
+
+Note that $Entry$ is a monotonically increasing function.
 
 Finally, the raw reward for a delegation is simply proportional to the difference in entries between the period where undelegation ended ($f$) and where it began ($k$).
 
