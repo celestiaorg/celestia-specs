@@ -388,9 +388,10 @@ Apply the following to the state:
 validator = state.inactiveValidatorSet[sender]
 
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance += validator.stakedBalance
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = AccountStatus.ValidatorUnbonded
+
+state.accounts[sender].balance += validator.stakedBalance
 
 validator.votingPower -= validator.stakedBalance
 validator.stakedBalance = 0
@@ -498,7 +499,7 @@ delegation.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 validator.delegatedCount -= 1
-validator.votingPower -= delegation.votingPower
+validator.votingPower -= delegation.stakedBalance
 
 # Update the validator in the linked list by first removing then inserting
 # Only do this if the validator is actually in the queue (i.e. bonded or queued)
@@ -515,7 +516,7 @@ if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued 
     state.inactiveValidatorSet[delegation.validator] = validator
 else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[delegation.validator] = validator
-    state.activeValidatorSet.votingPower -= delegation.votingPower
+    state.activeValidatorSet.votingPower -= delegation.stakedBalance
 
 state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
 ```
@@ -542,11 +543,12 @@ Apply the following to the state:
 delegation = state.accounts[sender].delegationInfo
 
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance += delegation.stakedBalance
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = None
 
 state.accounts[sender].balance += delegation.stakedBalance
+postCommissionRewards = validator.commissionRate * delegation.stakedBalance * (delegation.endEntry - delegation.beginEntry)
+state.accounts[sender].balance += postCommissionRewards
 
 if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued ||
       state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonding
