@@ -393,9 +393,6 @@ state.accounts[sender].status = AccountStatus.ValidatorUnbonded
 
 state.accounts[sender].balance += validator.stakedBalance
 
-validator.votingPower -= validator.stakedBalance
-validator.stakedBalance = 0
-
 state.inactiveValidatorSet[sender] = validator
 
 if validator.delegatedCount == 0
