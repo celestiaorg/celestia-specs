@@ -64,6 +64,7 @@ Data Structures
   - [Validator](#validator)
   - [ActiveValidatorCount](#activevalidatorcount)
   - [ActiveVotingPower](#activevotingpower)
+  - [ProposerBlockReward](#proposerblockreward)
   - [ValidatorQueueHead](#validatorqueuehead)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
@@ -830,18 +831,18 @@ In the delegation subtree, delegations are keyed by the [hash](#hashdigest) of t
 
 ### Validator
 
-| name              | type                         | description                                                                            |
-| ----------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
-| `stakedBalance`   | [VotingPower](#type-aliases) | Validator's personal staked balance, in `4u`.                                          |
-| `commissionRate`  | [Decimal](#decimal)          | Commission rate.                                                                       |
-| `delegatedCount`  | `uint32`                     | Number of accounts delegating to this validator.                                       |
-| `votingPower`     | [VotingPower](#type-aliases) | Total voting power as staked balance + delegated stake, in `4u`.                       |
-| `pendingRewards`  | [Amount](#type-aliases)      | Rewards collected so far this period, in `1u`.                                         |
-| `latestEntry`     | [PeriodEntry](#periodentry)  | Latest entry, used for calculating reward distribution.                                |
-| `unbondingHeight` | [Height](#type-aliases)      | Block height validator began unbonding.                                                |
-| `isSlashed`       | `bool`                       | If this validator has been slashed or not.                                             |
-| `slashRate`       | [Decimal](#decimal)          | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
-| `next`            | [Address](#type-aliases)     | Next validator in the queue. Zero if this validator is not in the queue.               |
+| name                | type                         | description                                                                            |
+| ------------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
+| `commissionRewards` | `uint64`                     | Validator's commission rewards, in `1u`.                                               |
+| `commissionRate`    | [Decimal](#decimal)          | Commission rate.                                                                       |
+| `delegatedCount`    | `uint32`                     | Number of accounts delegating to this validator.                                       |
+| `votingPower`       | [VotingPower](#type-aliases) | Total voting power as staked balance + delegated stake, in `4u`.                       |
+| `pendingRewards`    | [Amount](#type-aliases)      | Rewards collected so far this period, in `1u`.                                         |
+| `latestEntry`       | [PeriodEntry](#periodentry)  | Latest entry, used for calculating reward distribution.                                |
+| `unbondingHeight`   | [Height](#type-aliases)      | Block height validator began unbonding.                                                |
+| `isSlashed`         | `bool`                       | If this validator has been slashed or not.                                             |
+| `slashRate`         | [Decimal](#decimal)          | _Optional_, only if `isSlashed` is set. Rate at which this validator has been slashed. |
+| `next`              | [Address](#type-aliases)     | Next validator in the queue. Zero if this validator is not in the queue.               |
 
 Validator objects represent all the information needed to be keep track of a validator.
 
@@ -864,6 +865,14 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 | `votingPower` | `uint64` | Active voting power. |
 
 Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving the active voting power. The active voting power is stored in the active validators subtree, and is keyed with `1` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000001`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+### ProposerBlockReward
+
+| name     | type     | description                                                                    |
+| -------- | -------- | ------------------------------------------------------------------------------ |
+| `reward` | `uint64` | Total block reward (subsidy + fees) in current block so far. Reset each block. |
+
+The current block reward for the proposer is kept track of here. This is keyed with `2` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000002`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
 ### ValidatorQueueHead
 
