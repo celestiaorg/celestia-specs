@@ -258,7 +258,8 @@ state.accounts[sender].nonce += 1
 
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 state.accounts[tx.to].balance += tx.amount
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataPayForMessage
@@ -284,7 +285,7 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataCreateValidator
@@ -298,7 +299,7 @@ The following checks must be `true`:
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
 1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate` <!--TODO check some bounds here-->
 1. `state.accounts[sender].status` == `AccountStatus.None`.
@@ -307,14 +308,13 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = AccountStatus.ValidatorQueued
 
 validator = new Validator
-validator.stakedBalance = tx.amount
 validator.commissionRate = tx.commissionRate
 validator.delegatedCount = 0
-validator.votingPower = tx.amount
+validator.votingPower = 0
 validator.pendingRewards = 0
 validator.latestEntry = PeriodEntry(0)
 validator.unbondingHeight = 0
@@ -324,7 +324,7 @@ validatorQueueInsert(validator)
 
 state.inactiveValidatorSet[sender] = validator
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingValidator
@@ -362,8 +362,9 @@ validatorQueueRemove(validator, sender)
 
 state.inactiveValidatorSet[sender] = validator
 
-state.activeValidatorSet.votingPower -= validator.votingPower
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.activeVotingPower -= validator.votingPower
+
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondValidator
@@ -388,12 +389,10 @@ Apply the following to the state:
 validator = state.inactiveValidatorSet[sender]
 
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance += validator.stakedBalance
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = AccountStatus.ValidatorUnbonded
 
-validator.votingPower -= validator.stakedBalance
-validator.stakedBalance = 0
+state.accounts[sender].balance += validator.commissionRewards
 
 state.inactiveValidatorSet[sender] = validator
 
@@ -401,7 +400,7 @@ if validator.delegatedCount == 0
     state.accounts[sender].status = AccountStatus.None
     delete state.inactiveValidatorSet[sender]
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataCreateDelegation
@@ -455,9 +454,9 @@ if state.accounts[tx.to].status == AccountStatus.ValidatorQueued
     state.inactiveValidatorSet[tx.to] = validator
 else if state.accounts[tx.to].status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[tx.to] = validator
-    state.activeValidatorSet.votingPower += tx.amount
+    state.activeValidatorSet.activeVotingPower += tx.amount
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
@@ -498,7 +497,7 @@ delegation.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
 validator.delegatedCount -= 1
-validator.votingPower -= delegation.votingPower
+validator.votingPower -= delegation.stakedBalance
 
 # Update the validator in the linked list by first removing then inserting
 # Only do this if the validator is actually in the queue (i.e. bonded or queued)
@@ -515,9 +514,9 @@ if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued 
     state.inactiveValidatorSet[delegation.validator] = validator
 else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[delegation.validator] = validator
-    state.activeValidatorSet.votingPower -= delegation.votingPower
+    state.activeValidatorSet.activeVotingPower -= delegation.stakedBalance
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondDelegation
@@ -542,11 +541,13 @@ Apply the following to the state:
 delegation = state.accounts[sender].delegationInfo
 
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance += delegation.stakedBalance
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = None
 
+# Return the delegated stake
 state.accounts[sender].balance += delegation.stakedBalance
+# Also disperse rewards (commission has already been levied)
+state.accounts[sender].balance += delegation.stakedBalance * (delegation.endEntry - delegation.beginEntry)
 
 if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued ||
       state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonding
@@ -562,7 +563,7 @@ if validator.delegatedCount == 0 &&
 
 delete state.accounts[sender].delegationInfo
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### SignedTransactionDataBurn
@@ -585,7 +586,7 @@ Apply the following to the state:
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
 
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
 #### Begin Block
@@ -595,11 +596,46 @@ At the beginning of the block, rewards are distributed to the block proposer.
 Apply the following to the state:
 
 ```py
+proposer = state.activeValidatorSet[block.header.proposerAddress]
+
 rewardFactor = (TARGET_ANNUAL_ISSUANCE * BLOCK_TIME) / (SECONDS_PER_YEAR * sqrt(GENESIS_COIN_COUNT))
-state.activeValidatorSet[block.header.proposerAddress].pendingRewards += rewardFactor * sqrt(state.activeValidatorSet.votingPower)
+blockReward = rewardFactor * sqrt(state.activeValidatorSet.activeVotingPower)
+state.activeValidatorSet.proposerBlockReward = blockReward
+
+state.activeValidatorSet[block.header.proposerAddress] = proposer
 ```
 
 #### End Block
+
+```py
+account = state.accounts[block.header.proposerAddress]
+
+if account.status == AccountStatus.ValidatorUnbonding
+      account.status == AccountStatus.ValidatorUnbonded
+    proposer = state.inactiveValidatorSet[block.header.proposerAddress]
+else if account.status == AccountStatus.ValidatorBonded
+    proposer = state.activeValidatorSet[block.header.proposerAddress]
+
+blockReward = state.activeValidatorSet.proposerBlockReward
+commissionReward = proposer.commission * blockReward
+proposer.commissionRewards += commissionReward
+proposer.pendingRewards += blockReward - commissionReward
+
+# Even though the voting power hasn't changed yet, we consider this a period change.
+# Note: this isn't perfect because the block reward is shared with delegations
+#  _through_ this block rather than up to the beginning of this block.
+proposer.latestEntry += proposer.pendingRewards // proposer.votingPower
+proposer.pendingRewards = 0
+
+proposer.votingPower += blockReward
+state.activeValidatorSet.activeVotingPower += blockReward
+
+if account.status == AccountStatus.ValidatorUnbonding
+      account.status == AccountStatus.ValidatorUnbonded
+    state.inactiveValidatorSet[block.header.proposerAddress] = proposer
+else if account.status == AccountStatus.ValidatorBonded
+    state.activeValidatorSet[block.header.proposerAddress] = proposer
+```
 
 At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded. For previously-bonded validators that are no longer in the top `MAX_VALIDATORS` validators begin unbonding.
 
