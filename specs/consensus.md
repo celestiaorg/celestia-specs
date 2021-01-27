@@ -544,9 +544,10 @@ state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(0, bytesPaid)
 state.accounts[sender].status = None
 
+# Return the delegated stake
 state.accounts[sender].balance += delegation.stakedBalance
-postCommissionRewards = validator.commissionRate * delegation.stakedBalance * (delegation.endEntry - delegation.beginEntry)
-state.accounts[sender].balance += postCommissionRewards
+# Also disperse rewards (commission has already been levied)
+state.accounts[sender].balance += delegation.stakedBalance * (delegation.endEntry - delegation.beginEntry)
 
 if state.accounts[delegation.validator].status == AccountStatus.ValidatorQueued ||
       state.accounts[delegation.validator].status == AccountStatus.ValidatorUnbonding
@@ -616,8 +617,9 @@ else if account.status == AccountStatus.ValidatorBonded
     proposer = state.activeValidatorSet[block.header.proposerAddress]
 
 blockReward = state.activeValidatorSet.proposerBlockReward
-proposer.commissionRewards += proposer.commission * blockReward
-proposer.pendingRewards += blockReward
+commissionReward = proposer.commission * blockReward
+proposer.commissionRewards += commissionReward
+proposer.pendingRewards += blockReward - commissionReward
 
 # Even though the voting power hasn't changed yet, we consider this a period change.
 # Note: this isn't perfect because the block reward is shared with delegations
