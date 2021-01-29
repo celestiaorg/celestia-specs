@@ -65,6 +65,7 @@ Data Structures
   - [ActiveValidatorCount](#activevalidatorcount)
   - [ActiveVotingPower](#activevotingpower)
   - [ProposerBlockReward](#proposerblockreward)
+  - [ProposerInitialVotingPower](#proposerinitialvotingpower)
   - [ValidatorQueueHead](#validatorqueuehead)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
@@ -873,6 +874,14 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 | `reward` | `uint64` | Total block reward (subsidy + fees) in current block so far. Reset each block. |
 
 The current block reward for the proposer is kept track of here. This is keyed with `2` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000002`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+### ProposerInitialVotingPower
+
+| name          | type     | description                                                                    |
+| ------------- | -------- | ------------------------------------------------------------------------------ |
+| `votingPower` | `uint64` | Total block reward (subsidy + fees) in current block so far. Reset each block. |
+
+The proposer's voting power at the beginning of the block is kept track of here. This is keyed with `3` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000003`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
 ### ValidatorQueueHead
 

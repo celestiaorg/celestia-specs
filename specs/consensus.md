@@ -598,9 +598,13 @@ Apply the following to the state:
 ```py
 proposer = state.activeValidatorSet[block.header.proposerAddress]
 
+# Compute block subsidy and save to state for use in end block.
 rewardFactor = (TARGET_ANNUAL_ISSUANCE * BLOCK_TIME) / (SECONDS_PER_YEAR * sqrt(GENESIS_COIN_COUNT))
 blockReward = rewardFactor * sqrt(state.activeValidatorSet.activeVotingPower)
 state.activeValidatorSet.proposerBlockReward = blockReward
+
+# Save proposer's initial voting power to state for use in end block.
+state.activeValidatorSet.proposerInitialVotingPower = proposer.votingPower
 
 state.activeValidatorSet[block.header.proposerAddress] = proposer
 ```
@@ -616,15 +620,17 @@ if account.status == AccountStatus.ValidatorUnbonding
 else if account.status == AccountStatus.ValidatorBonded
     proposer = state.activeValidatorSet[block.header.proposerAddress]
 
+# Flush the outstanding pending rewards.
+proposer.latestEntry += proposer.pendingRewards // proposer.votingPower
+proposer.pendingRewards = 0
+
 blockReward = state.activeValidatorSet.proposerBlockReward
 commissionReward = proposer.commission * blockReward
 proposer.commissionRewards += commissionReward
 proposer.pendingRewards += blockReward - commissionReward
 
 # Even though the voting power hasn't changed yet, we consider this a period change.
-# Note: this isn't perfect because the block reward is shared with delegations
-#  _through_ this block rather than up to the beginning of this block.
-proposer.latestEntry += proposer.pendingRewards // proposer.votingPower
+proposer.latestEntry += proposer.pendingRewards // state.activeValidatorSet.proposerInitialVotingPower
 proposer.pendingRewards = 0
 
 proposer.votingPower += blockReward
