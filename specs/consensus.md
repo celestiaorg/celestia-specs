@@ -611,6 +611,8 @@ state.activeValidatorSet[block.header.proposerAddress] = proposer
 
 #### End Block
 
+Apply the following to the state:
+
 ```py
 account = state.accounts[block.header.proposerAddress]
 
