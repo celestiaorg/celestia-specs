@@ -49,6 +49,8 @@ Data Structures
       - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
       - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
       - [SignedTransactionDataBurn](#signedtransactiondataburn)
+      - [SignedTransactionRedelegateCommission](#signedtransactionredelegatecommission)
+      - [SignedTransactionRedelegateReward](#signedtransactionredelegatereward)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -570,6 +572,8 @@ enum TransactionType : uint8_t {
     BeginUnbondingDelegation = 7,
     UnbondDelegation = 8,
     Burn = 9,
+    RedelegateCommission = 10,
+    RedelegateReward = 11,
 };
 ```
 
@@ -583,6 +587,8 @@ Signed transaction data comes in a number of types:
 1. [BeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
 1. [UnbondDelegation](#signedtransactiondataunbonddelegation)
 1. [Burn](#signedtransactiondataburn)
+1. [RedelegateCommission](#signedtransactionredelegatecommission)
+1. [RedelegateReward](#signedtransactionredelegatereward)
 
 Common fields are denoted here to avoid repeating descriptions:
 
@@ -694,6 +700,27 @@ Finish unbonding the [Delegation](#delegation) at this address.
 | `fee`      | [TransactionFee](#transactionfee) |                                              |
 | `nonce`    | [Nonce](#type-aliases)            |                                              |
 | `graffiti` | [Graffiti](#type-aliases)         | Graffiti to indicate the reason for burning. |
+
+##### SignedTransactionRedelegateCommission
+
+| name    | type                              | description                                     |
+| ------- | --------------------------------- | ----------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateCommission`. |
+| `to`    | [Address](#address)               |                                                 |
+| `fee`   | [TransactionFee](#transactionfee) |                                                 |
+| `nonce` | [Nonce](#type-aliases)            |                                                 |
+
+Assigns validator's pending commission to a delegation.
+
+##### SignedTransactionRedelegateReward
+
+| name    | type                              | description                                 |
+| ------- | --------------------------------- | ------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateReward`. |
+| `fee`   | [TransactionFee](#transactionfee) |                                             |
+| `nonce` | [Nonce](#type-aliases)            |                                             |
+
+Adds delegation's pending rewards to voting power.
 
 ### IntermediateStateRootData
 
