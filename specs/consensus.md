@@ -354,6 +354,7 @@ if state.accounts[sender].status == AccountStatus.ValidatorQueued
 else if state.accounts[sender].status == AccountStatus.ValidatorBonded
     validator = state.activeValidatorSet[sender]
     delete state.activeValidatorSet[sender]
+
 validator.unbondingHeight = block.height + 1
 validator.latestEntry += validator.pendingRewards // validator.votingPower
 validator.pendingRewards = 0
@@ -634,9 +635,6 @@ proposer.pendingRewards += blockReward - commissionReward
 # Even though the voting power hasn't changed yet, we consider this a period change.
 proposer.latestEntry += proposer.pendingRewards // state.activeValidatorSet.proposerInitialVotingPower
 proposer.pendingRewards = 0
-
-proposer.votingPower += blockReward
-state.activeValidatorSet.activeVotingPower += blockReward
 
 if account.status == AccountStatus.ValidatorUnbonding
       account.status == AccountStatus.ValidatorUnbonded
