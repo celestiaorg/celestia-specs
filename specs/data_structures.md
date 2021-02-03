@@ -904,9 +904,9 @@ The current block reward for the proposer is kept track of here. This is keyed w
 
 ### ProposerInitialVotingPower
 
-| name          | type     | description                                                                    |
-| ------------- | -------- | ------------------------------------------------------------------------------ |
-| `votingPower` | `uint64` | Total block reward (subsidy + fees) in current block so far. Reset each block. |
+| name          | type     | description                                                              |
+| ------------- | -------- | ------------------------------------------------------------------------ |
+| `votingPower` | `uint64` | Voting power of the proposer at the start of each block. Set each block. |
 
 The proposer's voting power at the beginning of the block is kept track of here. This is keyed with `3` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000003`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
