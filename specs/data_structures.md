@@ -49,6 +49,8 @@ Data Structures
       - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
       - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
       - [SignedTransactionDataBurn](#signedtransactiondataburn)
+      - [SignedTransactionRedelegateCommission](#signedtransactionredelegatecommission)
+      - [SignedTransactionRedelegateReward](#signedtransactionredelegatereward)
   - [IntermediateStateRootData](#intermediatestaterootdata)
     - [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)
     - [IntermediateStateRoot](#intermediatestateroot)
@@ -65,6 +67,7 @@ Data Structures
   - [ActiveValidatorCount](#activevalidatorcount)
   - [ActiveVotingPower](#activevotingpower)
   - [ProposerBlockReward](#proposerblockreward)
+  - [ProposerInitialVotingPower](#proposerinitialvotingpower)
   - [ValidatorQueueHead](#validatorqueuehead)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
@@ -569,6 +572,8 @@ enum TransactionType : uint8_t {
     BeginUnbondingDelegation = 7,
     UnbondDelegation = 8,
     Burn = 9,
+    RedelegateCommission = 10,
+    RedelegateReward = 11,
 };
 ```
 
@@ -582,6 +587,8 @@ Signed transaction data comes in a number of types:
 1. [BeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
 1. [UnbondDelegation](#signedtransactiondataunbonddelegation)
 1. [Burn](#signedtransactiondataburn)
+1. [RedelegateCommission](#signedtransactionredelegatecommission)
+1. [RedelegateReward](#signedtransactionredelegatereward)
 
 Common fields are denoted here to avoid repeating descriptions:
 
@@ -693,6 +700,27 @@ Finish unbonding the [Delegation](#delegation) at this address.
 | `fee`      | [TransactionFee](#transactionfee) |                                              |
 | `nonce`    | [Nonce](#type-aliases)            |                                              |
 | `graffiti` | [Graffiti](#type-aliases)         | Graffiti to indicate the reason for burning. |
+
+##### SignedTransactionRedelegateCommission
+
+| name    | type                              | description                                     |
+| ------- | --------------------------------- | ----------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateCommission`. |
+| `to`    | [Address](#address)               |                                                 |
+| `fee`   | [TransactionFee](#transactionfee) |                                                 |
+| `nonce` | [Nonce](#type-aliases)            |                                                 |
+
+Assigns validator's pending commission to a delegation.
+
+##### SignedTransactionRedelegateReward
+
+| name    | type                              | description                                 |
+| ------- | --------------------------------- | ------------------------------------------- |
+| `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateReward`. |
+| `fee`   | [TransactionFee](#transactionfee) |                                             |
+| `nonce` | [Nonce](#type-aliases)            |                                             |
+
+Adds delegation's pending rewards to voting power.
 
 ### IntermediateStateRootData
 
@@ -873,6 +901,14 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 | `reward` | `uint64` | Total block reward (subsidy + fees) in current block so far. Reset each block. |
 
 The current block reward for the proposer is kept track of here. This is keyed with `2` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000002`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
+
+### ProposerInitialVotingPower
+
+| name          | type     | description                                                              |
+| ------------- | -------- | ------------------------------------------------------------------------ |
+| `votingPower` | `uint64` | Voting power of the proposer at the start of each block. Set each block. |
+
+The proposer's voting power at the beginning of the block is kept track of here. This is keyed with `3` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000003`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
 
 ### ValidatorQueueHead
 
