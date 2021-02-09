@@ -632,12 +632,11 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 | name             | type                              | description                                |
 | ---------------- | --------------------------------- | ------------------------------------------ |
 | `type`           | `TransactionType`                 | Must be `TransactionType.CreateValidator`. |
-| `amount`         | [Amount](#type-aliases)           |                                            |
 | `fee`            | [TransactionFee](#transactionfee) |                                            |
 | `nonce`          | [Nonce](#type-aliases)            |                                            |
 | `commissionRate` | [Decimal](#decimal)               |                                            |
 
-Create a new [Validator](#validator) at this address for `amount` coins worth of voting power.
+Create a new [Validator](#validator) at this address.
 
 ##### SignedTransactionDataBeginUnbondingValidator
 
