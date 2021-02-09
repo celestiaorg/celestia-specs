@@ -15,11 +15,13 @@ message Decimal {
 }
 
 message MessageCommitmentAndSignature {
+  // Original square size the share commitment was computed for
+  uint64 k = 1;
   // 32-byte hash: commitment to message shares
-  bytes share_commitment = 1;
+  bytes share_commitment = 2;
   // 64-byte signature a single SignedTransactionPayForMessage
   // https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#signedtransactiondatapayformessage
-  bytes signature = 2;
+  bytes signature = 3;
 }
 
 message WireTxTransfer {
