@@ -1,7 +1,7 @@
 LazyLedger Specifications
 ===
 
-[![Gitter](https://badges.gitter.im/LazyLedger/lazyledger-specs.svg)](https://gitter.im/LazyLedger/lazyledger-specs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Community](https://img.shields.io/badge/chat%20on-discord-orange?&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/YsnTPcSfWQ)
 
 - [Specs](#specs)
 
