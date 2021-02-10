@@ -722,7 +722,7 @@ proposer.latestEntry += proposer.pendingRewards // proposer.votingPower
 proposer.pendingRewards = 0
 
 blockReward = state.activeValidatorSet.proposerBlockReward
-commissionReward = proposer.commissionRate * blockReward
+commissionReward = proposer.commissionRate.numerator * blockReward // proposer.commissionRate.denominator
 proposer.commissionRewards += commissionReward
 proposer.pendingRewards += blockReward - commissionReward
 
