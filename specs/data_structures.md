@@ -929,7 +929,12 @@ For explanation on entries, see the [reward distribution rationale document](../
 
 ### Decimal
 
-TODO define a format for numbers in the range `[0,1]`
+| name          | type   | description           |
+| ------------- | ------ | --------------------- |
+| `numerator`   | uint64 | Rational numerator.   |
+| `denominator` | uint64 | Rational denominator. |
+
+Represents a (potentially) non-integer number.
 
 ## Consensus Parameters
 

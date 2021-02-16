@@ -311,7 +311,8 @@ The following checks must be `true`:
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. `tx.commissionRate` <!--TODO check some bounds here-->
+1. `tx.commissionRate.denominator > 0`.
+1. `tx.commissionRate.numerator <= tx.commissionRate.denominator`.
 1. `state.accounts[sender].status` == `AccountStatus.None`.
 
 Apply the following to the state:
@@ -729,7 +730,7 @@ proposer.latestEntry += compute_new_entry(proposer.pendingRewards, proposer.voti
 proposer.pendingRewards = 0
 
 blockReward = state.activeValidatorSet.proposerBlockReward
-commissionReward = proposer.commission * blockReward
+commissionReward = proposer.commissionRate.numerator * blockReward // proposer.commissionRate.denominator
 proposer.commissionRewards += commissionReward
 proposer.pendingRewards += blockReward - commissionReward
 
