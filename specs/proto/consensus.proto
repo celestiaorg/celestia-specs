@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+// Define wire types for consensus messages.
+
+// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#feeheader
+message FeeHeader {
+  uint64 baseRate = 1;
+  uint64 tipRate = 2;
+}
+
+// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#availabledataheader
+message AvailableDataHeader {
+  // array of 32-byte hashes
+  repeated bytes rowRoots = 1;
+  // array of 32-byte hashes
+  repeated bytes colRoots = 2;
+}
+
+message ConsensusProposal {
+  uint64 height = 1;
+  uint64 round = 2;
+  uint64 timestamp = 3;
+  // 32-byte hash
+  bytes lastBlockID = 4;
+  // 32-byte hash
+  bytes lastCommitHash = 5;
+  // 32-byte hash
+  bytes consensusRoot = 6;
+  FeeHeader feeHeader = 7;
+  // 32-byte hash
+  bytes stateCommitment = 8;
+  uint64 availableDataOriginalSharesUsed = 9;
+  AvailableDataHeader availableDataHeader = 10;
+  // 64-byte signature
+  bytes proposerSignature = 11;
+}
+
+enum BlockIDFlag {
+  BlockIDFlagAbsentNone = 0;
+  BlockIDFlagAbsent = 1;
+  BlockIDFlagCommit = 2;
+  BlockIDFlagNil = 3;
+}
+
+message ConsensusVote {
+  BlockIDFlag blockIDFlag = 1;
+  uint64 height = 2;
+  uint64 round = 3;
+  // 32-byte hash
+  bytes blockID = 4;
+  uint64 timestamp = 5;
+  // 64-byte signature
+  bytes signature = 6;
+}
