@@ -237,6 +237,14 @@ function validatorQueueRemove(validator, sender)
 
 Note that light clients cannot perform a linear search through a linked list, and are instead provided logarithmic proofs (e.g. in the case of `parentFromQueue`, a proof to the parent is provided, which should have `address` as its next validator).
 
+We define a helper function to compute [F1 entries](../rationale/distributing_rewards.md):
+```py
+function compute_new_entry(reward, power)
+    if power == 0
+        return 0
+    return reward // power
+```
+
 After applying a transaction, the new state state root is computed.
 
 #### SignedTransactionDataTransfer
@@ -358,7 +366,7 @@ else if state.accounts[sender].status == AccountStatus.ValidatorBonded
     delete state.activeValidatorSet[sender]
 
 validator.unbondingHeight = block.height + 1
-validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.latestEntry += compute_new_entry(validator.pendingRewards, validator.votingPower)
 validator.pendingRewards = 0
 
 validatorQueueRemove(validator, sender)
@@ -442,7 +450,7 @@ delegation.beginEntry = validator.latestEntry
 delegation.endEntry = PeriodEntry(0)
 delegation.unbondingHeight = 0
 
-validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.latestEntry += compute_new_entry(validator.pendingRewards, validator.votingPower)
 validator.pendingRewards = 0
 validator.delegatedCount += 1
 validator.votingPower += tx.amount
@@ -497,7 +505,7 @@ delegation.status = DelegationStatus.Unbonding
 delegation.endEntry = validator.latestEntry
 delegation.unbondingHeight = block.height + 1
 
-validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.latestEntry += compute_new_entry(validator.pendingRewards, validator.votingPower)
 validator.pendingRewards = 0
 validator.delegatedCount -= 1
 validator.votingPower -= delegation.stakedBalance
@@ -622,7 +630,7 @@ pendingRewards = delegation.stakedBalance * (validator.latestEntry - delegation.
 delegation.stakedBalance += pendingRewards
 delegation.beginEntry = validator.latestEntry
 
-validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.latestEntry += compute_new_entry(validator.pendingRewards, validator.votingPower)
 validator.pendingRewards = 0
 
 # Assign pending commission rewards to delegation
@@ -670,7 +678,7 @@ pendingRewards = delegation.stakedBalance * (validator.latestEntry - delegation.
 delegation.stakedBalance += pendingRewards
 delegation.beginEntry = validator.latestEntry
 
-validator.latestEntry += validator.pendingRewards // validator.votingPower
+validator.latestEntry += compute_new_entry(validator.pendingRewards, validator.votingPower)
 validator.pendingRewards = 0
 
 # Update voting power
@@ -717,7 +725,7 @@ else if account.status == AccountStatus.ValidatorBonded
     proposer = state.activeValidatorSet[block.header.proposerAddress]
 
 # Flush the outstanding pending rewards.
-proposer.latestEntry += proposer.pendingRewards // proposer.votingPower
+proposer.latestEntry += compute_new_entry(proposer.pendingRewards, proposer.votingPower)
 proposer.pendingRewards = 0
 
 blockReward = state.activeValidatorSet.proposerBlockReward
@@ -726,7 +734,7 @@ proposer.commissionRewards += commissionReward
 proposer.pendingRewards += blockReward - commissionReward
 
 # Even though the voting power hasn't changed yet, we consider this a period change.
-proposer.latestEntry += proposer.pendingRewards // state.activeValidatorSet.proposerInitialVotingPower
+proposer.latestEntry += compute_new_entry(proposer.pendingRewards, state.activeValidatorSet.proposerInitialVotingPower)
 proposer.pendingRewards = 0
 
 if account.status == AccountStatus.ValidatorUnbonding
@@ -736,7 +744,7 @@ else if account.status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[block.header.proposerAddress] = proposer
 ```
 
-At the end of a block, the top `MAX_VALIDATORS` validators by voting power are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded. For previously-bonded validators that are no longer in the top `MAX_VALIDATORS` validators begin unbonding.
+At the end of a block, the top `MAX_VALIDATORS` validators by voting power with voting power _greater than_ zero are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded. For previously-bonded validators that are no longer in the top `MAX_VALIDATORS` validators begin unbonding.
 
 Bonding validators is simply setting their status to `AccountStatus.ValidatorBonded`. The logic for validator unbonding is found [here](#signedtransactiondatabeginunbondingvalidator), minus transaction sender updates (nonce, balance, and fee).
 
