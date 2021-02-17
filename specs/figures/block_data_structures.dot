@@ -27,7 +27,7 @@ digraph G {
 
         subgraph cluster_header {
             label = "header";
-            struct1 [label = "height | timestamp | lastBlockID | <f3> lastCommitHash | consensusRoot | <f5> feeHeader | stateCommitment | availableDataOriginalSharesUsed | <f8> availableDataRoot | proposerAddress"];
+            struct1 [label = "height | timestamp | headerHash | <f3> lastCommitHash | consensusRoot | <f5> feeHeader | stateCommitment | availableDataOriginalSharesUsed | <f8> availableDataRoot | proposerAddress"];
         }
     }
 

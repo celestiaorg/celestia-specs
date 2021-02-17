@@ -10,7 +10,6 @@ Data Structures
   - [AvailableData](#availabledata)
   - [Commit](#commit)
   - [Timestamp](#timestamp)
-  - [BlockID](#blockid)
   - [HashDigest](#hashdigest)
   - [FeeHeader](#feeheader)
   - [TransactionFee](#transactionfee)
@@ -83,7 +82,6 @@ Data Structures
 | --------------------------- | -------------------------- |
 | [`Address`](#address)       | `byte[32]`                 |
 | `Amount`                    | `uint64`                   |
-| [`BlockID`](#blockid)       | [HashDigest](#hashdigest)  |
 | `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]` |
 | [`HashDigest`](#hashdigest) | `byte[32]`                 |
 | `Height`                    | `uint64`                   |
@@ -115,7 +113,7 @@ Block header, which is fully downloaded by both full clients and light clients.
 | --------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                  |
 | `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                           |
-| `lastBlockID`                     | [BlockID](#blockid)       | Previous block's ID.                                                                                                                                               |
+| `lastHeaderHash`                  | [HashDigest](#hashdigest) | Previous block's header hash.                                                                                                                                      |
 | `lastCommitHash`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit hash.                                                                                                                           |
 | `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                       |
 | `feeHeader`                       | [FeeHeader](#feeheader)   | Header data pertaining to fees.                                                                                                                                    |
@@ -125,6 +123,8 @@ Block header, which is fully downloaded by both full clients and light clients.
 | `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                  |
 
 The size of the [original data square](#arranging-available-data-into-shares), `availableDataOriginalSquareSize`, isn't explicitly declared in the block header. Instead, it is implicitly computed as the smallest power of 2 whose square is at least `availableDataOriginalSharesUsed` (in other words, the smallest power of 4 that is at least `availableDataOriginalSharesUsed`).
+
+The header hash is the [hash](#hashing) of the [serialized](#serialization) header.
 
 ### AvailableDataHeader
 
@@ -156,7 +156,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 | ------------ | --------------------------- | ---------------------------------- |
 | `height`     | [Height](#type-aliases)     | Block height.                      |
 | `round`      | [Round](#type-aliases)      | Round. Incremented on view change. |
-| `blockID`    | [BlockID](#blockid)         | Block ID of the previous block.    |
+| `headerHash` | [HashDigest](#hashdigest)   | Header hash of the previous block. |
 | `signatures` | [CommitSig](#commitsig)`[]` | List of signatures.                |
 
 ### Timestamp
@@ -164,12 +164,6 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 Timestamp is a [type alias](#type-aliases).
 
 LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
-
-### BlockID
-
-BlockID is a [type alias](#type-aliases).
-
-The block ID is a single Merkle root: the root of the [block header](#header)'s fields, in the order provided in the spec. The root is computed using a [binary Merkle tree](#binary-merkle-tree).
 
 ### HashDigest
 
@@ -204,16 +198,16 @@ Addresses are the [hash](#hashing) [digest](#hashdigest) of the [public key](#pu
 ### CommitSig
 
 ```C++
-enum BlockIDFlag : uint8_t {
-    BlockIDFlagAbsent = 1,
-    BlockIDFlagCommit = 2,
-    BlockIDFlagNil = 3,
+enum CommitFlag : uint8_t {
+    CommitFlagAbsent = 1,
+    CommitFlagCommit = 2,
+    CommitFlagNil = 3,
 };
 ```
 
 | name               | type                    | description |
 | ------------------ | ----------------------- | ----------- |
-| `blockIDFlag`      | `BlockIDFlag`           |             |
+| `commitFlag`       | `CommitFlag`            |             |
 | `validatorAddress` | [Address](#address)     |             |
 | `timestamp`        | [Timestamp](#timestamp) |             |
 | `signature`        | [Signature](#signature) |             |
@@ -772,16 +766,16 @@ enum VoteType : uint8_t {
 };
 ```
 
-| name               | type                    | description |
-| ------------------ | ----------------------- | ----------- |
-| `type`             | `VoteType`              |             |
-| `height`           | [Height](#type-aliases) |             |
-| `round`            | [Round](#type-aliases)  |             |
-| `blockID`          | [BlockID](#blockid)     |             |
-| `timestamp`        | [Timestamp](#timestamp) |             |
-| `validatorAddress` | [Address](#address)     |             |
-| `validatorIndex`   | `uint64`                |             |
-| `signature`        | [Signature](#signature) |             |
+| name               | type                      | description |
+| ------------------ | ------------------------- | ----------- |
+| `type`             | `VoteType`                |             |
+| `height`           | [Height](#type-aliases)   |             |
+| `round`            | [Round](#type-aliases)    |             |
+| `headerHash`       | [HashDigest](#hashdigest) |             |
+| `timestamp`        | [Timestamp](#timestamp)   |             |
+| `validatorAddress` | [Address](#address)       |             |
+| `validatorIndex`   | `uint64`                  |             |
+| `signature`        | [Signature](#signature)   |             |
 
 ### MessageData
 
