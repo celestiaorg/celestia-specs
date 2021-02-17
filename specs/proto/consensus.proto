@@ -21,7 +21,7 @@ message ConsensusProposal {
   uint64 round = 2;
   uint64 timestamp = 3;
   // 32-byte hash
-  bytes lastBlockID = 4;
+  bytes lastHeaderHash = 4;
   // 32-byte hash
   bytes lastCommitHash = 5;
   // 32-byte hash
@@ -35,19 +35,19 @@ message ConsensusProposal {
   bytes proposerSignature = 11;
 }
 
-enum BlockIDFlag {
-  BlockIDFlagAbsentNone = 0;
-  BlockIDFlagAbsent = 1;
-  BlockIDFlagCommit = 2;
-  BlockIDFlagNil = 3;
+enum CommitFlag {
+  CommitFlagAbsentNone = 0;
+  CommitFlagAbsent = 1;
+  CommitFlagCommit = 2;
+  CommitFlagNil = 3;
 }
 
 message ConsensusVote {
-  BlockIDFlag blockIDFlag = 1;
+  CommitFlag commitFlag = 1;
   uint64 height = 2;
   uint64 round = 3;
   // 32-byte hash
-  bytes blockID = 4;
+  bytes headerHash = 4;
   uint64 timestamp = 5;
   // 64-byte signature
   bytes signature = 6;

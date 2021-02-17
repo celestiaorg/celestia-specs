@@ -125,7 +125,7 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 
 1. `header.height` == `prev.header.height + 1`.
 1. `header.timestamp` > `prev.header.timestamp`.
-1. `header.lastBlockID` == the [block ID](./data_structures.md#blockid) of `prev`.
+1. `header.lastHeaderHash` == the [header hash](./data_structures.md#header) of `prev`.
 1. `header.lastCommitHash` == the [hash](./data_structures.md#hashing) of `lastCommit`.
 1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
 1. `header.feeHeader.baseRate` == `prev.header.feeHeader.baseRate * floor(1 + (prev.header.availableDataOriginalSharesUsed - AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET) / (BASE_FEE_CHANGE_RATE * AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET))`.
@@ -148,7 +148,7 @@ The last [commit](./data_structures.md#commit) `block.lastCommit` (`lastCommit` 
 
 1. `lastCommit.height` == `prev.header.height`.
 1. `lastCommit.round` >= `1`.
-1. `lastCommit.blockID` == the [block ID](./data_structures.md#blockid) of `prev`.
+1. `lastCommit.headerHash` == the [header hash](./data_structures.md#header) of `prev`.
 1. Length of `lastCommit.signatures` <= [`MAX_VALIDATORS`](#constants).
 1. Each of `lastCommit.signatures` must be a valid [CommitSig](./data_structures.md#commitsig)
 1. The sum of the votes for `prev` in `lastCommit` must be at least 2/3 (rounded up) of the voting power of `prev`'s next validator set.
