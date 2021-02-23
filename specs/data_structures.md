@@ -21,11 +21,11 @@ Data Structures
 - [Public-Key Cryptography](#public-key-cryptography)
 - [Merkle Trees](#merkle-trees)
   - [Binary Merkle Tree](#binary-merkle-tree)
-    - [BinaryMerkleTreeProof](#binarymerkletreeproof)
+    - [BinaryMerkleTreeInclusionProof](#binarymerkletreeinclusionproof)
   - [Namespace Merkle Tree](#namespace-merkle-tree)
-    - [NamespaceMerkleTreeProof](#namespacemerkletreeproof)
+    - [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof)
   - [Sparse Merkle Tree](#sparse-merkle-tree)
-    - [SparseMerkleTreeProof](#sparsemerkletreeproof)
+    - [SparseMerkleTreeInclusionProof](#sparsemerkletreeinclusionproof)
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
@@ -289,16 +289,13 @@ Note that rather than duplicating the last node if there are an odd number of no
 
 Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepended for leaf nodes while `0x01` is prepended for internal nodes. This avoids a second-preimage attack [where internal nodes are presented as leaves](https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack) trees with leaves at different heights.
 
-#### BinaryMerkleTreeProof
+#### BinaryMerkleTreeInclusionProof
 
-| name       | type                          | description                   |
-| ---------- | ----------------------------- | ----------------------------- |
-| `root`     | [HashDigest](#hashdigest)     | Merkle root.                  |
-| `key`      | `byte[32]`                    | Key (i.e. index) of the leaf. |
-| `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values.          |
-| `leaf`     | `byte[]`                      | Leaf value.                   |
+| name       | type                          | description                                                     |
+| ---------- | ----------------------------- | --------------------------------------------------------------- |
+| `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values, ordered starting from the leaf's neighbor. |
 
-A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree).
+A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree), as per Section 2.1.1 of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962#section-2.1.1).
 
 ### Namespace Merkle Tree
 
@@ -346,18 +343,13 @@ For some intuition: the min and max namespace IDs for subtree roots with at leas
 
 A compact commitment can be computed by taking the [hash](#hashing) of the [serialized](#serialization) root node.
 
-#### NamespaceMerkleTreeProof
+#### NamespaceMerkleTreeInclusionProof
 
-| name                 | type                             | description                   |
-| -------------------- | -------------------------------- | ----------------------------- |
-| `rootHash`           | [HashDigest](#hashdigest)        | Root hash.                    |
-| `rootNamespaceIDMin` | [NamespaceID](#type-aliases)     | Root minimum namespace ID.    |
-| `rootNamespaceIDMax` | [NamespaceID](#type-aliases)     | Root maximum namespace ID.    |
-| `key`                | `byte[32]`                       | Key (i.e. index) of the leaf. |
-| `siblingValues`      | [HashDigest](#hashdigest)`[]`    | Sibling hash values.          |
-| `siblingMins`        | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.    |
-| `siblingMaxes`       | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.    |
-| `leaf`               | `byte[]`                         | Leaf value.                   |
+| name            | type                             | description                                                     |
+| --------------- | -------------------------------- | --------------------------------------------------------------- |
+| `siblingValues` | [HashDigest](#hashdigest)`[]`    | Sibling hash values, ordered starting from the leaf's neighbor. |
+| `siblingMins`   | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.                                      |
+| `siblingMaxes`  | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.                                      |
 
 When verifying an NMT proof, the root hash is checked by reconstructing the root node `root_node` with the computed `root_node.v` (computed as with a [plain Merkle proof](#binarymerkletreeproof)) and the provided `rootNamespaceIDMin` and `rootNamespaceIDMax` as the `root_node.n_min` and `root_node.n_max`, respectively.
 
@@ -391,7 +383,7 @@ For internal node `node` with children `l` and `r`:
 node.v = h(0x01, l.v, r.v)
 ```
 
-#### SparseMerkleTreeProof
+#### SparseMerkleTreeInclusionProof
 
 SMTs can further be extended with _compact_ proofs. [Merkle proofs](#verifying-annotated-merkle-proofs) are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.
 
@@ -399,15 +391,13 @@ For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. Th
 
 A proof into an SMT is structured as:
 
-| name               | type                          | description                                                                                     |
-| ------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------- |
-| `root`             | [HashDigest](#hashdigest)     | Merkle root.                                                                                    |
-| `key`              | `byte[32]`                    | Key (i.e. index) of the leaf.                                                                   |
-| `depth`            | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`.                        |
-| `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values.                                                                            |
-| `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes. The lowest bit corresponds the leaf node level. |
-| `leaf`             | `byte[]`                      | Leaf value.                                                                                     |
+| name               | type                          | description                                                              |
+| ------------------ | ----------------------------- | ------------------------------------------------------------------------ |
+| `depth`            | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
+| `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values, ordered starting from the leaf's neighbor..         |
+| `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes.                          |
 
+The `includedSiblings` is ordered by most-significant-byte first, with each byte ordered by most-significant-bit first. The lowest bit corresponds the leaf node level.
 ## Erasure Coding
 
 In order to enable trust-minimized light clients (i.e. light clients that do not rely on an honest majority of validating state assumption), it is critical that light clients can determine whether the data in each block is _available_ or not, without downloading the whole block itself. The technique used here was formally described in the paper [Fraud and Data Availability Proofs: Maximising Light Client Security and Scaling Blockchains with Dishonest Majorities](https://arxiv.org/abs/1809.09044).
