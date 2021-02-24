@@ -82,6 +82,7 @@ Consensus Rules
 | `ACTIVE_VALIDATORS_SUBTREE_ID`   | `StateSubtreeID` | `0x02` |
 | `INACTIVE_VALIDATORS_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
 | `DELEGATIONS_SUBTREE_ID`         | `StateSubtreeID` | `0x04` |
+| `MESSAGE_PAID_SUBTREE_ID`        | `StateSubtreeID` | `0x05` |
 
 ### Rewards and Penalties
 
@@ -237,6 +238,25 @@ function validatorQueueRemove(validator, sender)
 
 Note that light clients cannot perform a linear search through a linked list, and are instead provided logarithmic proofs (e.g. in the case of `parentFromQueue`, a proof to the parent is provided, which should have `address` as its next validator).
 
+In addition, three helper functions to manage the [message paid list](./data_structures.md#messagepaid):
+1. `findFromMessagePaidList(start)`, which returns the transaction ID of the last transaction in the [message paid list](./data_structures.md#messagepaid) with `finish` greater than `start`, or `0` if the list is empty or no transactions in the list have at least `start` `finish`.
+1. `parentFromMessagePaidList(txid)`, which returns the transaction ID of the parent in the message paid list of the transaction with ID `txid`, or `0` if `txid` is not in the list or is the head of the list.
+3. `messagePaidListInsert`, defined as
+```py
+function messagePaidListInsert(tx, txid)
+    # Insert the new transaction into the linked list
+    parent = findFromMessagePaidList(tx.messageStartIndex)
+    state.messagesPaid[txid].start = tx.messageStartIndex
+    numShares = ceil(tx.messageSize / SHARE_SIZE)
+    state.messagesPaid[txid].finish = tx.messageStartIndex + numShares - 1
+    if parent != 0
+        state.messagesPaid[txid].next = state.messagesPaid[parent].next
+        state.messagesPaid[parent].next = txid
+    else
+        state.messagesPaid[txid].next = state.messagePaidHead
+        state.messagePaidHead = txid
+```
+
 We define a helper function to compute [F1 entries](../rationale/distributing_rewards.md):
 ```py
 function compute_new_entry(reward, power)
@@ -276,6 +296,8 @@ state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 
 ```py
 bytesPaid = len(tx) + tx.messageSize
+currentStartFinish = state.messagesPaid[findFromMessagePaidList(tx.messageStartIndex)]
+parentStartFinish = state.messagesPaid[parentFromMessagePaidList(findFromMessagePaidList(tx.messageStartIndex))]
 ```
 
 The following checks must be `true`:
@@ -285,15 +307,19 @@ The following checks must be `true`:
 1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
-1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `wrappedTransactions.messageStartIndex` must:
+1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `tx.messageStartIndex` must:
     1. Have namespace ID `tx.messageNamespaceID`.
 1. `tx.messageShareCommitment` == computed as described [here](./data_structures.md#signedtransactiondatapayformessage).
+1. `parentStartFinish.finish` < `tx.messageStartIndex`.
+1. `currentStartFinish.start` == `0` or `currentStartFinish.start` > `tx.messageStartIndex + ceil(tx.messageSize / SHARE_SIZE)`.
 
 Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
 state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+
+messagePaidListInsert(tx, id(tx))
 
 state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
@@ -748,5 +774,7 @@ else if account.status == AccountStatus.ValidatorBonded
 At the end of a block, the top `MAX_VALIDATORS` validators by voting power with voting power _greater than_ zero are or become active (bonded). For newly-bonded validators, the entire validator object is moved to the active validators subtree and their status is changed to bonded. For previously-bonded validators that are no longer in the top `MAX_VALIDATORS` validators begin unbonding.
 
 Bonding validators is simply setting their status to `AccountStatus.ValidatorBonded`. The logic for validator unbonding is found [here](#signedtransactiondatabeginunbondingvalidator), minus transaction sender updates (nonce, balance, and fee).
+
+Finally, the state subtree with ID [`MESSAGE_PAID_SUBTREE_ID`](#reserved-state-subtree-ids) is deleted.
 
 This end block implicit state transition is a single state transition, and [only has a single intermediate state root](#blockavailabledata) associated with it.
