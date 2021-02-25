@@ -70,6 +70,8 @@ Data Structures
   - [ValidatorQueueHead](#validatorqueuehead)
   - [PeriodEntry](#periodentry)
   - [Decimal](#decimal)
+  - [MessagePaid](#messagepaid)
+  - [MessagePaidHead](#messagepaidhead)
 - [Consensus Parameters](#consensus-parameters)
 
 ## Data Structures Overview
@@ -791,6 +793,7 @@ A number of subtrees are maintained:
 1. [Active validator set](#validator)
 1. [Inactive validator set](#validator)
 1. [Delegation set](#delegation)
+1. [Message shares paid for](#message-paid)
 
 ### Account
 
@@ -919,6 +922,24 @@ For explanation on entries, see the [reward distribution rationale document](../
 | `denominator` | uint64 | Rational denominator. |
 
 Represents a (potentially) non-integer number.
+
+### MessagePaid
+
+| name     | type                      | description                                                           |
+| -------- | ------------------------- | --------------------------------------------------------------------- |
+| `start`  | `uint64`                  | Share index (in row-major order) of first share paid for (inclusive). |
+| `finish` | `uint64`                  | Share index (in row-major order) of last share paid for (inclusive).  |
+| `next`   | [HashDigest](#hashdigest) | Next transaction ID in the list.                                      |
+
+### MessagePaidHead
+
+| name   | type                      | description                                                              |
+| ------ | ------------------------- | ------------------------------------------------------------------------ |
+| `head` | [HashDigest](#hashdigest) | Transaction hash at the head of the list (has the smallest start index). |
+
+The head of the list of paid message shares is stored in the message share paid subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `MESSAGE_PAID_SUBTREE_ID`.
+
+If the paid list is empty, `head` is set to the default value (i.e. the hash of the leaf is [the default value for a Sparse Merkle Tree](#sparse-merkle-tree)).
 
 ## Consensus Parameters
 
