@@ -36,7 +36,7 @@ message ConsensusProposal {
 }
 
 enum CommitFlag {
-  CommitFlagAbsentNone = 0;
+  CommitFlagNone = 0;
   CommitFlagAbsent = 1;
   CommitFlagCommit = 2;
   CommitFlagNil = 3;
