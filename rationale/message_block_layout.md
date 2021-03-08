@@ -1,5 +1,4 @@
-Message Layout
-===
+# Message Layout
 
 - [Preamble](#preamble)
 - [Message Layout Rationale](#message-layout-rationale)
@@ -17,6 +16,7 @@ Block data consists of transactions (which modify the LazyLedger chain's state),
 The simplest way we can imagine arranging block data is to simply serialize it all in no particular order, split it into fixed-sized shares, then arrange those shares into the `k * k` matrix in row-major order. However, this naive scheme can be improved in a number of ways, described below.
 
 First, we impose some ground rules:
+
 1. Data must be ordered by namespace ID. This makes queries into a NMT commitment of that data more efficient.
 1. Since non-message data are not naturally intended for particular namespaces, we assign reserved namespaces for them. A range of namespaces is reserved for this purpose, starting from the lowest possible namespace ID.
 1. By construction, the above two rules mean that non-message data always precedes message data in the row-major matrix, even when considering single rows or columns.
@@ -25,6 +25,7 @@ First, we impose some ground rules:
 Transactions can pay fees for a message to be included in the same block as the transaction itself. However, we do not want serialized transactions to include the entire message they pay for (which is the case in other blockchains with native execution, e.g. calldata in Ethereum transactions or OP_RETURN data in Bitcoin transactions), otherwise every node that validates the sanctity of the LazyLedger coin would need to download all message data. Transactions must therefore only include a commitment to (i.e. some hash of) the message they pay fees for. If implemented naively (e.g. with a simple hash of the message, or a simple binary Merkle tree root of the message), this can lead to a data availability problem, as there are no guarantees that the data behind these commitments is actually part of the block data.
 
 To that end, we impose some additional rules onto _messages only_: messages must be placed is a way such that both the transaction sender and the block producer can be held accountable—a necessary property for e.g. fee burning. Accountable in this context means that
+
 1. The transaction sender must pay sufficient fees for message inclusion.
 1. The block proposer cannot claim that a message was included when it was not (which implies that a transaction and the message it pays for must be included in the same block).
 
@@ -35,6 +36,7 @@ This, however, requires the block producer to interact with the transaction send
 ### Non-Interactive Default Rules
 
 As a non-consensus-critical default, we can impose some additional rules on message placement to make the possible starting locations of messages sufficiently predictable and constrained such that users can deterministically compute subtree roots without interaction:
+
 1. Messages that span multiple rows must begin at the start of a row (this can occur if a message is longer than `k` shares _or_ if the block producer decides to start a message partway through a row and it cannot fit).
 1. Messages begin at a location aligned with the largest power of 2 that is not larger than the message length or `k`.
 

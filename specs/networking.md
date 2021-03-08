@@ -1,10 +1,9 @@
-Networking
-===
+# Networking
 
 - [Wire Format](#wire-format)
-    - [AvailableData](#availabledata)
-    - [AvailableDataRow](#availabledatarow)
-    - [WireTxPayForMessage](#wiretxpayformessage)
+  - [AvailableData](#availabledata)
+  - [AvailableDataRow](#availabledatarow)
+  - [WireTxPayForMessage](#wiretxpayformessage)
 
 ## Wire Format
 

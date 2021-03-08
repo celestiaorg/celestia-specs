@@ -1,36 +1,35 @@
-Consensus Rules
-===
+# Consensus Rules
 
 - [System Parameters](#system-parameters)
-    - [Units](#units)
-    - [Constants](#constants)
-    - [Reserved Namespace IDs](#reserved-namespace-ids)
-    - [Reserved State Subtree IDs](#reserved-state-subtree-ids)
-    - [Rewards and Penalties](#rewards-and-penalties)
+  - [Units](#units)
+  - [Constants](#constants)
+  - [Reserved Namespace IDs](#reserved-namespace-ids)
+  - [Reserved State Subtree IDs](#reserved-state-subtree-ids)
+  - [Rewards and Penalties](#rewards-and-penalties)
 - [Leader Selection](#leader-selection)
 - [Fork Choice](#fork-choice)
 - [Block Validity](#block-validity)
 - [Block Structure](#block-structure)
-    - [`block.header`](#blockheader)
-    - [`block.availableDataHeader`](#blockavailabledataheader)
-    - [`block.lastCommit`](#blocklastcommit)
-    - [`block.availableData`](#blockavailabledata)
+  - [`block.header`](#blockheader)
+  - [`block.availableDataHeader`](#blockavailabledataheader)
+  - [`block.lastCommit`](#blocklastcommit)
+  - [`block.availableData`](#blockavailabledata)
 - [State Transitions](#state-transitions)
-    - [`block.availableData.evidenceData`](#blockavailabledataevidencedata)
-    - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
-        - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
-        - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
-        - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
-        - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
-        - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
-        - [SignedTransactionDataCreateDelegation](#signedtransactiondatacreatedelegation)
-        - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
-        - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
-        - [SignedTransactionDataBurn](#signedtransactiondataburn)
-        - [SignedTransactionRedelegateCommission](#signedtransactionredelegatecommission)
-        - [SignedTransactionRedelegateReward](#signedtransactionredelegatereward)
-        - [Begin Block](#begin-block)
-        - [End Block](#end-block)
+  - [`block.availableData.evidenceData`](#blockavailabledataevidencedata)
+  - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
+    - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
+    - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+    - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
+    - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
+    - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
+    - [SignedTransactionDataCreateDelegation](#signedtransactiondatacreatedelegation)
+    - [SignedTransactionDataBeginUnbondingDelegation](#signedtransactiondatabeginunbondingdelegation)
+    - [SignedTransactionDataUnbondDelegation](#signedtransactiondataunbonddelegation)
+    - [SignedTransactionDataBurn](#signedtransactiondataburn)
+    - [SignedTransactionRedelegateCommission](#signedtransactionredelegatecommission)
+    - [SignedTransactionRedelegateReward](#signedtransactionredelegatereward)
+    - [Begin Block](#begin-block)
+    - [End Block](#end-block)
 
 ## System Parameters
 
@@ -102,6 +101,7 @@ TODO
 ## Block Validity
 
 The validity of a newly-seen block, `block`, is determined by two components, detailed in subsequent sections:
+
 1. [Block structure](#block-structure): whether the block header is valid, and data in a block is arranged into a valid and matching data root (i.e. syntax).
 1. [State transition](#state-transitions): whether the application of transactions in the block produces a matching and valid state root (i.e. semantics).
 
@@ -112,6 +112,7 @@ Pseudocode in this section is not in any specific language and should be interpr
 Before executing [state transitions](#state-transitions), the structure of the [block](./data_structures.md#block) must be verified.
 
 The following block fields are acquired from the network and parsed (i.e. [deserialized](./data_structures.md#serialization)). If they cannot be parsed, the block is ignored but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the [networking spec](./networking.md).
+
 1. [block.header](./data_structures.md#header)
 1. [block.availableDataHeader](./data_structures.md#availabledataheader)
 1. [block.lastCommit](./data_structures.md#commit)
@@ -170,6 +171,7 @@ Once the basic structure of the block [has been validated](#block-structure), st
 For this section, the variable `state` represents the [state tree](./data_structures.md#state), with `state.accounts[k]`, `state.inactiveValidatorSet[k]`, `state.activeValidatorSet[k]`, and `state.delegationSet[k]` being shorthand for the leaf in the state tree in the [accounts, inactive validator set, active validator set, and delegation set subtrees](./data_structures.md#state) with [pre-hashed key](./data_structures.md#state) `k`. E.g. `state.accounts[a]` is shorthand for `state[(ACCOUNTS_SUBTREE_ID << 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 >> 8*STATE_SUBTREE_RESERVED_BYTES) & hash(a))]`.
 
 State transitions are applied in the following order:
+
 1. [Begin block](#begin-block).
 1. [Evidence](#blockavailabledataevidencedata).
 1. [Transactions](#blockavailabledatatransactiondata).
@@ -193,17 +195,21 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 1. `transaction.signature` must be a [valid signature](./data_structures.md#public-key-cryptography) over `transaction.signedTransactionData`.
 
 Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a few helper functions:
+
 ```py
 baseCost(y) = block.header.feeHeader.baseRate * y
 tipCost(y) = block.header.feeHeader.tipRate * y
 totalCost(x, y) = x + baseCost(y) + tipCost(y)
 ```
+
 , where `x` above represents the amount of coins sent by the transaction authorizer and `y` above represents the a measure of the block space used by the transaction (i.e. size in bytes).
 
 Four additional helper functions are defined to manage the [validator queue](./data_structures.md#validator):
+
 1. `findFromQueue(power)`, which returns the address of the last validator in the [validator queue](./data_structures.md#validator) with voting power greater than or equal to `power`, or `0` if the queue is empty or no validators in the queue have at least `power` voting power.
 1. `parentFromQueue(address)`, which returns the address of the parent in the validator queue of the validator with address `address`, or `0` if `address` is not in the queue or is the head of the queue.
-3. `validatorQueueInsert`, defined as
+1. `validatorQueueInsert`, defined as
+
 ```py
 function validatorQueueInsert(validator)
     # Insert the new validator into the linked list
@@ -219,7 +225,10 @@ function validatorQueueInsert(validator)
         validator.next = state.validatorQueueHead
         state.validatorQueueHead = sender
 ```
+
+<!-- markdownlint-disable-next-line MD029 -->
 4. `validatorQueueRemove`, defined as
+
 ```py
 function validatorQueueRemove(validator, sender)
     # Remove existing validator from the linked list
@@ -239,9 +248,11 @@ function validatorQueueRemove(validator, sender)
 Note that light clients cannot perform a linear search through a linked list, and are instead provided logarithmic proofs (e.g. in the case of `parentFromQueue`, a proof to the parent is provided, which should have `address` as its next validator).
 
 In addition, three helper functions to manage the [message paid list](./data_structures.md#messagepaid):
+
 1. `findFromMessagePaidList(start)`, which returns the transaction ID of the last transaction in the [message paid list](./data_structures.md#messagepaid) with `finish` greater than `start`, or `0` if the list is empty or no transactions in the list have at least `start` `finish`.
 1. `parentFromMessagePaidList(txid)`, which returns the transaction ID of the parent in the message paid list of the transaction with ID `txid`, or `0` if `txid` is not in the list or is the head of the list.
-3. `messagePaidListInsert`, defined as
+1. `messagePaidListInsert`, defined as
+
 ```py
 function messagePaidListInsert(tx, txid)
     # Insert the new transaction into the linked list
@@ -258,6 +269,7 @@ function messagePaidListInsert(tx, txid)
 ```
 
 We define a helper function to compute [F1 entries](../rationale/distributing_rewards.md):
+
 ```py
 function compute_new_entry(reward, power)
     if power == 0

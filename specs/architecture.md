@@ -1,5 +1,4 @@
-Architecture
-===
+# Architecture
 
 - [Common Terms and Expressions](#common-terms-and-expressions)
 - [System Architecture](#system-architecture)
