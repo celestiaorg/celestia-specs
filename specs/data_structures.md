@@ -81,7 +81,7 @@ Data Structures
 ## Type Aliases
 
 | name                        | type                       |
-| --------------------------- | -------------------------- |
+|-----------------------------|----------------------------|
 | [`Address`](#address)       | `byte[32]`                 |
 | `Amount`                    | `uint64`                   |
 | `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]` |
@@ -197,6 +197,8 @@ Address is a [type alias](#type-aliases).
 
 Addresses are the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
+Addresses are a length of 32.
+
 ### CommitSig
 
 ```C++
@@ -228,6 +230,7 @@ Output of the [signing](#public-key-cryptography) process.
 Objects that are committed to or signed over require a canonical serialization. This is done using a deterministic (and thus, bijective) variant of protobuf defined [here](https://github.com/cosmos/cosmos-sdk/blob/master/docs/architecture/adr-027-deterministic-protobuf-serialization.md).
 
 Note: there are two requirements for a serialization scheme, should this need to be changed:
+
 1. Must be bijective.
 1. Serialization must include the length of dynamic structures (e.g. arrays with variable length).
 
@@ -252,6 +255,7 @@ Deterministic signatures ([RFC-6979](https://tools.ietf.org/rfc/rfc6979.txt)) sh
 `v` represents the parity of the `Y` component of the point, `0` for even and `1` for odd. The `X` component of the point is assumed to always be low, since [the possibility of it being high is negligible](https://bitcoin.stackexchange.com/a/38909).
 
 Putting it all together, the encoding for signatures is:
+
 ```
 |    32 bytes   ||           32 bytes           |
 [256-bit r value][1-bit v value][255-bit s value]
@@ -273,16 +277,19 @@ Nodes contain a single field:
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
 The base case (an empty tree) is defined as the [hash](#hashing) of the empty string:
+
 ```C++
 node.v = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ```
 
 For leaf node `node` of leaf data `d`:
+
 ```C++
 node.v = h(0x00, serialize(d))
 ```
 
 For internal node `node` with children `l` and `r`:
+
 ```C++
 node.v = h(0x01, l.v, r.v)
 ```
@@ -311,6 +318,7 @@ Nodes contain three fields:
 | `v`     | [HashDigest](#hashdigest)    | Node value.                                      |
 
 The base case (an empty tree) is defined as:
+
 ```C++
 node.n_min = 0x0000000000000000
 node.n_max = 0x0000000000000000
@@ -318,6 +326,7 @@ node.v = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ```
 
 For leaf node `node` of [share](#share) data `d`:
+
 ```C++
 node.n_min = d.namespaceID
 node.n_max = d.namespaceID
@@ -329,6 +338,7 @@ The `namespaceID` message field here is the namespace ID of the leaf, which is a
 Leaves in an NMT **must** be lexicographically sorted by namespace ID in ascending order.
 
 For internal node `node` with children `l` and `r`:
+
 ```C++
 node.n_min = min(l.n_min, r.n_min)
 if l.n_min == PARITY_SHARE_NAMESPACE_ID
@@ -339,6 +349,7 @@ else
   node.n_max = max(l.n_max, r.n_max)
 node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 ```
+
 Note that the above snippet leverages the property that leaves are sorted by namespace ID: if `l.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `{l,r}.n_max`. By construction, either both the min and max namespace IDs of a node will be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), or neither will: if `r.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `r.n_max`.
 
 For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as [the right half of an NMT as used in LazyLedger will be parity shares](#2d-reed-solomon-encoding-scheme)) _ignore_ the namespace ID for the parity leaves. Subtree roots with _only parity leaves_ have their min and max namespace ID set to [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids). This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids)).
@@ -360,6 +371,7 @@ When verifying an NMT proof, the root hash is checked by reconstructing the root
 Sparse Merkle Trees (SMTs) are _sparse_, i.e. they contain mostly empty leaves. They can be used as key-value stores for arbitrary data, as each leaf is keyed by its index in the tree. Storage efficiency is achieved through clever use of implicit defaults, avoiding the need to store empty leaves.
 
 Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-tree):
+
 1. Default values are given to leaf nodes with empty leaves.
 1. While the above rule is sufficient to pre-compute the values of intermediate nodes that are roots of empty subtrees, a further simplification is to extend this default value to all nodes that are roots of empty subtrees. The 32-byte zero, i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`, is used as the default value. This rule takes precedence over the above one.
 1. The number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average, assuming a uniform distribution of non-empty leaf keys. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
@@ -370,17 +382,21 @@ Nodes contain a single field:
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
 The base case (an empty tree) is defined as the [hash](#hashing) of the empty string:
+
 ```C++
 node.v = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ```
 
 For leaf node `node` of leaf data `d` with key `k`:
+
 ```C++
 node.v = h(0x00, k, h(serialize(d)))
 ```
+
 The key of leaf nodes must be prepended, since the index of a leaf node that is not at maximum depth cannot be determined without this information. Leaf values are hashed so that they do not need to be included in full in non-membership proofs.
 
 For internal node `node` with children `l` and `r`:
+
 ```C++
 node.v = h(0x01, l.v, r.v)
 ```
@@ -400,6 +416,7 @@ A proof into an SMT is structured as:
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes.                          |
 
 The `includedSiblings` is ordered by most-significant-byte first, with each byte ordered by most-significant-bit first. The lowest bit corresponds the leaf node level.
+
 ## Erasure Coding
 
 In order to enable trust-minimized light clients (i.e. light clients that do not rely on an honest majority of validating state assumption), it is critical that light clients can determine whether the data in each block is _available_ or not, without downloading the whole block itself. The technique used here was formally described in the paper [Fraud and Data Availability Proofs: Maximising Light Client Security and Scaling Blockchains with Dishonest Majorities](https://arxiv.org/abs/1809.09044).
@@ -411,6 +428,7 @@ The remainder of the subsections below specify the [2D Reed-Solomon erasure codi
 Note that while data is laid out in a two-dimensional square, rows and columns are erasure coded using a standard one-dimensional encoding.
 
 Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:
+
 - 16-bit Galois field
 - [`availableDataOriginalSquareSize`](#header) original pieces (maximum of [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants))
 - [`availableDataOriginalSquareSize`](#header) parity pieces (maximum of [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants)) (i.e `availableDataOriginalSquareSize * 2` total pieces), for an erasure efficiency of 50%. In other words, any 50% of the pieces from the `availableDataOriginalSquareSize * 2` total pieces are enough to recover the original data.
@@ -427,6 +445,7 @@ The 2-dimensional data layout is described in this section. The roots of [NMTs](
 The data of `Q0` is the original data, and the remaining quadrants are parity data. Setting `k = availableDataOriginalSquareSize`, the original data first must be [split into shares](#share) and [arranged into a `k * k` matrix](#arranging-available-data-into-shares). Then the parity data can be computed.
 
 Where `A -> B` indicates that `B` is computed using [erasure coding](#reed-solomon-erasure-coding) from `A`:
+
 - `Q0 -> Q1` for each row in `Q0` and `Q1`
 - `Q0 -> Q2` for each column in `Q0` and `Q2`
 - `Q2 -> Q3` for each row in `Q2` and `Q3`
@@ -492,6 +511,7 @@ For non-parity shares, if there is insufficient request data to fill the share, 
 The previous sections described how some original data, arranged into a `k * k` matrix, can be extended into a `2k * 2k` matrix and committed to with NMT roots. This section specifies how [available data](#available-data) (which includes [transactions](#transactiondata), [intermediate state roots](#intermediatestaterootdata), [evidence](#evidencedata), and [messages](#messagedata)) is arranged into the matrix in the first place.
 
 Then,
+
 1. For each of `transactionData`, `intermediateStateRootData`, and `evidenceData`, [serialize](#serialization):
     1. For each request in the list:
         1. [Serialize](#serialization) the request (individually).
@@ -506,11 +526,13 @@ These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-sche
 ![fig: Original data: reserved.](./figures/rs2d_originaldata_reserved.svg)
 
 Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. For each message, it is placed in the available data matrix, with row-major order, as follows:
+
 1. Place the first share of the message at the next unused location in the matrix, then place the remaining shares in the following locations.
 
 Transactions [must commit to a Merkle root of a list of hashes](#transaction) that are each guaranteed (assuming the block is valid) to be subtree roots in one or more of the row NMTs. For additional info, see [the rationale document](../rationale/message_block_layout.md) for this section.
 
 However, with only the rule above, interaction between the block producer and transaction sender may be required to compute a commitment to the message the transaction sender can sign over. To remove interaction, messages can optionally be laid out using a non-interactive default:
+
 1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the largest power of 2 that is not larger than the message length or [`availableDataOriginalSquareSize`](#header), then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
 1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose length is greater than [`availableDataOriginalSquareSize`](#header) will be placed in this way.
 
@@ -564,6 +586,7 @@ enum TransactionType : uint8_t {
 ```
 
 Signed transaction data comes in a number of types:
+
 1. [Transfer](#signedtransactiondatatransfer)
 1. [PayForMessage](#signedtransactiondatapayformessage)
 1. [CreateValidator](#signedtransactiondatacreatevalidator)
@@ -601,7 +624,7 @@ Transfers `amount` coins to `to`.
 ##### SignedTransactionDataPayForMessage
 
 | name                     | type                              | description                                                  |
-| ------------------------ | --------------------------------- | ------------------------------------------------------------ |
+|--------------------------|-----------------------------------|--------------------------------------------------------------|
 | `type`                   | `TransactionType`                 | Must be `TransactionType.PayForMessage`.                     |
 | `fee`                    | [TransactionFee](#transactionfee) |                                                              |
 | `nonce`                  | [Nonce](#type-aliases)            |                                                              |
@@ -689,7 +712,7 @@ Finish unbonding the [Delegation](#delegation) at this address.
 ##### SignedTransactionRedelegateCommission
 
 | name    | type                              | description                                     |
-| ------- | --------------------------------- | ----------------------------------------------- |
+|---------|-----------------------------------|-------------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateCommission`. |
 | `to`    | [Address](#address)               |                                                 |
 | `fee`   | [TransactionFee](#transactionfee) |                                                 |
@@ -765,8 +788,6 @@ enum VoteType : uint8_t {
 | `round`            | [Round](#type-aliases)    |             |
 | `headerHash`       | [HashDigest](#hashdigest) |             |
 | `timestamp`        | [Timestamp](#timestamp)   |             |
-| `validatorAddress` | [Address](#address)       |             |
-| `validatorIndex`   | `uint64`                  |             |
 | `signature`        | [Signature](#signature)   |             |
 
 ### MessageData
@@ -789,6 +810,7 @@ The state of the LazyLedger chain is intentionally restricted to containing only
 The state tree is separated into `2**(8*STATE_SUBTREE_RESERVED_BYTES)` subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest `STATE_SUBTREE_RESERVED_BYTES` bytes from the key and replacing them with the appropriate [reserved state subtree ID](consensus.md#reserved-state-subtree-ids). Reducing the key size within subtrees also reduces the collision resistance of keys by `8*STATE_SUBTREE_RESERVED_BYTES` bits, but this is not an issue due the number of bits removed being small.
 
 A number of subtrees are maintained:
+
 1. [Accounts](#account)
 1. [Active validator set](#validator)
 1. [Inactive validator set](#validator)
@@ -818,10 +840,12 @@ enum AccountStatus : uint8_t {
 The `status` of an account indicates weather it is a validator (`AccountStatus.Validator*`), delegating to a validator (`AccountStatus.Delegation*`), or neither (`AccountStatus.None`). Being a validator and delegating are mutually exclusive, and only a single validator can be delegated to.
 
 Delegations have two statuses:
+
 1. `DelegationBonded`: This delegation is enabled for a `Queued` _or_ `Bonded` validator. Delegations to a `Queued` validator can be withdrawn immediately, while delegations for a `Bonded` validator must be unbonded first.
 1. `DelegationUnbonding`: This delegation is unbonding. It will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed. Once the unbonding duration has expired, the delegation can be withdrawn.
 
 Validators have four statuses:
+
 1. `ValidatorQueued`: This validator has entered the queue to become an active validator. Once the next validator set transition occurs, if this validator has sufficient voting power (including its own stake and stake delegated to it) to be in the top `MAX_VALIDATORS` validators by voting power, it will become an active, i.e. `ValidatorBonded` validator. Until bonded, this validator can immediately exit the queue.
 1. `ValidatorBonded`: This validator is active and bonded. It can propose new blocks and vote on proposed blocks. Once bonded, an active validator must go through an unbonding process until its stake can be freed.
 1. `ValidatorUnbonding`: This validator is in the process of unbonding, which can be voluntary (the validator decided to stop being an active validator) or forced (the validator committed a slashable offence and was kicked from the active validator set). Validators will remain in this status for at least `UNBONDING_DURATION` blocks, and while unbonding may still be slashed.
