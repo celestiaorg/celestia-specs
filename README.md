@@ -13,3 +13,10 @@
 - [Networking](specs/networking.md)
 - [Light client](specs/light_client.md)
 - [Node types](specs/node_types.md)
+
+## Contributing
+
+Markdown files must conform to [GitHub Flavored Markdown](https://github.github.com/gfm/). Markdown must be formatted with:
+
+- [markdownlint](https://github.com/DavidAnson/markdownlint)
+- [Markdown Table Prettifier](https://github.com/darkriszty/MarkdownTablePrettify-VSCodeExt)
