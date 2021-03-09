@@ -1,5 +1,4 @@
-Honest Block Proposer
-===
+# Honest Block Proposer
 
 - [Deciding on a Block Size](#deciding-on-a-block-size)
 - [Laying out Transactions and Messages](#laying-out-transactions-and-messages)
@@ -11,10 +10,12 @@ This document describes the tasks of an honest block proposer to assemble a new 
 Before [arranging available data into shares](./data_structures.md#arranging-available-data-into-shares), the size of the original data's square must be determined.
 
 There are two restrictions on the original data's square size:
+
 1. It must be at most [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants).
 1. It must be a power of 2.
 
 With these restrictions in mind, the block proposer performs the following actions:
+
 1. Collect as many transactions and messages from the mempool as possible, such that the total number of shares is at most [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](./consensus.md#constants).
 1. Compute the smallest square size that is a power of 2 that can fit the number of shares.
 1. Attempt to [lay out the collected transactions and messages](#laying-out-transactions-and-messages-in-a-block) in the current square.

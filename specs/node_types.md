@@ -1,19 +1,18 @@
-Node Types
-===
+# Node Types
 
 - [Node Parameters](#node-parameters)
-    - [Block Headers](#block-headers)
-        - [Compact Block Headers](#compact-block-headers)
-        - [Extended Block Headers](#extended-block-headers)
-    - [Block Bodies](#block-bodies)
-        - [No Bodies](#no-bodies)
-        - [Sampled Bodies](#sampled-bodies)
-        - [Partial Bodies](#partial-bodies)
-        - [Full Bodies](#full-bodies)
-    - [Transactions](#transactions)
-        - [No Transactions](#no-transactions)
-        - [Full Transactions](#full-transactions)
-- [Node Types](#node-types)
+  - [Block Headers](#block-headers)
+    - [Compact Block Headers](#compact-block-headers)
+    - [Extended Block Headers](#extended-block-headers)
+  - [Block Bodies](#block-bodies)
+    - [No Bodies](#no-bodies)
+    - [Sampled Bodies](#sampled-bodies)
+    - [Partial Bodies](#partial-bodies)
+    - [Full Bodies](#full-bodies)
+  - [Transactions](#transactions)
+    - [No Transactions](#no-transactions)
+    - [Full Transactions](#full-transactions)
+- [Node Type Definitions](#node-type-definitions)
 
 ## Node Parameters
 
@@ -31,7 +30,7 @@ Secure under an honest supermajority of validator voting power and a weak subjec
 
 #### Extended Block Headers
 
-Nodes that process extended block headers will download and validate both the [compact block header](#compact-block-headers) and the 
+Nodes that process extended block headers will download and validate both the [compact block header](#compact-block-headers) and the
 [`availabledataheader`](./data_structures.md##availabledataheader) [block](./data_structures.md#block) field. These nodes can perform Data Availability Sampling on [block bodies](#block-bodies), and their security assumptions depend on how block bodies are handled.
 
 ### Block Bodies
@@ -76,9 +75,10 @@ Nodes that wish to produce new blocks must know the [chain state](./data_structu
 
 At most secure under a weak subjectivity assumption.
 
-## Node Types
+## Node Type Definitions
 
 For convenience, we will define several common parameter configurations:
+
 1. [Full nodes](https://en.bitcoin.it/wiki/Full_node) provide the strongest security guarantees. Block bodies do not need to be stored.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Full Bodies](#full-bodies)
