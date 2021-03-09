@@ -1,5 +1,4 @@
-Rationale: Distributing Rewards and Penalties
-===
+# Rationale: Distributing Rewards and Penalties
 
 - [Preamble](#preamble)
 - [Distribution Scheme](#distribution-scheme)
@@ -8,6 +7,7 @@ Rationale: Distributing Rewards and Penalties
 ## Preamble
 
 Due to the requirement that all incorrect state transitions on LazyLedger be provable with a [compact fraud proof](https://arxiv.org/abs/1809.09044) that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:
+
 1. In-protocol stake delegation: this makes it easier for users to participate in the consensus process, and reduces reliance on custodial staking services.
 1. In-protocol enforcement of proper distribution of rewards and penalities to delegators: rewards and penalties collected by validators should be distributed to delegators trustlessly.
 
@@ -27,7 +27,7 @@ $$
 
 In other words, the voting power contributed by the delegator multiplied by the _reward rate_, i.e. the rewards per unit of voting power. We note that if the total voting power of a validator remains constant forever, then the above equation holds and is approximation-free. However, changes to the total voting power need to be accounted for.
 
-Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a _period_. Every time a validator's voting power changes (i.e. a new period $f$ begins), an entry $Entry_f$ for this period is saved in state, which records _the reward rate up to the beginning of_ $f$. This is simply the sum of the reward rate up to the beginning of previous period $f-1$ and the reward rate of the period $f$ itself:
+Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a _period_. Every time a validator's voting power changes (i.e. a new period $f$ begins), an entry $Entry_f$ for this period is saved in state, which records_the reward rate up to the beginning of_ $f$. This is simply the sum of the reward rate up to the beginning of previous period $f-1$ and the reward rate of the period $f$ itself:
 
 $$
 Entry_f = \begin{cases}
@@ -49,6 +49,7 @@ This raw reward can be scaled by additional factors, such as commissions or slas
 ### State-Efficient Implementation
 
 The F1 paper does not specify where entries are stored in state, but the understanding is that they are placed in independent state elements. This has the downside of requiring multiple Merkle branches to prove the inclusion of entries for e.g. fraud proofs. We can improve on this by leveraging a specific property of entries, namely that each entry is only used in exactly two cases:
+
 1. To compute the next entry.
 1. To compute the reward of a delegator.
 

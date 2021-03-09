@@ -1,5 +1,4 @@
-Block Rewards
-===
+# Block Rewards
 
 Block rewards scale with the inverse square root of the total validating stake. This gives us a nice property: as the total validating stake decreases, returns per validator increases. This encourages additional validators to join and makes the system as a whole more robust even in the presence of secondary uses of the staking coin, e.g. being used as collateral in Decentralized Finance protocols.
 
@@ -7,7 +6,7 @@ Note that non-constant reward scaling opens up the system to [gatekeeping attack
 
 The formula to calculate the reward per block uses the following symbols:
 | symbol | note                              |
-| ------ | --------------------------------- |
+|--------|-----------------------------------|
 | $R_B$  | Rewards per block, in coins.      |
 | $I_T$  | Target annual issuance, in coins. |
 | $t_B$  | Block time, in seconds.           |
