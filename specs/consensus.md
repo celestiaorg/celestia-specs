@@ -36,7 +36,7 @@
 ### Units
 
 | name | SI    | value   | description         |
-| ---- | ----- | ------- | ------------------- |
+|------|-------|---------|---------------------|
 | `1u` | `1u`  | `10**0` | `1` unit.           |
 | `2u` | `k1u` | `10**3` | `1000` units.       |
 | `3u` | `M1u` | `10**6` | `1000000` units.    |
@@ -45,7 +45,7 @@
 ### Constants
 
 | name                                    | type     | value   | unit    | description                                                                                                                                                         |
-| --------------------------------------- | -------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-----------------------------------------|----------|---------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`    | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
 | `AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET` | `uint64` |         | `share` | Target number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares).  |
 | `BASE_FEE_CHANGE_RATE`                  | `uint64` | `8`     |         | Inverse of rate at which the [base fee](../rationale/fees.md) changes.                                                                                              |
@@ -65,7 +65,7 @@
 ### Reserved Namespace IDs
 
 | name                                    | type          | value                | description                                                                                |
-| --------------------------------------- | ------------- | -------------------- | ------------------------------------------------------------------------------------------ |
+|-----------------------------------------|---------------|----------------------|--------------------------------------------------------------------------------------------|
 | `TRANSACTION_NAMESPACE_ID`              | `NamespaceID` | `0x0000000000000001` | Transactions: requests that modify the state.                                              |
 | `INTERMEDIATE_STATE_ROOT_NAMESPACE_ID`  | `NamespaceID` | `0x0000000000000002` | Intermediate state roots, committed after every transaction.                               |
 | `EVIDENCE_NAMESPACE_ID`                 | `NamespaceID` | `0x0000000000000003` | Evidence: fraud proofs or other proof of slashable action.                                 |
@@ -76,7 +76,7 @@
 ### Reserved State Subtree IDs
 
 | name                             | type             | value  |
-| -------------------------------- | ---------------- | ------ |
+|----------------------------------|------------------|--------|
 | `ACCOUNTS_SUBTREE_ID`            | `StateSubtreeID` | `0x01` |
 | `ACTIVE_VALIDATORS_SUBTREE_ID`   | `StateSubtreeID` | `0x02` |
 | `INACTIVE_VALIDATORS_SUBTREE_ID` | `StateSubtreeID` | `0x03` |
@@ -86,7 +86,7 @@
 ### Rewards and Penalties
 
 | name                     | type     | value       | unit   | description                                             |
-| ------------------------ | -------- | ----------- | ------ | ------------------------------------------------------- |
+|--------------------------|----------|-------------|--------|---------------------------------------------------------|
 | `SECONDS_PER_YEAR`       | `uint64` | `31536000`  | second | Seconds per year. Omit leap seconds.                    |
 | `TARGET_ANNUAL_ISSUANCE` | `uint64` | `2 * 10**6` | `4u`   | `(= 2000000)` Target number of coins to issue per year. |
 

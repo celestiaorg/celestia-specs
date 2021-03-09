@@ -6,7 +6,7 @@
 ## Common Terms and Expressions
 
 | name              | description                                                                                                                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | App (application) | Alternate name for "[virtual sidechain](https://arxiv.org/abs/1905.09274)." LazyLedger apps are sidechains that post all their data onto the LazyLedger chain to share security. |
 | Transaction       | Request that modifies the consensus-critical state (validator balances and statuses).                                                                                            |
 | Message           | Request that is executed by a non-consensus-critical app.                                                                                                                        |

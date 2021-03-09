@@ -6,7 +6,7 @@ Note that non-constant reward scaling opens up the system to [gatekeeping attack
 
 The formula to calculate the reward per block uses the following symbols:
 | symbol | note                              |
-| ------ | --------------------------------- |
+|--------|-----------------------------------|
 | $R_B$  | Rewards per block, in coins.      |
 | $I_T$  | Target annual issuance, in coins. |
 | $t_B$  | Block time, in seconds.           |

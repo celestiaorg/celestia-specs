@@ -80,7 +80,7 @@
 ## Type Aliases
 
 | name                        | type                       |
-| --------------------------- | -------------------------- |
+|-----------------------------|----------------------------|
 | [`Address`](#address)       | `byte[32]`                 |
 | `Amount`                    | `uint64`                   |
 | `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]` |
@@ -100,7 +100,7 @@
 Blocks are the top-level data structure of the LazyLedger blockchain.
 
 | name                  | type                                        | description                                                           |
-| --------------------- | ------------------------------------------- | --------------------------------------------------------------------- |
+|-----------------------|---------------------------------------------|-----------------------------------------------------------------------|
 | `header`              | [Header](#header)                           | Block header. Contains primarily identification info and commitments. |
 | `availableDataHeader` | [AvailableDataHeader](#availabledataheader) | Header of available data. Contains commitments to erasure-coded data. |
 | `availableData`       | [AvailableData](#availabledata)             | Data that is erasure-coded for availability.                          |
@@ -111,7 +111,7 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 Block header, which is fully downloaded by both full clients and light clients.
 
 | name                              | type                      | description                                                                                                                                                        |
-| --------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|-----------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                  |
 | `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                           |
 | `lastHeaderHash`                  | [HashDigest](#hashdigest) | Previous block's header hash.                                                                                                                                      |
@@ -130,7 +130,7 @@ The header hash is the [hash](#hashing) of the [serialized](#serialization) head
 ### AvailableDataHeader
 
 | name       | type                          | description                            |
-| ---------- | ----------------------------- | -------------------------------------- |
+|------------|-------------------------------|----------------------------------------|
 | `rowRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 | `colRoots` | [HashDigest](#hashdigest)`[]` | Commitments to all erasure-coded data. |
 
@@ -145,7 +145,7 @@ The number of column roots is `availableDataOriginalSquareSize * 2`, and the num
 Data that is [erasure-coded](#erasure-coding) for [data availability checks](https://arxiv.org/abs/1809.09044).
 
 | name                        | type                                                    | description                                                                                                     |
-| --------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+|-----------------------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
 | `transactionData`           | [TransactionData](#transactiondata)                     | Transaction data. Transactions modify the validator set and balances, and pay fees for messages to be included. |
 | `intermediateStateRootData` | [IntermediateStateRootData](#intermediatestaterootdata) | Intermediate state roots used for fraud proofs.                                                                 |
 | `evidenceData`              | [EvidenceData](#evidencedata)                           | Evidence used for slashing conditions (e.g. equivocation).                                                      |
@@ -154,7 +154,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 ### Commit
 
 | name         | type                        | description                        |
-| ------------ | --------------------------- | ---------------------------------- |
+|--------------|-----------------------------|------------------------------------|
 | `height`     | [Height](#type-aliases)     | Block height.                      |
 | `round`      | [Round](#type-aliases)      | Round. Incremented on view change. |
 | `headerHash` | [HashDigest](#hashdigest)   | Header hash of the previous block. |
@@ -175,7 +175,7 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 ### FeeHeader
 
 | name       | type     | description                                      |
-| ---------- | -------- | ------------------------------------------------ |
+|------------|----------|--------------------------------------------------|
 | `baseRate` | `uint64` | The base fee rate for this block.                |
 | `tipRate`  | `uint64` | The tip rate for all transactions in this block. |
 
@@ -184,7 +184,7 @@ See the [rationale document](../rationale/fees.md) for more information on base 
 ### TransactionFee
 
 | name          | type     | description                                     |
-| ------------- | -------- | ----------------------------------------------- |
+|---------------|----------|-------------------------------------------------|
 | `baseRateMax` | `uint64` | The maximum base fee rate for this transaction. |
 | `tipRateMax`  | `uint64` | The maximum tip rate for this transaction.      |
 
@@ -207,7 +207,7 @@ enum CommitFlag : uint8_t {
 ```
 
 | name               | type                    | description |
-| ------------------ | ----------------------- | ------------|
+|--------------------|-------------------------|-------------|
 | `commitFlag`       | `CommitFlag`            |             |
 | `validatorAddress` | [Address](#address)     |             |
 | `timestamp`        | [Timestamp](#timestamp) |             |
@@ -216,7 +216,7 @@ enum CommitFlag : uint8_t {
 ### Signature
 
 | name | type       | description                                                          |
-| ---- | ---------- | -------------------------------------------------------------------- |
+|------|------------|----------------------------------------------------------------------|
 | `r`  | `byte[32]` | `r` value of the signature.                                          |
 | `vs` | `byte[32]` | 1-bit `v` value followed by last 255 bits of `s` value of signature. |
 
@@ -271,7 +271,7 @@ Binary Merkle trees are constructed in the same fashion as described in [Certifi
 
 Nodes contain a single field:
 | name | type                      | description |
-| ---- | ------------------------- | ----------- |
+|------|---------------------------|-------------|
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
 The base case (an empty tree) is defined as the [hash](#hashing) of the empty string:
@@ -299,7 +299,7 @@ Leaves and internal nodes are hashed differently: the one-byte `0x00` is prepend
 #### BinaryMerkleTreeInclusionProof
 
 | name       | type                          | description                                                     |
-| ---------- | ----------------------------- | --------------------------------------------------------------- |
+|------------|-------------------------------|-----------------------------------------------------------------|
 | `siblings` | [HashDigest](#hashdigest)`[]` | Sibling hash values, ordered starting from the leaf's neighbor. |
 
 A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree), as per Section 2.1.1 of [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962#section-2.1.1).
@@ -310,7 +310,7 @@ A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree), as per Sectio
 
 Nodes contain three fields:
 | name    | type                         | description                                      |
-| ------- | ---------------------------- | ------------------------------------------------ |
+|---------|------------------------------|--------------------------------------------------|
 | `n_min` | [NamespaceID](#type-aliases) | Min namespace ID in subtree rooted at this node. |
 | `n_max` | [NamespaceID](#type-aliases) | Max namespace ID in subtree rooted at this node. |
 | `v`     | [HashDigest](#hashdigest)    | Node value.                                      |
@@ -357,7 +357,7 @@ A compact commitment can be computed by taking the [hash](#hashing) of the [seri
 #### NamespaceMerkleTreeInclusionProof
 
 | name            | type                             | description                                                     |
-| --------------- | -------------------------------- | --------------------------------------------------------------- |
+|-----------------|----------------------------------|-----------------------------------------------------------------|
 | `siblingValues` | [HashDigest](#hashdigest)`[]`    | Sibling hash values, ordered starting from the leaf's neighbor. |
 | `siblingMins`   | [NamespaceID](#type-aliases)`[]` | Sibling min namespace IDs.                                      |
 | `siblingMaxes`  | [NamespaceID](#type-aliases)`[]` | Sibling max namespace IDs.                                      |
@@ -376,7 +376,7 @@ Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-
 
 Nodes contain a single field:
 | name | type                      | description |
-| ---- | ------------------------- | ----------- |
+|------|---------------------------|-------------|
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
 The base case (an empty tree) is defined as the [hash](#hashing) of the empty string:
@@ -408,7 +408,7 @@ For a Merkle branch of height `h`, an `h`-bit value is appended to the proof. Th
 A proof into an SMT is structured as:
 
 | name               | type                          | description                                                              |
-| ------------------ | ----------------------------- | ------------------------------------------------------------------------ |
+|--------------------|-------------------------------|--------------------------------------------------------------------------|
 | `depth`            | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
 | `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values, ordered starting from the leaf's neighbor..         |
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes.                          |
@@ -469,7 +469,7 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 #### ShareProof
 
 | name       | type                                                  | description                                                                                       |
-| ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+|------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------|
 | `share`    | [Share](#share)                                       | The share.                                                                                        |
 | `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
 | `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
@@ -478,7 +478,7 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 #### BadEncodingFraudProof
 
 | name          | type                                                  | description                                                                       |
-| ------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------- |
+|---------------|-------------------------------------------------------|-----------------------------------------------------------------------------------|
 | `shareProofs` | [ShareProof](#shareproof)`[]`                         | The available shares in the offending row or column.                              |
 | `root`        | [HashDigest](#hashdigest)                             | The Merkle root of the offending row or column.                                   |
 | `proof`       | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
@@ -488,7 +488,7 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 ### Share
 
 | name          | type                         | description                |
-| ------------- | ---------------------------- | -------------------------- |
+|---------------|------------------------------|----------------------------|
 | `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of the share. |
 | `rawData`     | `byte[SHARE_SIZE]`           | Raw share data.            |
 
@@ -545,7 +545,7 @@ The non-interactive default rules may introduce empty shares that do not belong 
 ### TransactionData
 
 | name                  | type                                          | description                   |
-| --------------------- | --------------------------------------------- | ----------------------------- |
+|-----------------------|-----------------------------------------------|-------------------------------|
 | `wrappedTransactions` | [WrappedTransaction](#wrappedtransaction)`[]` | List of wrapped transactions. |
 
 #### WrappedTransaction
@@ -553,7 +553,7 @@ The non-interactive default rules may introduce empty shares that do not belong 
 Wrapped transactions include additional metadata by the block proposer that is committed to in the [available data matrix](#arranging-available-data-into-shares).
 
 | name                | type                        | description                                                                                                                                                                                                                                                                                                |
-| ------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|---------------------|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `index`             | `uint64`                    | Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking a transaction to an [intermediate state root](#wrappedintermediatestateroot). |
 | `transaction`       | [Transaction](#transaction) | Actual transaction.                                                                                                                                                                                                                                                                                        |
 | `messageStartIndex` | `uint64`                    | _Optional, only used if transaction pays for a message or padding_. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.                                                                                       |
@@ -561,7 +561,7 @@ Wrapped transactions include additional metadata by the block proposer that is c
 #### Transaction
 
 | name                    | type                                            | description                       |
-| ----------------------- | ----------------------------------------------- | --------------------------------- |
+|-------------------------|-------------------------------------------------|-----------------------------------|
 | `signedTransactionData` | [SignedTransactionData](#signedtransactiondata) | Data payload that is signed over. |
 | `signature`             | [Signature](#signature)                         | Signature.                        |
 
@@ -600,7 +600,7 @@ Signed transaction data comes in a number of types:
 Common fields are denoted here to avoid repeating descriptions:
 
 | name     | type                              | description                                                                |
-| -------- | --------------------------------- | -------------------------------------------------------------------------- |
+|----------|-----------------------------------|----------------------------------------------------------------------------|
 | `type`   | `TransactionType`                 | Type of the transaction. Each type indicates a different state transition. |
 | `amount` | [Amount](#type-aliases)           | Amount of coins to send, in `1u`.                                          |
 | `to`     | [Address](#address)               | Recipient's address.                                                       |
@@ -610,7 +610,7 @@ Common fields are denoted here to avoid repeating descriptions:
 ##### SignedTransactionDataTransfer
 
 | name     | type                              | description                         |
-| -------- | --------------------------------- | ----------------------------------- |
+|----------|-----------------------------------|-------------------------------------|
 | `type`   | `TransactionType`                 | Must be `TransactionType.Transfer`. |
 | `amount` | [Amount](#type-aliases)           |                                     |
 | `to`     | [Address](#address)               |                                     |
@@ -622,7 +622,7 @@ Transfers `amount` coins to `to`.
 ##### SignedTransactionDataPayForMessage
 
 | name                     | type                              | description                                                  |
-| ------------------------ | --------------------------------- | ------------------------------------------------------------ |
+|--------------------------|-----------------------------------|--------------------------------------------------------------|
 | `type`                   | `TransactionType`                 | Must be `TransactionType.PayForMessage`.                     |
 | `fee`                    | [TransactionFee](#transactionfee) |                                                              |
 | `nonce`                  | [Nonce](#type-aliases)            |                                                              |
@@ -637,7 +637,7 @@ The commitment to message shares `messageShareCommitment` is a [Merkle root](#bi
 ##### SignedTransactionDataCreateValidator
 
 | name             | type                              | description                                |
-| ---------------- | --------------------------------- | ------------------------------------------ |
+|------------------|-----------------------------------|--------------------------------------------|
 | `type`           | `TransactionType`                 | Must be `TransactionType.CreateValidator`. |
 | `fee`            | [TransactionFee](#transactionfee) |                                            |
 | `nonce`          | [Nonce](#type-aliases)            |                                            |
@@ -648,7 +648,7 @@ Create a new [Validator](#validator) at this address.
 ##### SignedTransactionDataBeginUnbondingValidator
 
 | name    | type                              | description                                        |
-| ------- | --------------------------------- | -------------------------------------------------- |
+|---------|-----------------------------------|----------------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.BeginUnbondingValidator`. |
 | `fee`   | [TransactionFee](#transactionfee) |                                                    |
 | `nonce` | [Nonce](#type-aliases)            |                                                    |
@@ -658,7 +658,7 @@ Begin unbonding the [Validator](#validator) at this address.
 ##### SignedTransactionDataUnbondValidator
 
 | name    | type                              | description                                |
-| ------- | --------------------------------- | ------------------------------------------ |
+|---------|-----------------------------------|--------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.UnbondValidator`. |
 | `fee`   | [TransactionFee](#transactionfee) |                                            |
 | `nonce` | [Nonce](#type-aliases)            |                                            |
@@ -668,7 +668,7 @@ Finish unbonding the [Validator](#validator) at this address.
 ##### SignedTransactionDataCreateDelegation
 
 | name     | type                              | description                                 |
-| -------- | --------------------------------- | ------------------------------------------- |
+|----------|-----------------------------------|---------------------------------------------|
 | `type`   | `TransactionType`                 | Must be `TransactionType.CreateDelegation`. |
 | `amount` | [Amount](#type-aliases)           |                                             |
 | `to`     | [Address](#address)               |                                             |
@@ -680,7 +680,7 @@ Create a new [Delegation](#delegation) of `amount` coins worth of voting power f
 ##### SignedTransactionDataBeginUnbondingDelegation
 
 | name    | type                              | description                                         |
-| ------- | --------------------------------- | --------------------------------------------------- |
+|---------|-----------------------------------|-----------------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.BeginUnbondingDelegation`. |
 | `fee`   | [TransactionFee](#transactionfee) |                                                     |
 | `nonce` | [Nonce](#type-aliases)            |                                                     |
@@ -690,7 +690,7 @@ Begin unbonding the [Delegation](#delegation) at this address.
 ##### SignedTransactionDataUnbondDelegation
 
 | name    | type                              | description                                 |
-| ------- | --------------------------------- | ------------------------------------------- |
+|---------|-----------------------------------|---------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.UnbondDelegation`. |
 | `fee`   | [TransactionFee](#transactionfee) |                                             |
 | `nonce` | [Nonce](#type-aliases)            |                                             |
@@ -700,7 +700,7 @@ Finish unbonding the [Delegation](#delegation) at this address.
 ##### SignedTransactionDataBurn
 
 | name       | type                              | description                                  |
-| ---------- | --------------------------------- | -------------------------------------------- |
+|------------|-----------------------------------|----------------------------------------------|
 | `type`     | `TransactionType`                 | Must be `TransactionType.Burn`.              |
 | `amount`   | [Amount](#type-aliases)           |                                              |
 | `fee`      | [TransactionFee](#transactionfee) |                                              |
@@ -710,7 +710,7 @@ Finish unbonding the [Delegation](#delegation) at this address.
 ##### SignedTransactionRedelegateCommission
 
 | name    | type                              | description                                     |
-| ------- | --------------------------------- | ----------------------------------------------- |
+|---------|-----------------------------------|-------------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateCommission`. |
 | `to`    | [Address](#address)               |                                                 |
 | `fee`   | [TransactionFee](#transactionfee) |                                                 |
@@ -721,7 +721,7 @@ Assigns validator's pending commission to a delegation.
 ##### SignedTransactionRedelegateReward
 
 | name    | type                              | description                                 |
-| ------- | --------------------------------- | ------------------------------------------- |
+|---------|-----------------------------------|---------------------------------------------|
 | `type`  | `TransactionType`                 | Must be `TransactionType.RedelegateReward`. |
 | `fee`   | [TransactionFee](#transactionfee) |                                             |
 | `nonce` | [Nonce](#type-aliases)            |                                             |
@@ -731,20 +731,20 @@ Adds delegation's pending rewards to voting power.
 ### IntermediateStateRootData
 
 | name                            | type                                                              | description                               |
-| ------------------------------- | ----------------------------------------------------------------- | ----------------------------------------- |
+|---------------------------------|-------------------------------------------------------------------|-------------------------------------------|
 | `wrappedIntermediateStateRoots` | [WrappedIntermediateStateRoot](#wrappedintermediatestateroot)`[]` | List of wrapped intermediate state roots. |
 
 #### WrappedIntermediateStateRoot
 
 | name                    | type                                            | description                                                                                                                                                                                                                                                                                                                  |
-| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------------|-------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `index`                 | `uint64`                                        | Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into [fixed-sized shares](#share), and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a [transaction](#wrappedtransaction). |
 | `intermediateStateRoot` | [IntermediateStateRoot](#intermediatestateroot) | Intermediate state root. Used for fraud proofs.                                                                                                                                                                                                                                                                              |
 
 #### IntermediateStateRoot
 
 | name   | type                      | description                                                                              |
-| ------ | ------------------------- | ---------------------------------------------------------------------------------------- |
+|--------|---------------------------|------------------------------------------------------------------------------------------|
 | `root` | [HashDigest](#hashdigest) | Root of intermediate state, which is composed of the global state and the validator set. |
 
 ### EvidenceData
@@ -752,13 +752,13 @@ Adds delegation's pending rewards to voting power.
 Wrapper for evidence data.
 
 | name        | type                      | description                                    |
-| ----------- | ------------------------- | ---------------------------------------------- |
+|-------------|---------------------------|------------------------------------------------|
 | `evidences` | [Evidence](#evidence)`[]` | List of evidence used for slashing conditions. |
 
 #### Evidence
 
 | name     | type                    | description |
-| -------- | ----------------------- | ----------- |
+|----------|-------------------------|-------------|
 | `pubKey` | [PublicKey](#publickey) |             |
 | `voteA`  | [Vote](#vote)           |             |
 | `voteB`  | [Vote](#vote)           |             |
@@ -766,7 +766,7 @@ Wrapper for evidence data.
 #### PublicKey
 
 | name | type       | description              |
-| ---- | ---------- | ------------------------ |
+|------|------------|--------------------------|
 | `x`  | `byte[32]` | `x` value of public key. |
 | `y`  | `byte[32]` | `y` value of public key. |
 
@@ -780,7 +780,7 @@ enum VoteType : uint8_t {
 ```
 
 | name               | type                      | description |
-| ------------------ | ------------------------- | ----------- |
+|--------------------|---------------------------|-------------|
 | `type`             | `VoteType`                |             |
 | `height`           | [Height](#type-aliases)   |             |
 | `round`            | [Round](#type-aliases)    |             |
@@ -793,13 +793,13 @@ enum VoteType : uint8_t {
 ### MessageData
 
 | name       | type                    | description       |
-| ---------- | ----------------------- | ----------------- |
+|------------|-------------------------|-------------------|
 | `messages` | [Message](#message)`[]` | List of messages. |
 
 #### Message
 
 | name          | type                         | description                   |
-| ------------- | ---------------------------- | ----------------------------- |
+|---------------|------------------------------|-------------------------------|
 | `namespaceID` | [NamespaceID](#type-aliases) | Namespace ID of this message. |
 | `rawData`     | `byte[]`                     | Raw message bytes.            |
 
@@ -832,7 +832,7 @@ enum AccountStatus : uint8_t {
 ```
 
 | name      | type                    | description                                                                       |
-| --------- | ----------------------- | --------------------------------------------------------------------------------- |
+|-----------|-------------------------|-----------------------------------------------------------------------------------|
 | `balance` | [Amount](#type-aliases) | Coin balance.                                                                     |
 | `nonce`   | [Nonce](#type-aliases)  | Account nonce. Every outgoing transaction from this account increments the nonce. |
 | `status`  | `AccountStatus`         | Validator or delegation status of this account.                                   |
@@ -856,7 +856,7 @@ In the accounts subtree, accounts (i.e. leaves) are keyed by the [hash](#hashdig
 ### Delegation
 
 | name              | type                         | description                                         |
-| ----------------- | ---------------------------- | --------------------------------------------------- |
+|-------------------|------------------------------|-----------------------------------------------------|
 | `validator`       | [Address](#address)          | The validator being delegating to.                  |
 | `stakedBalance`   | [VotingPower](#type-aliases) | Delegated stake, in `4u`.                           |
 | `beginEntry`      | [PeriodEntry](#periodentry)  | Entry when delegation began.                        |
@@ -870,7 +870,7 @@ In the delegation subtree, delegations are keyed by the [hash](#hashdigest) of t
 ### Validator
 
 | name                | type                         | description                                                                            |
-| ------------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
+|---------------------|------------------------------|----------------------------------------------------------------------------------------|
 | `commissionRewards` | `uint64`                     | Validator's commission rewards, in `1u`.                                               |
 | `commissionRate`    | [Decimal](#decimal)          | Commission rate.                                                                       |
 | `delegatedCount`    | `uint32`                     | Number of accounts delegating to this validator.                                       |
@@ -891,7 +891,7 @@ The validator queue (i.e. validators with status `ValidatorQueued`) is a subset 
 ### ActiveValidatorCount
 
 | name            | type     | description                  |
-| --------------- | -------- | ---------------------------- |
+|-----------------|----------|------------------------------|
 | `numValidators` | `uint32` | Number of active validators. |
 
 Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving that the number of active validators exceeds `MAX_VALIDATORS` without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
@@ -899,7 +899,7 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 ### ActiveVotingPower
 
 | name          | type     | description          |
-| ------------- | -------- | -------------------- |
+|---------------|----------|----------------------|
 | `votingPower` | `uint64` | Active voting power. |
 
 Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree](#sparse-merkle-tree), there is no compact way of proving the active voting power. The active voting power is stored in the active validators subtree, and is keyed with `1` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000001`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
@@ -907,7 +907,7 @@ Since the [active validator set](#validator) is stored in a [Sparse Merkle Tree]
 ### ProposerBlockReward
 
 | name     | type     | description                                                                    |
-| -------- | -------- | ------------------------------------------------------------------------------ |
+|----------|----------|--------------------------------------------------------------------------------|
 | `reward` | `uint64` | Total block reward (subsidy + fees) in current block so far. Reset each block. |
 
 The current block reward for the proposer is kept track of here. This is keyed with `2` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000002`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
@@ -915,7 +915,7 @@ The current block reward for the proposer is kept track of here. This is keyed w
 ### ProposerInitialVotingPower
 
 | name          | type     | description                                                              |
-| ------------- | -------- | ------------------------------------------------------------------------ |
+|---------------|----------|--------------------------------------------------------------------------|
 | `votingPower` | `uint64` | Voting power of the proposer at the start of each block. Set each block. |
 
 The proposer's voting power at the beginning of the block is kept track of here. This is keyed with `3` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000003`), with the first byte replaced with `ACTIVE_VALIDATORS_SUBTREE_ID`.
@@ -923,7 +923,7 @@ The proposer's voting power at the beginning of the block is kept track of here.
 ### ValidatorQueueHead
 
 | name   | type                | description                                                       |
-| ------ | ------------------- | ----------------------------------------------------------------- |
+|--------|---------------------|-------------------------------------------------------------------|
 | `head` | [Address](#address) | Address of inactive validator at the head of the validator queue. |
 
 The head of the queue for validators that are waiting to become active validators is stored in the inactive validators subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `INACTIVE_VALIDATORS_SUBTREE_ID`.
@@ -933,7 +933,7 @@ If the queue is empty, `head` is set to the default value (i.e. the hash of the 
 ### PeriodEntry
 
 | name         | type                    | description                                                   |
-| ------------ | ----------------------- | ------------------------------------------------------------- |
+|--------------|-------------------------|---------------------------------------------------------------|
 | `rewardRate` | [Amount](#type-aliases) | Rewards per unit of voting power accumulated so far, in `1u`. |
 
 For explanation on entries, see the [reward distribution rationale document](../rationale/distributing_rewards.md).
@@ -941,7 +941,7 @@ For explanation on entries, see the [reward distribution rationale document](../
 ### Decimal
 
 | name          | type   | description           |
-| ------------- | ------ | --------------------- |
+|---------------|--------|-----------------------|
 | `numerator`   | uint64 | Rational numerator.   |
 | `denominator` | uint64 | Rational denominator. |
 
@@ -950,7 +950,7 @@ Represents a (potentially) non-integer number.
 ### MessagePaid
 
 | name     | type                      | description                                                           |
-| -------- | ------------------------- | --------------------------------------------------------------------- |
+|----------|---------------------------|-----------------------------------------------------------------------|
 | `start`  | `uint64`                  | Share index (in row-major order) of first share paid for (inclusive). |
 | `finish` | `uint64`                  | Share index (in row-major order) of last share paid for (inclusive).  |
 | `next`   | [HashDigest](#hashdigest) | Next transaction ID in the list.                                      |
@@ -958,7 +958,7 @@ Represents a (potentially) non-integer number.
 ### MessagePaidHead
 
 | name   | type                      | description                                                              |
-| ------ | ------------------------- | ------------------------------------------------------------------------ |
+|--------|---------------------------|--------------------------------------------------------------------------|
 | `head` | [HashDigest](#hashdigest) | Transaction hash at the head of the list (has the smallest start index). |
 
 The head of the list of paid message shares is stored in the message share paid subtree, and is keyed with `0` (i.e. `0x0000000000000000000000000000000000000000000000000000000000000000`), with the first byte replaced with `MESSAGE_PAID_SUBTREE_ID`.
@@ -970,7 +970,7 @@ If the paid list is empty, `head` is set to the default value (i.e. the hash of 
 Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
 
 | name                             | type     | description                               |
-| -------------------------------- | -------- | ----------------------------------------- |
+|----------------------------------|----------|-------------------------------------------|
 | `version`                        | `uint64` | The `VERSION`.                            |
 | `chainID`                        | `uint64` | The `CHAIN_ID`.                           |
 | `shareSize`                      | `uint64` | The `SHARE_SIZE`.                         |
