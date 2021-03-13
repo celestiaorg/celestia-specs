@@ -196,6 +196,8 @@ Address is a [type alias](#type-aliases).
 
 Addresses are the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
+Addresses have a length of 32 bytes.
+
 ### CommitSig
 
 ```C++
@@ -786,8 +788,6 @@ enum VoteType : uint8_t {
 | `round`            | [Round](#type-aliases)    |             |
 | `headerHash`       | [HashDigest](#hashdigest) |             |
 | `timestamp`        | [Timestamp](#timestamp)   |             |
-| `validatorAddress` | [Address](#address)       |             |
-| `validatorIndex`   | `uint64`                  |             |
 | `signature`        | [Signature](#signature)   |             |
 
 ### MessageData
