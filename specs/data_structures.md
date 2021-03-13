@@ -196,7 +196,7 @@ Address is a [type alias](#type-aliases).
 
 Addresses are the [hash](#hashing) [digest](#hashdigest) of the [public key](#publickey).
 
-Addresses are a length of 32.
+Addresses have a length of 32 bytes.
 
 ### CommitSig
 
