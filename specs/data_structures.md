@@ -138,7 +138,7 @@ The `availableDataRoot` of the [header](#header) is computed using the compact r
 
 The number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](#arranging-available-data-into-shares) for this block. Must be a power of 2.
 
-The number of column roots is `availableDataOriginalSquareSize * 2`, and the number of row roots is `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize) + availableDataOriginalSquareSize`. Rows containing only [tail padding](./consensus.md#reserved-namespace-ids) are implicitly available, and so do not need to be committed to here.
+The number of row and column roots is each `availableDataOriginalSquareSize * 2`. Implementations can prune rows containing only [tail padding](./consensus.md#reserved-namespace-ids) as they are implicitly available.
 
 ### AvailableData
 
@@ -781,14 +781,14 @@ enum VoteType : uint8_t {
 };
 ```
 
-| name               | type                      | description |
-|--------------------|---------------------------|-------------|
-| `type`             | `VoteType`                |             |
-| `height`           | [Height](#type-aliases)   |             |
-| `round`            | [Round](#type-aliases)    |             |
-| `headerHash`       | [HashDigest](#hashdigest) |             |
-| `timestamp`        | [Timestamp](#timestamp)   |             |
-| `signature`        | [Signature](#signature)   |             |
+| name         | type                      | description |
+|--------------|---------------------------|-------------|
+| `type`       | `VoteType`                |             |
+| `height`     | [Height](#type-aliases)   |             |
+| `round`      | [Round](#type-aliases)    |             |
+| `headerHash` | [HashDigest](#hashdigest) |             |
+| `timestamp`  | [Timestamp](#timestamp)   |             |
+| `signature`  | [Signature](#signature)   |             |
 
 ### MessageData
 
