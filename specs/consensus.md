@@ -140,7 +140,7 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 
 The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be `true`:
 
-1. Length of `availableDataHeader.rowRoots` == `ceil(availableDataOriginalSharesUsed / availableDataOriginalSquareSize) + availableDataOriginalSquareSize`.
+1. Length of `availableDataHeader.rowRoots` == `availableDataOriginalSquareSize * 2`.
 1. Length of `availableDataHeader.colRoots` == `availableDataOriginalSquareSize * 2`.
 1. The length of each element in `availableDataHeader.rowRoots` and `availableDataHeader.colRoots` must be [`32`](./consensus.md#hashing).
 
