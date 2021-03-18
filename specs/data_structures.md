@@ -496,13 +496,15 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 A share is a fixed-size data chunk associated with a namespace ID, whose data will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
 
-A share's raw data (`rawData`) is interpreted differently depending on the namespace ID.
+The first [`NAMESPACE_ID_BYTES`](./consensus.md#constants) of a share's raw data `rawData` for non-parity shares is the namespace ID of that share, `namespaceID`.
 
-For shares **with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes (the `*` in the example layout figure below) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a [canonically serialized](#serialization) big-endian unsigned integer. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex).
+Subsequent bytes of a share's raw data `rawData` are interpreted differently depending on the namespace ID.
+
+For shares **with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes after [`NAMESPACE_ID_BYTES`](./consensus.md#constants) (the `*` in the example layout figure below) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a [canonically serialized](#serialization) big-endian unsigned integer. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex).
 
 ![fig: Reserved share.](./figures/share.svg)
 
-For shares **with a namespace ID above [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes have no special meaning and are simply used to store data like all the other bytes in the share.
+For shares **with a namespace ID above [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes after [`NAMESPACE_ID_BYTES`](./consensus.md#constants) have no special meaning and are simply used to store data like all the other bytes in the share.
 
 For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
 
