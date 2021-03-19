@@ -500,7 +500,7 @@ The first [`NAMESPACE_ID_BYTES`](./consensus.md#constants) of a share's raw data
 
 Subsequent bytes of a share's raw data `rawData` are interpreted differently depending on the namespace ID.
 
-For shares **with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes after [`NAMESPACE_ID_BYTES`](./consensus.md#constants) (the `*` in the example layout figure below) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a [canonically serialized](#serialization) big-endian unsigned integer. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex).
+For shares **with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes after [`NAMESPACE_ID_BYTES`](./consensus.md#constants) (the `*` in the example layout figure below) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a one-byte big-endian unsigned integer (i.e. canonical serialization is not used). In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex).
 
 ![fig: Reserved share.](./figures/share.svg)
 
