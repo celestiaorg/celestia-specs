@@ -496,15 +496,26 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 A share is a fixed-size data chunk associated with a namespace ID, whose data will be erasure-coded and committed to in [Namespace Merkle trees](#namespace-merkle-tree).
 
-A share's raw data (`rawData`) is interpreted differently depending on the namespace ID.
+A share's raw data `rawData` is interpreted differently depending on the namespace ID.
 
-For shares **with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes (the `*` in the example layout figure below) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a [canonically serialized](#serialization) big-endian unsigned integer. In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex).
+For shares **with a reserved namespace ID through [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**:
+
+- The first [`NAMESPACE_ID_BYTES`](./consensus.md#constants) of a share's raw data `rawData` is the namespace ID of that share, `namespaceID`.
+- The next [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes (the `*` in the example layout figure below) is the starting byte of the length of the [canonically serialized](#serialization) first request that starts in the share, or `0` if there is none, as a one-byte big-endian unsigned integer (i.e. canonical serialization is not used). In this example, with a share size of `256` the first byte would be `80` (or `0x50` in hex).
+- The remaining [`SHARE_SIZE`](./consensus.md#constants)`-`[`NAMESPACE_ID_BYTES`](./consensus.md#constants)`-`[`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes are request data.
 
 ![fig: Reserved share.](./figures/share.svg)
 
-For shares **with a namespace ID above [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants)**, the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes have no special meaning and are simply used to store data like all the other bytes in the share.
+For shares **with a namespace ID above [`NAMESPACE_ID_MAX_RESERVED`](./consensus.md#constants) but below [`PARITY_SHARE_NAMESPACE_ID`](./consensus.md#constants)**:
 
-For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are padded with `0`.
+- The first [`NAMESPACE_ID_BYTES`](./consensus.md#constants) of a share's raw data `rawData` is the namespace ID of that share, `namespaceID`.
+- The remaining [`SHARE_SIZE`](./consensus.md#constants)`-`[`NAMESPACE_ID_BYTES`](./consensus.md#constants) bytes are request data. In other words, the remaining bytes have no special meaning and are simply used to store data.
+
+For shares **with a namespace ID equal to [`PARITY_SHARE_NAMESPACE_ID`](./consensus.md#constants)** (i.e. parity shares):
+
+- Bytes carry no special meaning.
+
+For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are filled with `0`.
 
 ### Arranging Available Data Into Shares
 
@@ -516,7 +527,8 @@ Then,
     1. For each request in the list:
         1. [Serialize](#serialization) the request (individually).
         1. Compute the length of each serialized request, [serialize the length](#share), and pre-pend the serialized request with its serialized length.
-    1. Split up the length/request pairs into [`SHARE_SIZE`](./consensus.md#constants)`-`[`SHARE_RESERVED_BYTES`](./consensus.md#constants)-byte [shares](#share) and assign [the appropriate namespace ID](./consensus.md#reserved-namespace-ids). This data has a _reserved_ namespace ID, so the first [`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes for these shares must be [set specially](#share).
+    1. Split up the length/request pairs into [`SHARE_SIZE`](./consensus.md#constants)`-`[`NAMESPACE_ID_BYTES`](./consensus.md#constants)`-`[`SHARE_RESERVED_BYTES`](./consensus.md#constants)-byte chunks.
+    1. Create a [share](#share) out of each chunk. This data has a _reserved_ namespace ID, so the first [`NAMESPACE_ID_BYTES`](./consensus.md#constants)`+`[`SHARE_RESERVED_BYTES`](./consensus.md#constants) bytes for these shares must be [set specially](#share).
 1. Concatenate the lists of shares in the order: transactions, intermediate state roots, evidence.
 
 Note that by construction, each share only has a single namespace, and that the list of concatenated shares is [lexicographically ordered by namespace ID](consensus.md#reserved-namespace-ids).
@@ -525,7 +537,7 @@ These shares are arranged in the [first quadrant](#2d-reed-solomon-encoding-sche
 
 ![fig: Original data: reserved.](./figures/rs2d_originaldata_reserved.svg)
 
-Each message in the list `messageData` is _independently_ serialized and split into `SHARE_SIZE`-byte shares. For each message, it is placed in the available data matrix, with row-major order, as follows:
+Each message in the list `messageData` is _independently_ serialized and split into [`SHARE_SIZE`](./consensus.md#constants)`-`[`NAMESPACE_ID_BYTES`](./consensus.md#constants)-byte shares, with the first [`NAMESPACE_ID_BYTES`](./consensus.md#constants) [set to the namespace ID](#share). For each message, it is placed in the available data matrix, with row-major order, as follows:
 
 1. Place the first share of the message at the next unused location in the matrix, then place the remaining shares in the following locations.
 
