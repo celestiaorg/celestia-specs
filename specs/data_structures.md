@@ -179,7 +179,7 @@ Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 |-----------|----------|------------------------------------|
 | `tipRate` | `uint64` | The tip rate for this transaction. |
 
-See the [rationale document](../rationale/fees.md) for more information on fees.
+Abstraction over transaction fees.
 
 ### Address
 
