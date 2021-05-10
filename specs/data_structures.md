@@ -79,19 +79,19 @@
 
 ## Type Aliases
 
-| name                        | type                       |
-|-----------------------------|----------------------------|
-| [`Address`](#address)       | `byte[32]`                 |
-| `Amount`                    | `uint64`                   |
-| `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]` |
-| [`HashDigest`](#hashdigest) | `byte[32]`                 |
-| `Height`                    | `uint64`                   |
-| `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]` |
-| `Nonce`                     | `uint64`                   |
-| `Round`                     | `uint64`                   |
-| `StateSubtreeID`            | `byte`                     |
-| [`Timestamp`](#timestamp)   | `uint64`                   |
-| `VotingPower`               | `uint64`                   |
+| name                        | type                        |
+|-----------------------------|-----------------------------|
+| [`Address`](#address)       | `byte[32]`                  |
+| `Amount`                    | `uint64`                    |
+| `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]`  |
+| [`HashDigest`](#hashdigest) | `byte[32]`                  |
+| `Height`                    | `int64`                     |
+| `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]`  |
+| `Nonce`                     | `uint64`                    |
+| `Round`                     | `int32`                     |
+| `StateSubtreeID`            | `byte`                      |
+| [`Timestamp`](#timestamp)   | `google.protobuf.Timestamp` |
+| `VotingPower`               | `uint64`                    |
 
 ## Blockchain Data Structures
 
@@ -110,18 +110,19 @@ Blocks are the top-level data structure of the LazyLedger blockchain.
 
 Block header, which is fully downloaded by both full clients and light clients.
 
-| name                              | type                      | description                                                                                                                                                        |
-|-----------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `height`                          | [Height](#type-aliases)   | Block height. The genesis block is at height `1`.                                                                                                                  |
-| `timestamp`                       | [Timestamp](#timestamp)   | Timestamp of this block.                                                                                                                                           |
-| `lastHeaderHash`                  | [HashDigest](#hashdigest) | Previous block's header hash.                                                                                                                                      |
-| `lastCommitHash`                  | [HashDigest](#hashdigest) | Previous block's Tendermint commit hash.                                                                                                                           |
-| `consensusRoot`                   | [HashDigest](#hashdigest) | Merkle root of [consensus parameters](#consensus-parameters) for this block.                                                                                       |
-| `feeHeader`                       | [FeeHeader](#feeheader)   | Header data pertaining to fees.                                                                                                                                    |
-| `stateCommitment`                 | [HashDigest](#hashdigest) | The [state root](#state) after this block's transactions are applied.                                                                                              |
-| `availableDataOriginalSharesUsed` | `uint64`                  | The number of shares used in the [original data square](#arranging-available-data-into-shares) that are not [tail padding](./consensus.md#reserved-namespace-ids). |
-| `availableDataRoot`               | [HashDigest](#hashdigest) | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                 |
-| `proposerAddress`                 | [Address](#address)       | Address of this block's proposer.                                                                                                                                  |
+| name                              | type                                  | description                                                                                                                                                        |
+|-----------------------------------|---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `version`                         | [ConsensusVersion](#consensusversion) | The consensus version struct.                                                                                                                                      |
+| `chainID`                         | `string`                              | The `CHAIN_ID`.                                                                                                                                                    |
+| `height`                          | [Height](#type-aliases)               | Block height. The genesis block is at height `1`.                                                                                                                  |
+| `timestamp`                       | [Timestamp](#timestamp)               | Timestamp of this block.                                                                                                                                           |
+| `lastHeaderHash`                  | [HashDigest](#hashdigest)             | Previous block's header hash.                                                                                                                                      |
+| `lastCommitHash`                  | [HashDigest](#hashdigest)             | Previous block's Tendermint commit hash.                                                                                                                           |
+| `consensusHash`                   | [HashDigest](#hashdigest)             | Hash of [consensus parameters](#consensus-parameters) for this block.                                                                                              |
+| `stateCommitment`                 | [HashDigest](#hashdigest)             | The [state root](#state) after this block's transactions are applied.                                                                                              |
+| `availableDataOriginalSharesUsed` | `uint64`                              | The number of shares used in the [original data square](#arranging-available-data-into-shares) that are not [tail padding](./consensus.md#reserved-namespace-ids). |
+| `availableDataRoot`               | [HashDigest](#hashdigest)             | Root of [commitments to erasure-coded data](#availabledataheader).                                                                                                 |
+| `proposerAddress`                 | [Address](#address)                   | Address of this block's proposer.                                                                                                                                  |
 
 The size of the [original data square](#arranging-available-data-into-shares), `availableDataOriginalSquareSize`, isn't explicitly declared in the block header. Instead, it is implicitly computed as the smallest power of 2 whose square is at least `availableDataOriginalSharesUsed` (in other words, the smallest power of 4 that is at least `availableDataOriginalSharesUsed`).
 
@@ -164,7 +165,7 @@ Data that is [erasure-coded](#erasure-coding) for [data availability checks](htt
 
 Timestamp is a [type alias](#type-aliases).
 
-LazyLedger uses a 64-bit unsigned integer (`uint64`) to represent time in [TAI64](http://cr.yp.to/libtai/tai64.html) format.
+LazyLedger uses [`google.protobuf.Timestamp`](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp) to represent time.
 
 ### HashDigest
 
@@ -172,23 +173,13 @@ HashDigest is a [type alias](#type-aliases).
 
 Output of the [hashing](#hashing) function. Exactly 256 bits (32 bytes) long.
 
-### FeeHeader
-
-| name       | type     | description                                      |
-|------------|----------|--------------------------------------------------|
-| `baseRate` | `uint64` | The base fee rate for this block.                |
-| `tipRate`  | `uint64` | The tip rate for all transactions in this block. |
-
-See the [rationale document](../rationale/fees.md) for more information on base fees.
-
 ### TransactionFee
 
-| name          | type     | description                                     |
-|---------------|----------|-------------------------------------------------|
-| `baseRateMax` | `uint64` | The maximum base fee rate for this transaction. |
-| `tipRateMax`  | `uint64` | The maximum tip rate for this transaction.      |
+| name      | type     | description                        |
+|-----------|----------|------------------------------------|
+| `tipRate` | `uint64` | The tip rate for this transaction. |
 
-See the [rationale document](../rationale/fees.md) for more information on base fees.
+See the [rationale document](../rationale/fees.md) for more information on fees.
 
 ### Address
 
@@ -223,6 +214,13 @@ enum CommitFlag : uint8_t {
 | `vs` | `byte[32]` | 1-bit `v` value followed by last 255 bits of `s` value of signature. |
 
 Output of the [signing](#public-key-cryptography) process.
+
+## ConsensusVersion
+
+| name    | type     | description          |
+|---------|----------|----------------------|
+| `block` | `uint64` | The `VERSION_BLOCK`. |
+| `app`   | `uint64` | The `VERSION_APP`.   |
 
 ## Serialization
 
@@ -988,12 +986,12 @@ If the paid list is empty, `head` is set to the default value (i.e. the hash of 
 
 Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
 
-| name                             | type     | description                               |
-|----------------------------------|----------|-------------------------------------------|
-| `version`                        | `uint64` | The `VERSION`.                            |
-| `chainID`                        | `uint64` | The `CHAIN_ID`.                           |
-| `shareSize`                      | `uint64` | The `SHARE_SIZE`.                         |
-| `shareReservedBytes`             | `uint64` | The `SHARE_RESERVED_BYTES`.               |
-| `availableDataOriginalSquareMax` | `uint64` | The `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`. |
+| name                             | type                                  | description                               |
+|----------------------------------|---------------------------------------|-------------------------------------------|
+| `version`                        | [ConsensusVersion](#consensusversion) | The consensus version struct.             |
+| `chainID`                        | `string`                              | The `CHAIN_ID`.                           |
+| `shareSize`                      | `uint64`                              | The `SHARE_SIZE`.                         |
+| `shareReservedBytes`             | `uint64`                              | The `SHARE_RESERVED_BYTES`.               |
+| `availableDataOriginalSquareMax` | `uint64`                              | The `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`. |
 
-In order to compute the `consensusRoot` field in the [block header](#header), the above list of parameters is Merkleized in a plain [binary Merkle tree](#binary-merkle-tree), whose root is assigned to the `consensusRoot`.
+In order to compute the `consensusHash` field in the [block header](#header), the above list of parameters is [hashed](#hashing).

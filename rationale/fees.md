@@ -6,6 +6,8 @@
 
 ## Preamble
 
+**This document will apply to a future version of the LazyLedger protocol.**
+
 Two desiderata are elastic block size limits—which can smooth out transaction fees and prevent fee spikes—and variable burning of fees—which can respond to market forces and provides intrinsic demand for the burned coin that cannot be replicated by issuance of new supply. Interestingly, these two properties cannot be accomplished independently. Without a negative feedback mechanism that cannot be bypassed, block producers will always produce maximum-size blocks. This negative feedback mechanism is in-protocol variable fee burning. In a similar vein, variable (rather than fixed) fee burning requires a measure of block usage, which happens to exactly be an elastic block size limit.
 
 This document describes the rationale and structure of an elastic block size limit through variable in-protocol fee burning.
