@@ -4,10 +4,8 @@ syntax = "proto3";
 // https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#signedtransactiondata
 
 message TransactionFee {
-  // Max base fee rate (burnt)
-  uint64 base_rate_max = 1;
-  // Max tip fee rate (rewarded to block proposer)
-  uint64 tip_rate_max = 2;
+  // Tip fee rate (rewarded to block proposer)
+  uint64 tip_rate = 1;
 }
 
 message Decimal {
