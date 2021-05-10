@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 // Define wire types for consensus messages.
 
 // https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#consensusversion
@@ -17,15 +19,15 @@ message AvailableDataHeader {
 }
 
 message ConsensusProposal {
-  uint64 height = 1;
-  uint64 round = 2;
-  uint64 timestamp = 3;
+  int64 height = 1;
+  int32 round = 2;
+  google.protobuf.Timestamp timestamp = 3;
   // 32-byte hash
   bytes last_header_hash = 4;
   // 32-byte hash
   bytes last_commit_hash = 5;
   // 32-byte hash
-  bytes consensus_root = 6;
+  bytes consensus_hash = 6;
   // 32-byte hash
   bytes state_commitment = 7;
   uint64 available_data_original_shares_used = 8;
@@ -43,11 +45,11 @@ enum CommitFlag {
 
 message ConsensusVote {
   CommitFlag commit_flag = 1;
-  uint64 height = 2;
-  uint64 round = 3;
+  int64 height = 2;
+  int32 round = 3;
   // 32-byte hash
   bytes header_hash = 4;
-  uint64 timestamp = 5;
+  google.protobuf.Timestamp timestamp = 5;
   // 64-byte signature
   bytes signature = 6;
 }
