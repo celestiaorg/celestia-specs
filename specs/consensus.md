@@ -44,23 +44,23 @@
 
 ### Constants
 
-| name                                    | type     | value   | unit    | description                                                                                                                                                         |
-|-----------------------------------------|----------|---------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`    | `uint64` |         | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
-| `AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET` | `uint64` |         | `share` | Target number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares).  |
-| `BASE_FEE_CHANGE_RATE`                  | `uint64` | `8`     |         | Inverse of rate at which the [base fee](../rationale/fees.md) changes.                                                                                              |
-| `BLOCK_TIME`                            | `uint64` |         | second  | Block time, in seconds.                                                                                                                                             |
-| `CHAIN_ID`                              | `uint64` | `1`     |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
-| `GENESIS_COIN_COUNT`                    | `uint64` | `10**8` | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
-| `MAX_GRAFFITI_BYTES`                    | `uint64` | `32`    | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
-| `MAX_VALIDATORS`                        | `uint16` | `64`    |         | Maximum number of active validators.                                                                                                                                |
-| `NAMESPACE_ID_BYTES`                    | `uint64` | `8`     | `byte`  | Size of namespace ID, in bytes.                                                                                                                                     |
-| `NAMESPACE_ID_MAX_RESERVED`             | `uint64` | `255`   |         | Value of maximum reserved namespace ID (inclusive). 1 byte worth of IDs.                                                                                            |
-| `SHARE_RESERVED_BYTES`                  | `uint64` | `1`     | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                            |
-| `SHARE_SIZE`                            | `uint64` | `256`   | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                                       |
-| `STATE_SUBTREE_RESERVED_BYTES`          | `uint64` | `1`     | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                                |
-| `UNBONDING_DURATION`                    | `uint32` |         | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
-| `VERSION`                               | `uint64` | `1`     |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
+| name                                    | type     | value          | unit    | description                                                                                                                                                         |
+|-----------------------------------------|----------|----------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`    | `uint64` |                | `share` | Maximum number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares). |
+| `AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET` | `uint64` |                | `share` | Target number of rows/columns of the original data [shares](data_structures.md#share) in [square layout](data_structures.md#arranging-available-data-into-shares).  |
+| `BLOCK_TIME`                            | `uint64` |                | second  | Block time, in seconds.                                                                                                                                             |
+| `CHAIN_ID`                              | `string` | `"LazyLedger"` |         | Chain ID. Each chain assigns itself a (unique) ID.                                                                                                                  |
+| `GENESIS_COIN_COUNT`                    | `uint64` | `10**8`        | `4u`    | `(= 100000000)` Number of coins at genesis.                                                                                                                         |
+| `MAX_GRAFFITI_BYTES`                    | `uint64` | `32`           | `byte`  | Maximum size of transaction graffiti, in bytes.                                                                                                                     |
+| `MAX_VALIDATORS`                        | `uint16` | `64`           |         | Maximum number of active validators.                                                                                                                                |
+| `NAMESPACE_ID_BYTES`                    | `uint64` | `8`            | `byte`  | Size of namespace ID, in bytes.                                                                                                                                     |
+| `NAMESPACE_ID_MAX_RESERVED`             | `uint64` | `255`          |         | Value of maximum reserved namespace ID (inclusive). 1 byte worth of IDs.                                                                                            |
+| `SHARE_RESERVED_BYTES`                  | `uint64` | `1`            | `byte`  | Bytes reserved at the beginning of each [share](data_structures.md#share). Must be sufficient to represent `SHARE_SIZE`.                                            |
+| `SHARE_SIZE`                            | `uint64` | `256`          | `byte`  | Size of transaction and message [shares](data_structures.md#share), in bytes.                                                                                       |
+| `STATE_SUBTREE_RESERVED_BYTES`          | `uint64` | `1`            | `byte`  | Number of bytes reserved to identify state subtrees.                                                                                                                |
+| `UNBONDING_DURATION`                    | `uint32` |                | `block` | Duration, in blocks, for unbonding a validator or delegation.                                                                                                       |
+| `VERSION_APP`                           | `uint64` | `1`            |         | Version of the LazyLedger application. Breaking changes (hard forks) must update this parameter.                                                                    |
+| `VERSION_BLOCK`                         | `uint64` | `1`            |         | Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.                                                                          |
 
 ### Reserved Namespace IDs
 
@@ -129,8 +129,7 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 1. `header.timestamp` > `prev.header.timestamp`.
 1. `header.lastHeaderHash` == the [header hash](./data_structures.md#header) of `prev`.
 1. `header.lastCommitHash` == the [hash](./data_structures.md#hashing) of `lastCommit`.
-1. `header.consensusRoot` == the value computed [here](./data_structures.md#consensus-parameters).
-1. `header.feeHeader.baseRate` == `prev.header.feeHeader.baseRate * floor(1 + (prev.header.availableDataOriginalSharesUsed - AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET) / (BASE_FEE_CHANGE_RATE * AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET))`.
+1. `header.consensusHash` == the value computed [here](./data_structures.md#consensus-parameters).
 1. `header.stateCommitment` == the root of the state, computed [with the application of all state transitions in this block](#state-transitions).
 1. `availableDataOriginalSquareSize` <= [`AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`](#constants).
 1. `header.availableDataRoot` == the [Merkle root](./data_structures.md#binary-merkle-tree) of the tree with the row and column roots of `block.availableDataHeader` as leaves.
@@ -197,12 +196,11 @@ For `wrappedTransaction`'s [transaction](./data_structures.md#transaction) `tran
 Finally, each `wrappedTransaction` is processed depending on [its transaction type](./data_structures.md#signedtransactiondata). These are specified in the next subsections, where `tx` is short for `transaction.signedTransactionData`, and `sender` is the recovered signing [address](./data_structures.md#address). We will define a few helper functions:
 
 ```py
-baseCost(y) = block.header.feeHeader.baseRate * y
-tipCost(y) = block.header.feeHeader.tipRate * y
-totalCost(x, y) = x + baseCost(y) + tipCost(y)
+tipCost(y, z) = y * z
+totalCost(x, y, z) = x + tipCost(y, z)
 ```
 
-, where `x` above represents the amount of coins sent by the transaction authorizer and `y` above represents the a measure of the block space used by the transaction (i.e. size in bytes).
+, where `x` above is the amount of coins sent by the transaction authorizer, `y` above is the tip rate set in the transaction, and `z` above is the measure of the block space used by the transaction (i.e. size in bytes).
 
 Four additional helper functions are defined to manage the [validator queue](./data_structures.md#validator):
 
@@ -288,9 +286,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Transfer`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(tx.amount, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
 Apply the following to the state:
@@ -298,7 +294,7 @@ Apply the following to the state:
 ```py
 state.accounts[sender].nonce += 1
 
-state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].balance -= totalCost(tx.amount, tx.fee.tipRate, bytesPaid)
 state.accounts[tx.to].balance += tx.amount
 
 state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
@@ -315,9 +311,7 @@ parentStartFinish = state.messagesPaid[parentFromMessagePaidList(findFromMessage
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `tx.messageStartIndex` must:
     1. Have namespace ID `tx.messageNamespaceID`.
@@ -329,11 +323,11 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].balance -= totalCost(tx.amount, tx.fee.tipRate, bytesPaid)
 
 messagePaidListInsert(tx, id(tx))
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataCreateValidator
@@ -345,9 +339,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `tx.commissionRate.denominator > 0`.
 1. `tx.commissionRate.numerator <= tx.commissionRate.denominator`.
@@ -357,7 +349,7 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 state.accounts[sender].status = AccountStatus.ValidatorQueued
 
 validator = new Validator
@@ -373,7 +365,7 @@ validatorQueueInsert(validator)
 
 state.inactiveValidatorSet[sender] = validator
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingValidator
@@ -385,9 +377,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].status` == `AccountStatus.ValidatorQueued` or `state.accounts[sender].status` == `AccountStatus.ValidatorBonded`.
 
@@ -395,7 +385,7 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 state.accounts[sender].status = ValidatorStatus.Unbonding
 
 if state.accounts[sender].status == AccountStatus.ValidatorQueued
@@ -414,7 +404,7 @@ state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet.activeVotingPower -= validator.votingPower
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondValidator
@@ -426,9 +416,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondValidator`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].status` == `AccountStatus.ValidatorUnbonding`.
 1. `state.inactiveValidatorSet[sender].unbondingHeight + UNBONDING_DURATION` < `block.height`.
@@ -439,7 +427,7 @@ Apply the following to the state:
 validator = state.inactiveValidatorSet[sender]
 
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 state.accounts[sender].status = AccountStatus.ValidatorUnbonded
 
 state.accounts[sender].balance += validator.commissionRewards
@@ -450,7 +438,7 @@ if validator.delegatedCount == 0
     state.accounts[sender].status = AccountStatus.None
     delete state.inactiveValidatorSet[sender]
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataCreateDelegation
@@ -462,9 +450,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.CreateDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(tx.amount, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `state.accounts[tx.to].status` == `AccountStatus.ValidatorQueued` or `state.accounts[tx.to].status` == `AccountStatus.ValidatorBonded`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].status` == `AccountStatus.None`.
@@ -473,7 +459,7 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].balance -= totalCost(tx.amount, tx.fee.tipRate, bytesPaid)
 state.accounts[sender].status = AccountStatus.DelegationBonded
 
 if state.accounts[tx.to].status == AccountStatus.ValidatorQueued
@@ -506,7 +492,7 @@ else if state.accounts[tx.to].status == AccountStatus.ValidatorBonded
     state.activeValidatorSet[tx.to] = validator
     state.activeValidatorSet.activeVotingPower += tx.amount
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataBeginUnbondingDelegation
@@ -518,9 +504,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.BeginUnbondingDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].status` == `AccountStatus.DelegationBonded`.
 
@@ -528,7 +512,7 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 state.accounts[sender].status = AccountStatus.DelegationUnbonding
 
 delegation = state.delegationSet[sender]
@@ -566,7 +550,7 @@ else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBo
     state.activeValidatorSet[delegation.validator] = validator
     state.activeValidatorSet.activeVotingPower -= delegation.stakedBalance
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataUnbondDelegation
@@ -578,8 +562,6 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.UnbondDelegation`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].status` == `AccountStatus.DelegationUnbonding`.
@@ -591,7 +573,7 @@ Apply the following to the state:
 delegation = state.accounts[sender].delegationInfo
 
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 state.accounts[sender].status = None
 
 # Return the delegated stake
@@ -613,7 +595,7 @@ if validator.delegatedCount == 0 &&
 
 delete state.accounts[sender].delegationInfo
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionDataBurn
@@ -625,8 +607,6 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.Burn`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
 1. `totalCost(tx.amount, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 
@@ -634,9 +614,9 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(tx.amount, bytesPaid)
+state.accounts[sender].balance -= totalCost(tx.amount, tx.fee.tipRate, bytesPaid)
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionRedelegateCommission
@@ -648,9 +628,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.RedelegateCommission`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[tx.to].status` == `AccountStatus.DelegationBonded`.
 1. `state.accounts[sender].status` == `AccountStatus.ValidatorBonded`.
@@ -659,7 +637,7 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 
 delegation = state.delegationSet[tx.to]
 validator = state.activeValidatorSet[delegation.validator]
@@ -684,7 +662,7 @@ state.activeValidatorSet.activeVotingPower += pendingRewards + commissionRewards
 state.delegationSet[tx.to] = delegation
 state.activeValidatorSet[delegation.validator] = validator
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### SignedTransactionRedelegateReward
@@ -696,9 +674,7 @@ bytesPaid = len(tx)
 The following checks must be `true`:
 
 1. `tx.type` == [`TransactionType.RedelegateReward`](./data_structures.md#signedtransactiondata).
-1. `tx.fee.baseRateMax` >= `block.header.feeHeader.baseRate`.
-1. `tx.fee.tipRateMax` >= `block.header.feeHeader.tipRate`.
-1. `totalCost(0, bytesPaid)` <= `state.accounts[sender].balance`.
+1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. `state.accounts[sender].status` == `AccountStatus.DelegationBonded`.
 1. `state.accounts[state.delegationSet[sender].validator].status` == `AccountStatus.ValidatorBonded`.
@@ -707,7 +683,7 @@ Apply the following to the state:
 
 ```py
 state.accounts[sender].nonce += 1
-state.accounts[sender].balance -= totalCost(0, bytesPaid)
+state.accounts[sender].balance -= totalCost(0, tx.fee.tipRate, bytesPaid)
 
 delegation = state.delegationSet[sender]
 validator = state.activeValidatorSet[delegation.validator]
@@ -727,7 +703,7 @@ state.activeValidatorSet.activeVotingPower += pendingRewards
 state.delegationSet[sender] = delegation
 state.activeValidatorSet[delegation.validator] = validator
 
-state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
+state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 ```
 
 #### Begin Block
