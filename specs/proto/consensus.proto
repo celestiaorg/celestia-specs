@@ -4,10 +4,16 @@ import "google/protobuf/timestamp.proto";
 
 // Define wire types for consensus messages.
 
-// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#consensusversion
-message ConsensusVersion {
-  uint64 block = 1;
-  uint64 app = 2;
+// SignedMsgType is a type of signed message in the consensus.
+enum SignedMsgType {
+  SignedMsgTypeUnknown = 0;
+
+  // Votes
+  SignedMsgTypePrevote = 1;
+  SignedMsgTypePrecommit = 2;
+
+  // Proposals
+  SignedMsgTypeProposal = 32;
 }
 
 // https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#availabledataheader
@@ -19,37 +25,29 @@ message AvailableDataHeader {
 }
 
 message ConsensusProposal {
-  int64 height = 1;
-  int32 round = 2;
-  google.protobuf.Timestamp timestamp = 3;
+  SignedMsgType type = 1;
+  int64 height = 2;
+  int32 round = 3;
+  int32 pol_round = 4;
   // 32-byte hash
-  bytes last_header_hash = 4;
-  // 32-byte hash
-  bytes last_commit_hash = 5;
-  // 32-byte hash
-  bytes consensus_hash = 6;
-  // 32-byte hash
-  bytes state_commitment = 7;
-  uint64 available_data_original_shares_used = 8;
-  AvailableDataHeader available_data_header = 9;
+  // Proposed block header
+  bytes header_hash = 5;
+  google.protobuf.Timestamp timestamp = 6;
   // 64-byte signature
-  bytes proposer_signature = 10;
-}
-
-enum CommitFlag {
-  CommitFlagNone = 0;
-  CommitFlagAbsent = 1;
-  CommitFlagCommit = 2;
-  CommitFlagNil = 3;
+  bytes proposer_signature = 7;
+  AvailableDataHeader da_header = 8;
 }
 
 message ConsensusVote {
-  CommitFlag commit_flag = 1;
+  SignedMsgType type = 1;
   int64 height = 2;
   int32 round = 3;
   // 32-byte hash
   bytes header_hash = 4;
   google.protobuf.Timestamp timestamp = 5;
+  // 32-byte hash
+  bytes validator_address = 6;
+  int32 validator_index = 7;
   // 64-byte signature
-  bytes signature = 6;
+  bytes signature = 8;
 }
