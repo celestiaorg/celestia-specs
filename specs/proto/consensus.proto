@@ -36,7 +36,9 @@ message ConsensusVote {
   // 32-byte hash
   bytes header_hash = 4;
   google.protobuf.Timestamp timestamp = 5;
+  // 32-byte hash
   bytes validator_address = 6;
+  int32 validator_index = 7;
   // 64-byte signature
-  bytes signature = 7;
+  bytes signature = 8;
 }
