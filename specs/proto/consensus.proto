@@ -2,6 +2,8 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
+import "types.proto";
+
 // Define wire types for consensus messages.
 
 // SignedMsgType is a type of signed message in the consensus.
@@ -16,26 +18,15 @@ enum SignedMsgType {
   SignedMsgTypeProposal = 32;
 }
 
-// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#availabledataheader
-message AvailableDataHeader {
-  // array of 32-byte hashes
-  repeated bytes row_roots = 1;
-  // array of 32-byte hashes
-  repeated bytes col_roots = 2;
-}
-
 message ConsensusProposal {
   SignedMsgType type = 1;
-  int64 height = 2;
-  int32 round = 3;
-  int32 pol_round = 4;
+  int32 pol_round = 2;
   // 32-byte hash
   // Proposed block header
-  bytes header_hash = 5;
-  google.protobuf.Timestamp timestamp = 6;
+  Header header = 3;
+  AvailableDataHeader da_header = 4;
   // 64-byte signature
-  bytes proposer_signature = 7;
-  AvailableDataHeader da_header = 8;
+  bytes proposer_signature = 5;
 }
 
 message ConsensusVote {

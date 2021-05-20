@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+// Define data structures.
+
+// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#header
+message Header {
+  ConsensusVersion version = 1;
+  string chain_id = 2;
+  int64 height = 3;
+  google.protobuf.Timestamp time = 4;
+  // 32-byte hash
+  BlockID last_header_hash = 5;
+  // 32-byte hash
+  bytes last_commit_hash = 6;
+  // 32-byte hash
+  bytes consensus_hash = 7;
+  // 32-byte hash
+  bytes state_commitment = 8;
+  uint64 available_data_original_shares_used = 9;
+  // 32-byte hash
+  bytes available_data_root = 10;
+  bytes proposer_address = 11;
+}
+
+// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#consensusversion
+message ConsensusVersion {
+  uint64 block = 1;
+  uint64 app = 2;
+}
+
+// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#availabledataheader
+message AvailableDataHeader {
+  // array of 32-byte hashes
+  repeated bytes row_roots = 1;
+  // array of 32-byte hashes
+  repeated bytes col_roots = 2;
+}
