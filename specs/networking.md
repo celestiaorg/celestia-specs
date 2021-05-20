@@ -3,6 +3,7 @@
 - [Wire Format](#wire-format)
   - [AvailableData](#availabledata)
   - [AvailableDataRow](#availabledatarow)
+  - [ConsensusProposal](#consensusproposal)
   - [WireTxPayForMessage](#wiretxpayformessage)
 
 ## Wire Format
@@ -18,6 +19,10 @@
 | name     | type                                    | description      |
 |----------|-----------------------------------------|------------------|
 | `shares` | [Share](./data_structures.md#share)`[]` | Shares in a row. |
+
+### ConsensusProposal
+
+Defined as `ConsensusProposal` [here](./proto/consensus.proto).
 
 ### WireTxPayForMessage
 
