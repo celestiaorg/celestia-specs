@@ -20,13 +20,14 @@ enum SignedMsgType {
 
 message ConsensusProposal {
   SignedMsgType type = 1;
-  int32 pol_round = 2;
+  int32 round = 2;
+  int32 pol_round = 3;
   // 32-byte hash
   // Proposed block header
-  Header header = 3;
-  AvailableDataHeader da_header = 4;
+  Header header = 4;
+  AvailableDataHeader da_header = 5;
   // 64-byte signature
-  bytes proposer_signature = 5;
+  bytes proposer_signature = 6;
 }
 
 message ConsensusVote {
