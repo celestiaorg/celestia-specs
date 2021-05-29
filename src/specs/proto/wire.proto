@@ -31,6 +31,7 @@ message WireTxTransfer {
   uint64 nonce = 4;
 }
 
+// ANCHOR: WireTxPayForMessage
 message WireTxPayForMessage {
   TransactionFee fee = 1;
   uint64 nonce = 2;
@@ -40,6 +41,7 @@ message WireTxPayForMessage {
   bytes message = 5;
   repeated MessageCommitmentAndSignature message_commitment_and_signature = 6;
 }
+// ANCHOR_END: WireTxPayForMessage
 
 message WireTxCreateValidator {
   TransactionFee fee = 1;

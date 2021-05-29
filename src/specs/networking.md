@@ -22,7 +22,11 @@
 
 ### ConsensusProposal
 
-Defined as `ConsensusProposal` [here](./proto/consensus.proto).
+Defined as `ConsensusProposal`:
+
+```protobuf
+{{#include ./proto/consensus.proto:ConsensusProposal}}
+```
 
 When receiving a new block proposal `proposal` from the network, the following steps are performed in order. _Must_ indicates that peers must be blacklisted (to prevent DoS attacks) and _should_ indicates that the network message can simply be ignored.
 
@@ -51,7 +55,11 @@ When receiving a new block proposal `proposal` from the network, the following s
 
 ### WireTxPayForMessage
 
-Defined as `WireTxPayForMessage` as a [wire type](./proto/wire.proto).
+Defined as `WireTxPayForMessage`:
+
+```protobuf
+{{#include ./proto/wire.proto:WireTxPayForMessage}}
+```
 
 Accepting a `WireTxPayForMessage` into the mempool requires different logic than other transactions in LazyLedger, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike [SignedTransactionDataPayForMessage](./data_structures.md#signedtransactiondatapayformessage) (the canonical data type that is included in blocks and committed to with a data root in the block header), each `WireTxPayForMessage` (the over-the-wire representation of the same) has potentially multiple signatures.
 
