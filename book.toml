@@ -7,3 +7,7 @@ title = "LazyLedger Specifications"
 
 [output.html]
 mathjax-support = true
+git-repository-url = "https://github.com/lazyledger/lazyledger-specs"
+
+[rust]
+edition = "2018"
