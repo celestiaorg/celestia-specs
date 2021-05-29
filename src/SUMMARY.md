@@ -1,6 +1,6 @@
 # Summary
 
-[Fuel Specifications](./README.md)
+[LazyLedger Specifications](./README.md)
 
 - [Specification](./specs/README.md)
   - [Architecture](./specs/architecture.md)
