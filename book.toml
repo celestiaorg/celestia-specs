@@ -1,0 +1,6 @@
+[book]
+authors = ["LazyLedger Labs"]
+language = "en"
+multilingual = false
+src = "src"
+title = "LazyLedger Specifications"
