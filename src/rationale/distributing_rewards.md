@@ -27,7 +27,7 @@ $$
 
 In other words, the voting power contributed by the delegator multiplied by the _reward rate_, i.e. the rewards per unit of voting power. We note that if the total voting power of a validator remains constant forever, then the above equation holds and is approximation-free. However, changes to the total voting power need to be accounted for.
 
-Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a _period_. Every time a validator's voting power changes (i.e. a new period \\( f \\) begins), an entry \\( Entry_f \\) for this period is saved in state, which records_the reward rate up to the beginning of_ \\( f \\). This is simply the sum of the reward rate up to the beginning of previous period \\( f-1 \\) and the reward rate of the period \\( f \\) itself:
+Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a _period_. Every time a validator's voting power changes (i.e. a new period \\( f \\) begins), an entry \\( Entry_f \\) for this period is saved in state, which records _the reward rate up to the beginning of_ \\( f \\). This is simply the sum of the reward rate up to the beginning of previous period \\( f-1 \\) and the reward rate of the period \\( f \\) itself:
 
 $$
 Entry_f = \begin{cases}
