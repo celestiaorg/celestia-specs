@@ -18,6 +18,7 @@ enum SignedMsgType {
   SignedMsgTypeProposal = 32;
 }
 
+// ANCHOR: ConsensusProposal
 message ConsensusProposal {
   SignedMsgType type = 1;
   int32 round = 2;
@@ -29,6 +30,7 @@ message ConsensusProposal {
   // 64-byte signature
   bytes proposer_signature = 6;
 }
+// ANCHOR_END: ConsensusProposal
 
 message ConsensusVote {
   SignedMsgType type = 1;
