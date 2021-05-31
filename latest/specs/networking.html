@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -131,21 +133,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -166,7 +172,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#networking" id="networking">Networking</a></h1>
+                        <h1 id="networking"><a class="header" href="#networking">Networking</a></h1>
 <ul>
 <li><a href="#wire-format">Wire Format</a>
 <ul>
@@ -177,16 +183,16 @@
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#wire-format" id="wire-format">Wire Format</a></h2>
-<h3><a class="header" href="#availabledata" id="availabledata">AvailableData</a></h3>
+<h2 id="wire-format"><a class="header" href="#wire-format">Wire Format</a></h2>
+<h3 id="availabledata"><a class="header" href="#availabledata">AvailableData</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>availableDataRows</code></td><td><a href="#availabledatarow">AvailableDataRow</a><code>[]</code></td><td>List of rows.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#availabledatarow" id="availabledatarow">AvailableDataRow</a></h3>
+<h3 id="availabledatarow"><a class="header" href="#availabledatarow">AvailableDataRow</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>shares</code></td><td><a href="./data_structures.html#share">Share</a><code>[]</code></td><td>Shares in a row.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#consensusproposal" id="consensusproposal">ConsensusProposal</a></h3>
+<h3 id="consensusproposal"><a class="header" href="#consensusproposal">ConsensusProposal</a></h3>
 <p>Defined as <code>ConsensusProposal</code>:</p>
 <pre><code class="language-protobuf">message ConsensusProposal {
   SignedMsgType type = 1;
@@ -225,7 +231,7 @@
 <li>For <a href="./node_types.html#node-type-definitions">full nodes</a>, <code>proposal.da_header</code> must be the result of computing the roots of the shares (received separately).</li>
 <li>For <a href="./node_types.html#node-type-definitions">light nodes</a>, <code>proposal.da_header</code> should be sampled from for availability.</li>
 </ol>
-<h3><a class="header" href="#wiretxpayformessage" id="wiretxpayformessage">WireTxPayForMessage</a></h3>
+<h3 id="wiretxpayformessage"><a class="header" href="#wiretxpayformessage">WireTxPayForMessage</a></h3>
 <p>Defined as <code>WireTxPayForMessage</code>:</p>
 <pre><code class="language-protobuf">message WireTxPayForMessage {
   TransactionFee fee = 1;

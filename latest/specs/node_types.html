@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -131,21 +133,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -166,7 +172,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#node-types" id="node-types">Node Types</a></h1>
+                        <h1 id="node-types"><a class="header" href="#node-types">Node Types</a></h1>
 <ul>
 <li><a href="#node-parameters">Node Parameters</a>
 <ul>
@@ -194,38 +200,38 @@
 </li>
 <li><a href="#node-type-definitions">Node Type Definitions</a></li>
 </ul>
-<h2><a class="header" href="#node-parameters" id="node-parameters">Node Parameters</a></h2>
+<h2 id="node-parameters"><a class="header" href="#node-parameters">Node Parameters</a></h2>
 <p>Nodes that run the <a href="./consensus.html">LazyLedger protocol</a> have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the <code>header</code> and <code>lastCommit</code> fields of each <a href="./data_structures.html#block">block</a>, but can handle the <code>availableDataHeader</code> and <code>availableData</code> fields differently.</p>
 <p>We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority (&gt; 2/3) of validator voting power performs an attributable—and thus <a href="./consensus.html#blockavailabledataevidencedata">penalizable</a>—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).</p>
-<h3><a class="header" href="#block-headers" id="block-headers">Block Headers</a></h3>
-<h4><a class="header" href="#compact-block-headers" id="compact-block-headers">Compact Block Headers</a></h4>
+<h3 id="block-headers"><a class="header" href="#block-headers">Block Headers</a></h3>
+<h4 id="compact-block-headers"><a class="header" href="#compact-block-headers">Compact Block Headers</a></h4>
 <p>Nodes that only process compact block headers will download and validate the <a href="./data_structures.html#header">block header</a> <em>without</em> downloading or validating the <code>availableDataHeader</code> <a href="./data_structures.html#block">block</a> field that is committed to in the block header. These nodes cannot perform Data Availability Sampling on <a href="#block-bodies">block bodies</a>.</p>
 <p>Secure under an honest supermajority of validator voting power and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#extended-block-headers" id="extended-block-headers">Extended Block Headers</a></h4>
+<h4 id="extended-block-headers"><a class="header" href="#extended-block-headers">Extended Block Headers</a></h4>
 <p>Nodes that process extended block headers will download and validate both the <a href="#compact-block-headers">compact block header</a> and the
 <a href="./data_structures.html##availabledataheader"><code>availabledataheader</code></a> <a href="./data_structures.html#block">block</a> field. These nodes can perform Data Availability Sampling on <a href="#block-bodies">block bodies</a>, and their security assumptions depend on how block bodies are handled.</p>
-<h3><a class="header" href="#block-bodies" id="block-bodies">Block Bodies</a></h3>
+<h3 id="block-bodies"><a class="header" href="#block-bodies">Block Bodies</a></h3>
 <p>Block bodies (the <code>availableData</code> <a href="./data_structures.html#block">block</a> field) can be downloaded and optionally stored and/or served. Storing and serving block body data has no effect on node security assumptions.</p>
-<h4><a class="header" href="#no-bodies" id="no-bodies">No Bodies</a></h4>
+<h4 id="no-bodies"><a class="header" href="#no-bodies">No Bodies</a></h4>
 <p>Nodes that only process <a href="#compact-block-headers">compact block headers</a> have no need for block bodies and simply do not process block bodies.</p>
 <p>Secure under an honest supermajority majority of validator voting power and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#sampled-bodies" id="sampled-bodies">Sampled Bodies</a></h4>
+<h4 id="sampled-bodies"><a class="header" href="#sampled-bodies">Sampled Bodies</a></h4>
 <p>These nodes perform Data Availability Sampling on block bodies.</p>
 <p>Secure under an honest minority of nodes and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#partial-bodies" id="partial-bodies">Partial Bodies</a></h4>
+<h4 id="partial-bodies"><a class="header" href="#partial-bodies">Partial Bodies</a></h4>
 <p>These nodes fully download and validate <a href="./data_structures.html#2d-reed-solomon-encoding-scheme">the erasure coding</a> of a random subset of block bodies (configurable locally). Since the erasure coding of each block is stateless, nodes that perform validation of partial bodies contribute to the overall security of the network by being able to produce <a href="./data_structures.html#invalid-erasure-coding">fraud proofs of invalid erasure coding</a>.</p>
 <p>Secure under an honest minority of nodes and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#full-bodies" id="full-bodies">Full Bodies</a></h4>
+<h4 id="full-bodies"><a class="header" href="#full-bodies">Full Bodies</a></h4>
 <p>These nodes fully download and validate <a href="./data_structures.html#2d-reed-solomon-encoding-scheme">the erasure coding</a> of all block bodies.</p>
 <p>If <a href="#no-transactions">transactions are not processed</a>, secure under an honest minority of nodes and a weak subjectivity assumption. If <a href="#full-transactions">transactions are processed</a>, secure under a weak subjectivity assumption.</p>
-<h3><a class="header" href="#transactions" id="transactions">Transactions</a></h3>
-<h4><a class="header" href="#no-transactions" id="no-transactions">No Transactions</a></h4>
+<h3 id="transactions"><a class="header" href="#transactions">Transactions</a></h3>
+<h4 id="no-transactions"><a class="header" href="#no-transactions">No Transactions</a></h4>
 <p>These nodes process do not process requests <a href="./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> and thus to not know the chain state without relying on a third party.</p>
 <p>At most secure under an honest minority of nodes and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#full-transactions" id="full-transactions">Full Transactions</a></h4>
+<h4 id="full-transactions"><a class="header" href="#full-transactions">Full Transactions</a></h4>
 <p>Nodes that wish to produce new blocks must know the <a href="./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the LazyLedger state, as <a href="./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
 <p>At most secure under a weak subjectivity assumption.</p>
-<h2><a class="header" href="#node-type-definitions" id="node-type-definitions">Node Type Definitions</a></h2>
+<h2 id="node-type-definitions"><a class="header" href="#node-type-definitions">Node Type Definitions</a></h2>
 <p>For convenience, we will define several common parameter configurations:</p>
 <ol>
 <li><a href="https://en.bitcoin.it/wiki/Full_node">Full nodes</a> provide the strongest security guarantees. Block bodies do not need to be stored.

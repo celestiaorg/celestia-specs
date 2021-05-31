@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -131,21 +133,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -166,7 +172,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#consensus-rules" id="consensus-rules">Consensus Rules</a></h1>
+                        <h1 id="consensus-rules"><a class="header" href="#consensus-rules">Consensus Rules</a></h1>
 <ul>
 <li><a href="#system-parameters">System Parameters</a>
 <ul>
@@ -211,15 +217,15 @@
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#system-parameters" id="system-parameters">System Parameters</a></h2>
-<h3><a class="header" href="#units" id="units">Units</a></h3>
+<h2 id="system-parameters"><a class="header" href="#system-parameters">System Parameters</a></h2>
+<h3 id="units"><a class="header" href="#units">Units</a></h3>
 <table><thead><tr><th>name</th><th>SI</th><th>value</th><th>description</th></tr></thead><tbody>
 <tr><td><code>1u</code></td><td><code>1u</code></td><td><code>10**0</code></td><td><code>1</code> unit.</td></tr>
 <tr><td><code>2u</code></td><td><code>k1u</code></td><td><code>10**3</code></td><td><code>1000</code> units.</td></tr>
 <tr><td><code>3u</code></td><td><code>M1u</code></td><td><code>10**6</code></td><td><code>1000000</code> units.</td></tr>
 <tr><td><code>4u</code></td><td><code>G1u</code></td><td><code>10**9</code></td><td><code>1000000000</code> units.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#constants" id="constants">Constants</a></h3>
+<h3 id="constants"><a class="header" href="#constants">Constants</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>unit</th><th>description</th></tr></thead><tbody>
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Maximum number of rows/columns of the original data <a href="data_structures.html#share">shares</a> in <a href="data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Target number of rows/columns of the original data <a href="data_structures.html#share">shares</a> in <a href="data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
@@ -237,7 +243,7 @@
 <tr><td><code>VERSION_APP</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger application. Breaking changes (hard forks) must update this parameter.</td></tr>
 <tr><td><code>VERSION_BLOCK</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#reserved-namespace-ids" id="reserved-namespace-ids">Reserved Namespace IDs</a></h3>
+<h3 id="reserved-namespace-ids"><a class="header" href="#reserved-namespace-ids">Reserved Namespace IDs</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>description</th></tr></thead><tbody>
 <tr><td><code>TRANSACTION_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0x0000000000000001</code></td><td>Transactions: requests that modify the state.</td></tr>
 <tr><td><code>INTERMEDIATE_STATE_ROOT_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0x0000000000000002</code></td><td>Intermediate state roots, committed after every transaction.</td></tr>
@@ -246,7 +252,7 @@
 <tr><td><code>TAIL_PADDING_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0xFFFFFFFFFFFFFFFE</code></td><td>Tail padding for messages: padding after all messages to fill up the original data square.</td></tr>
 <tr><td><code>PARITY_SHARE_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0xFFFFFFFFFFFFFFFF</code></td><td>Parity shares: extended shares in the available data matrix.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#reserved-state-subtree-ids" id="reserved-state-subtree-ids">Reserved State Subtree IDs</a></h3>
+<h3 id="reserved-state-subtree-ids"><a class="header" href="#reserved-state-subtree-ids">Reserved State Subtree IDs</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th></tr></thead><tbody>
 <tr><td><code>ACCOUNTS_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x01</code></td></tr>
 <tr><td><code>ACTIVE_VALIDATORS_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x02</code></td></tr>
@@ -254,23 +260,23 @@
 <tr><td><code>DELEGATIONS_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x04</code></td></tr>
 <tr><td><code>MESSAGE_PAID_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x05</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#rewards-and-penalties" id="rewards-and-penalties">Rewards and Penalties</a></h3>
+<h3 id="rewards-and-penalties"><a class="header" href="#rewards-and-penalties">Rewards and Penalties</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>unit</th><th>description</th></tr></thead><tbody>
 <tr><td><code>SECONDS_PER_YEAR</code></td><td><code>uint64</code></td><td><code>31536000</code></td><td>second</td><td>Seconds per year. Omit leap seconds.</td></tr>
 <tr><td><code>TARGET_ANNUAL_ISSUANCE</code></td><td><code>uint64</code></td><td><code>2 * 10**6</code></td><td><code>4u</code></td><td><code>(= 2000000)</code> Target number of coins to issue per year.</td></tr>
 </tbody></table>
-<h2><a class="header" href="#leader-selection" id="leader-selection">Leader Selection</a></h2>
+<h2 id="leader-selection"><a class="header" href="#leader-selection">Leader Selection</a></h2>
 <p>TODO</p>
-<h2><a class="header" href="#fork-choice" id="fork-choice">Fork Choice</a></h2>
+<h2 id="fork-choice"><a class="header" href="#fork-choice">Fork Choice</a></h2>
 <p>TODO</p>
-<h2><a class="header" href="#block-validity" id="block-validity">Block Validity</a></h2>
+<h2 id="block-validity"><a class="header" href="#block-validity">Block Validity</a></h2>
 <p>The validity of a newly-seen block, <code>block</code>, is determined by two components, detailed in subsequent sections:</p>
 <ol>
 <li><a href="#block-structure">Block structure</a>: whether the block header is valid, and data in a block is arranged into a valid and matching data root (i.e. syntax).</li>
 <li><a href="#state-transitions">State transition</a>: whether the application of transactions in the block produces a matching and valid state root (i.e. semantics).</li>
 </ol>
 <p>Pseudocode in this section is not in any specific language and should be interpreted as being in a neutral and sane language.</p>
-<h2><a class="header" href="#block-structure" id="block-structure">Block Structure</a></h2>
+<h2 id="block-structure"><a class="header" href="#block-structure">Block Structure</a></h2>
 <p>Before executing <a href="#state-transitions">state transitions</a>, the structure of the <a href="./data_structures.html#block">block</a> must be verified.</p>
 <p>The following block fields are acquired from the network and parsed (i.e. <a href="./data_structures.html#serialization">deserialized</a>). If they cannot be parsed, the block is ignored but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the <a href="./networking.html">networking spec</a>.</p>
 <ol>
@@ -279,7 +285,7 @@
 <li><a href="./data_structures.html#commit">block.lastCommit</a></li>
 </ol>
 <p>If the above fields are parsed successfully, the available data <code>block.availableData</code> is acquired in erasure-coded form as <a href="./networking.html#availabledata">a list of share rows</a>, then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.</p>
-<h3><a class="header" href="#blockheader" id="blockheader"><code>block.header</code></a></h3>
+<h3 id="blockheader"><a class="header" href="#blockheader"><code>block.header</code></a></h3>
 <p>The <a href="./data_structures.html#header">block header</a> <code>block.header</code> (<code>header</code> for short) is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block <code>prev</code> (if <code>prev</code> is not known, then the block is ignored), and previous block header <code>prev.header</code>, the following checks must be <code>true</code>:</p>
 <p><code>availableDataOriginalSquareSize</code> is computed as described <a href="./data_structures.html#header">here</a>.</p>
 <ol>
@@ -293,14 +299,14 @@
 <li><code>header.availableDataRoot</code> == the <a href="./data_structures.html#binary-merkle-tree">Merkle root</a> of the tree with the row and column roots of <code>block.availableDataHeader</code> as leaves.</li>
 <li><code>header.proposerAddress</code> == the <a href="#leader-selection">leader</a> for <code>header.height</code>.</li>
 </ol>
-<h3><a class="header" href="#blockavailabledataheader" id="blockavailabledataheader"><code>block.availableDataHeader</code></a></h3>
+<h3 id="blockavailabledataheader"><a class="header" href="#blockavailabledataheader"><code>block.availableDataHeader</code></a></h3>
 <p>The <a href="./data_structures.html#availabledataheader">available data header</a>) <code>block.availableDataHeader</code> (<code>availableDataHeader</code> for short) is then processed. This commits to the available data, which is only downloaded after the <a href="#blocklastcommit">consensus commit</a> is processed. The following checks must be <code>true</code>:</p>
 <ol>
 <li>Length of <code>availableDataHeader.rowRoots</code> == <code>availableDataOriginalSquareSize * 2</code>.</li>
 <li>Length of <code>availableDataHeader.colRoots</code> == <code>availableDataOriginalSquareSize * 2</code>.</li>
 <li>The length of each element in <code>availableDataHeader.rowRoots</code> and <code>availableDataHeader.colRoots</code> must be <a href="./consensus.html#hashing"><code>32</code></a>.</li>
 </ol>
-<h3><a class="header" href="#blocklastcommit" id="blocklastcommit"><code>block.lastCommit</code></a></h3>
+<h3 id="blocklastcommit"><a class="header" href="#blocklastcommit"><code>block.lastCommit</code></a></h3>
 <p>The last <a href="./data_structures.html#commit">commit</a> <code>block.lastCommit</code> (<code>lastCommit</code> for short) is processed next. This is the Tendermint commit (i.e. polka of votes) <em>for the previous block</em>. For previous block <code>prev</code> and previous block header <code>prev.header</code>, the following checks must be <code>true</code>:</p>
 <ol>
 <li><code>lastCommit.height</code> == <code>prev.header.height</code>.</li>
@@ -310,14 +316,14 @@
 <li>Each of <code>lastCommit.signatures</code> must be a valid <a href="./data_structures.html#commitsig">CommitSig</a></li>
 <li>The sum of the votes for <code>prev</code> in <code>lastCommit</code> must be at least 2/3 (rounded up) of the voting power of <code>prev</code>'s next validator set.</li>
 </ol>
-<h3><a class="header" href="#blockavailabledata" id="blockavailabledata"><code>block.availableData</code></a></h3>
+<h3 id="blockavailabledata"><a class="header" href="#blockavailabledata"><code>block.availableData</code></a></h3>
 <p>The block's <a href="./data_structures.html#availabledata">available data</a> (analogous to transactions in contemporary blockchain designs) <code>block.availableData</code> (<code>availableData</code> for short) is finally processed. The <a href="./networking.html#availabledata">list of share rows</a> is parsed into the <a href="./data_structures.html#availabledata">actual data structures</a> using the reverse of <a href="./data_structures.html#arranging-available-data-into-shares">the process to encode available data into shares</a>; if parsing fails here, the block is invalid.</p>
 <p>Once parsed, the following checks must be <code>true</code>:</p>
 <ol>
 <li>The commitments of the <a href="./data_structures.html#2d-reed-solomon-encoding-scheme">erasure-coded extended</a> <code>availableData</code> must match those in <code>header.availableDataHeader</code>. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a <a href="data_structures.html#namespace-merkle-tree">Namespace Merkle Tree</a>.</li>
 <li>Length of <code>availableData.intermediateStateRootData</code> == length of <code>availableData.transactionData</code> + length of <code>availableData.evidenceData</code> + 2. (Two additional state transitions are the <a href="#begin-block">begin</a> and <a href="#end-block">end block</a> implicit transitions.)</li>
 </ol>
-<h2><a class="header" href="#state-transitions" id="state-transitions">State Transitions</a></h2>
+<h2 id="state-transitions"><a class="header" href="#state-transitions">State Transitions</a></h2>
 <p>Once the basic structure of the block <a href="#block-structure">has been validated</a>, state transitions must be applied to compute the new state and state root.</p>
 <p>For this section, the variable <code>state</code> represents the <a href="./data_structures.html#state">state tree</a>, with <code>state.accounts[k]</code>, <code>state.inactiveValidatorSet[k]</code>, <code>state.activeValidatorSet[k]</code>, and <code>state.delegationSet[k]</code> being shorthand for the leaf in the state tree in the <a href="./data_structures.html#state">accounts, inactive validator set, active validator set, and delegation set subtrees</a> with <a href="./data_structures.html#state">pre-hashed key</a> <code>k</code>. E.g. <code>state.accounts[a]</code> is shorthand for <code>state[(ACCOUNTS_SUBTREE_ID &lt;&lt; 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 &gt;&gt; 8*STATE_SUBTREE_RESERVED_BYTES) &amp; hash(a))]</code>.</p>
 <p>State transitions are applied in the following order:</p>
@@ -327,10 +333,10 @@
 <li><a href="#blockavailabledatatransactiondata">Transactions</a>.</li>
 <li><a href="#end-block">End block</a>.</li>
 </ol>
-<h3><a class="header" href="#blockavailabledataevidencedata" id="blockavailabledataevidencedata"><code>block.availableData.evidenceData</code></a></h3>
+<h3 id="blockavailabledataevidencedata"><a class="header" href="#blockavailabledataevidencedata"><code>block.availableData.evidenceData</code></a></h3>
 <p>Evidence is the second set of state transitions that are applied, ahead of <a href="#blockavailabledatatransactiondata">transactions</a>.
 Each evidence represents proof of validator misbehavior, and causes a penalty against the validator(s).</p>
-<h3><a class="header" href="#blockavailabledatatransactiondata" id="blockavailabledatatransactiondata"><code>block.availableData.transactionData</code></a></h3>
+<h3 id="blockavailabledatatransactiondata"><a class="header" href="#blockavailabledatatransactiondata"><code>block.availableData.transactionData</code></a></h3>
 <p>Once <a href="#blockavailabledataevidencedata">evidence has been processed</a>, transactions are applied to the state. Note that <em>transactions</em> mutate the state (essentially, the validator set and minimal balances), while <em>messages</em> do not. See <a href="./architecture.html">the architecture documentation</a> for more info.</p>
 <p><code>block.availableData.transactionData</code> is simply a list of <a href="./data_structures.html#wrappedtransaction">WrappedTransaction</a>s. For each wrapped transaction in this list, <code>wrappedTransaction</code>, with index <code>i</code> (starting from <code>0</code>), the following checks must be <code>true</code>:</p>
 <ol>
@@ -410,7 +416,7 @@ totalCost(x, y, z) = x + tipCost(y, z)
     return reward // power
 </code></pre>
 <p>After applying a transaction, the new state state root is computed.</p>
-<h4><a class="header" href="#signedtransactiondatatransfer" id="signedtransactiondatatransfer">SignedTransactionDataTransfer</a></h4>
+<h4 id="signedtransactiondatatransfer"><a class="header" href="#signedtransactiondatatransfer">SignedTransactionDataTransfer</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -427,7 +433,7 @@ state.accounts[tx.to].balance += tx.amount
 
 state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatapayformessage" id="signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a></h4>
+<h4 id="signedtransactiondatapayformessage"><a class="header" href="#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx) + tx.messageSize
 currentStartFinish = state.messagesPaid[findFromMessagePaidList(tx.messageStartIndex)]
 parentStartFinish = state.messagesPaid[parentFromMessagePaidList(findFromMessagePaidList(tx.messageStartIndex))]
@@ -454,7 +460,7 @@ messagePaidListInsert(tx, id(tx))
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatacreatevalidator" id="signedtransactiondatacreatevalidator">SignedTransactionDataCreateValidator</a></h4>
+<h4 id="signedtransactiondatacreatevalidator"><a class="header" href="#signedtransactiondatacreatevalidator">SignedTransactionDataCreateValidator</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -486,7 +492,7 @@ state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatabeginunbondingvalidator" id="signedtransactiondatabeginunbondingvalidator">SignedTransactionDataBeginUnbondingValidator</a></h4>
+<h4 id="signedtransactiondatabeginunbondingvalidator"><a class="header" href="#signedtransactiondatabeginunbondingvalidator">SignedTransactionDataBeginUnbondingValidator</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -519,7 +525,7 @@ state.activeValidatorSet.activeVotingPower -= validator.votingPower
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondataunbondvalidator" id="signedtransactiondataunbondvalidator">SignedTransactionDataUnbondValidator</a></h4>
+<h4 id="signedtransactiondataunbondvalidator"><a class="header" href="#signedtransactiondataunbondvalidator">SignedTransactionDataUnbondValidator</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -547,7 +553,7 @@ if validator.delegatedCount == 0
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatacreatedelegation" id="signedtransactiondatacreatedelegation">SignedTransactionDataCreateDelegation</a></h4>
+<h4 id="signedtransactiondatacreatedelegation"><a class="header" href="#signedtransactiondatacreatedelegation">SignedTransactionDataCreateDelegation</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -595,7 +601,7 @@ else if state.accounts[tx.to].status == AccountStatus.ValidatorBonded
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatabeginunbondingdelegation" id="signedtransactiondatabeginunbondingdelegation">SignedTransactionDataBeginUnbondingDelegation</a></h4>
+<h4 id="signedtransactiondatabeginunbondingdelegation"><a class="header" href="#signedtransactiondatabeginunbondingdelegation">SignedTransactionDataBeginUnbondingDelegation</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -647,7 +653,7 @@ else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBo
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondataunbonddelegation" id="signedtransactiondataunbonddelegation">SignedTransactionDataUnbondDelegation</a></h4>
+<h4 id="signedtransactiondataunbonddelegation"><a class="header" href="#signedtransactiondataunbonddelegation">SignedTransactionDataUnbondDelegation</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -686,7 +692,7 @@ delete state.accounts[sender].delegationInfo
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondataburn" id="signedtransactiondataburn">SignedTransactionDataBurn</a></h4>
+<h4 id="signedtransactiondataburn"><a class="header" href="#signedtransactiondataburn">SignedTransactionDataBurn</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -701,7 +707,7 @@ state.accounts[sender].balance -= totalCost(tx.amount, tx.fee.tipRate, bytesPaid
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactionredelegatecommission" id="signedtransactionredelegatecommission">SignedTransactionRedelegateCommission</a></h4>
+<h4 id="signedtransactionredelegatecommission"><a class="header" href="#signedtransactionredelegatecommission">SignedTransactionRedelegateCommission</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -741,7 +747,7 @@ state.activeValidatorSet[delegation.validator] = validator
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactionredelegatereward" id="signedtransactionredelegatereward">SignedTransactionRedelegateReward</a></h4>
+<h4 id="signedtransactionredelegatereward"><a class="header" href="#signedtransactionredelegatereward">SignedTransactionRedelegateReward</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -776,7 +782,7 @@ state.activeValidatorSet[delegation.validator] = validator
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#begin-block" id="begin-block">Begin Block</a></h4>
+<h4 id="begin-block"><a class="header" href="#begin-block">Begin Block</a></h4>
 <p>At the beginning of the block, rewards are distributed to the block proposer.</p>
 <p>Apply the following to the state:</p>
 <pre><code class="language-py">proposer = state.activeValidatorSet[block.header.proposerAddress]
@@ -791,7 +797,7 @@ state.activeValidatorSet.proposerInitialVotingPower = proposer.votingPower
 
 state.activeValidatorSet[block.header.proposerAddress] = proposer
 </code></pre>
-<h4><a class="header" href="#end-block" id="end-block">End Block</a></h4>
+<h4 id="end-block"><a class="header" href="#end-block">End Block</a></h4>
 <p>Apply the following to the state:</p>
 <pre><code class="language-py">account = state.accounts[block.header.proposerAddress]
 

@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -131,21 +133,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -166,7 +172,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#message-layout" id="message-layout">Message Layout</a></h1>
+                        <h1 id="message-layout"><a class="header" href="#message-layout">Message Layout</a></h1>
 <ul>
 <li><a href="#preamble">Preamble</a></li>
 <li><a href="#message-layout-rationale">Message Layout Rationale</a>
@@ -176,9 +182,9 @@
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#preamble" id="preamble">Preamble</a></h2>
+<h2 id="preamble"><a class="header" href="#preamble">Preamble</a></h2>
 <p>LazyLedger uses <a href="https://arxiv.org/abs/1809.09044">a data availability scheme</a> that allows nodes to determine whether a block's data was published without downloading the whole block. The core of this scheme is arranging data in a two-dimensional matrix then applying erasure coding to each row and column. This document describes the rationale for how data—transactions, messages, and other data—<a href="../specs/data_structures.html#arranging-available-data-into-shares">is actually arranged</a>. Familiarity with the <a href="https://arxiv.org/abs/1809.09044">originally proposed data layout format</a> is assumed.</p>
-<h2><a class="header" href="#message-layout-rationale" id="message-layout-rationale">Message Layout Rationale</a></h2>
+<h2 id="message-layout-rationale"><a class="header" href="#message-layout-rationale">Message Layout Rationale</a></h2>
 <p>Block data consists of transactions (which modify the LazyLedger chain's state), intermediate state roots (required for fraud proofs of the aforementioned transactions), messages (binary blobs which do not modify the LazyLedger state, but which are intended for a LazyLedger application identified with a provided namespace ID), and other relevant pieces of data (e.g. evidence for slashing). We want to arrange this data into a <code>k * k</code> matrix of fixed-sized shares, which will later be committed to in <a href="../specs/data_structures.html#namespace-merkle-tree">Namespace Merkle Trees (NMTs)</a>.</p>
 <p>The simplest way we can imagine arranging block data is to simply serialize it all in no particular order, split it into fixed-sized shares, then arrange those shares into the <code>k * k</code> matrix in row-major order. However, this naive scheme can be improved in a number of ways, described below.</p>
 <p>First, we impose some ground rules:</p>
@@ -196,7 +202,7 @@
 </ol>
 <p>Specifically, messages must begin at a new share, unlike non-message data which can span multiple shares. We note a nice property from this rule: if the transaction sender knows 1) <code>k</code>, the size of the matrix, 2) the starting location of their message in a row, and 3) the length of the message (they know this since they are sending the message), then they can actually compute a sequence of roots to <em>subtrees in the row NMTs</em>. More importantly, anyone can compute this, and can compute <em>the simple Merkle root of these subtree roots</em>.</p>
 <p>This, however, requires the block producer to interact with the transaction sender to provide them the starting location of their message. This can be done selectively, but is not ideal as a default for e.g. end-user wallets.</p>
-<h3><a class="header" href="#non-interactive-default-rules" id="non-interactive-default-rules">Non-Interactive Default Rules</a></h3>
+<h3 id="non-interactive-default-rules"><a class="header" href="#non-interactive-default-rules">Non-Interactive Default Rules</a></h3>
 <p>As a non-consensus-critical default, we can impose some additional rules on message placement to make the possible starting locations of messages sufficiently predictable and constrained such that users can deterministically compute subtree roots without interaction:</p>
 <ol>
 <li>Messages that span multiple rows must begin at the start of a row (this can occur if a message is longer than <code>k</code> shares <em>or</em> if the block producer decides to start a message partway through a row and it cannot fit).</li>
@@ -205,7 +211,7 @@
 <p>With the above constraints, we can compute subtree roots deterministically easily: simply slice off either the largest power of 2 that isn't larger than the remaining message length, or <code>k</code>, whichever is smaller. This is done recursively. As an example, with <code>k = 4</code> and message length of <code>11</code>, the message would be sliced with lengths <code>4, 4, 2, 1</code>. The resulting slices are the leaves of subtrees whose roots can be computed. Due to the rules above, the subtrees are guaranteed to be aligned to powers of 2, and thus the subtree roots will be present as internal nodes in the NMT of <em>some</em> row(s).</p>
 <p>This is similar to <a href="https://www.usenix.org/legacy/event/sec09/tech/full_papers/crosby.pdf">Merkle Mountain Ranges</a>, though with the largest subtree bounded by <code>k</code> rather than being unbounded.</p>
 <p>The last piece of the puzzle is determining <em>which</em> row the message is placed at (or, more specifically, the starting location). This is needed to keep the block producer accountable. To this end, the block producer simply augments each fee-paying transaction with some metadata: the starting location of the message the transaction pays for.</p>
-<h3><a class="header" href="#caveats" id="caveats">Caveats</a></h3>
+<h3 id="caveats"><a class="header" href="#caveats">Caveats</a></h3>
 <p>The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by requiring that such shares have a value of zero and a namespace ID equal to the preceding message's. Since their value is known, they can be omitted from NMT proofs of all shares of a given namespace ID.</p>
 
                     </main>

@@ -28,7 +28,9 @@
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
+        
         <link rel="stylesheet" href="css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
@@ -133,21 +135,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -168,7 +174,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#lazyledger-specifications" id="lazyledger-specifications">LazyLedger Specifications</a></h1>
+                        <h1 id="lazyledger-specifications"><a class="header" href="#lazyledger-specifications">LazyLedger Specifications</a></h1>
 <ul>
 <li><a href="./specs/README.html">Specification</a>
 <ul>
@@ -189,7 +195,7 @@
 </ul>
 </li>
 </ul>
-<h1><a class="header" href="#specification" id="specification">Specification</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="specification"><a class="header" href="#specification">Specification</a></h1>
 <ul>
 <li><a href="specs/./architecture.html">Architecture</a></li>
 <li><a href="specs/./data_structures.html">Data Structures</a></li>
@@ -199,25 +205,25 @@
 <li><a href="specs/./light_client.html">Light client</a></li>
 <li><a href="specs/./node_types.html">Node types</a></li>
 </ul>
-<h1><a class="header" href="#architecture" id="architecture">Architecture</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
 <ul>
 <li><a href="specs/architecture.html#common-terms-and-expressions">Common Terms and Expressions</a></li>
 <li><a href="specs/architecture.html#system-architecture">System Architecture</a></li>
 </ul>
-<h2><a class="header" href="#common-terms-and-expressions" id="common-terms-and-expressions">Common Terms and Expressions</a></h2>
+<h2 id="common-terms-and-expressions"><a class="header" href="#common-terms-and-expressions">Common Terms and Expressions</a></h2>
 <table><thead><tr><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>App (application)</td><td>Alternate name for &quot;<a href="https://arxiv.org/abs/1905.09274">virtual sidechain</a>.&quot; LazyLedger apps are sidechains that post all their data onto the LazyLedger chain to share security.</td></tr>
 <tr><td>Transaction</td><td>Request that modifies the consensus-critical state (validator balances and statuses).</td></tr>
 <tr><td>Message</td><td>Request that is executed by a non-consensus-critical app.</td></tr>
 </tbody></table>
-<h2><a class="header" href="#system-architecture" id="system-architecture">System Architecture</a></h2>
+<h2 id="system-architecture"><a class="header" href="#system-architecture">System Architecture</a></h2>
 <p>LazyLedger has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native <em>transactions</em>, distinct from the <em>messages</em> processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.</p>
 <p>Transactions pay fees similarly to how they would in a normal blockchain (e.g. Bitcoin), and their side effects are restricted to modifying the validator set and their balances. Transactions can additionally pay fees for the inclusion of a message (identified by a hash) in the same block. The validator set is committed to in the block header, and since the entire system state <em>is</em> the validator set, this is the only state commitment needed in the header.</p>
 <p>One desideratum that will most likely be included is <a href="https://github.com/lazyledger/lazyledger-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md">burning a non-proportional amount of coins for each transaction as a network fee</a>. This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.</p>
 <p>This architecture has the benefit of allowing a spectrum of clients. Since different components are made available through commitments, client that are only interested in a portion of the block data do not need to download and process the whole block.</p>
 <p>Non-consensus full clients have easy and direct access to all the data they need to validate: the transactions. Messages do not need to be validated, as they do not change the state, they simply need to be verified as available.</p>
 <p>Light clients are almost identical to full clients here: they simply need to process all the validator set changes (i.e. transactions) and run data availability checks on the rest of the block. Unlike full clients, light clients do not need to verify the signatures of transactions and can instead trust the majority of validators to sign off on validator set changes, with the addition of fraud proofs in case of an invalid signature.</p>
-<h1><a class="header" href="#data-structures" id="data-structures">Data Structures</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="data-structures"><a class="header" href="#data-structures">Data Structures</a></h1>
 <ul>
 <li><a href="specs/data_structures.html#data-structures-overview">Data Structures Overview</a></li>
 <li><a href="specs/data_structures.html#type-aliases">Type Aliases</a></li>
@@ -334,9 +340,9 @@
 </li>
 <li><a href="specs/data_structures.html#consensus-parameters">Consensus Parameters</a></li>
 </ul>
-<h2><a class="header" href="#data-structures-overview" id="data-structures-overview">Data Structures Overview</a></h2>
+<h2 id="data-structures-overview"><a class="header" href="#data-structures-overview">Data Structures Overview</a></h2>
 <p><img src="specs/./figures/block_data_structures.svg" alt="fig: Block data structures." /></p>
-<h2><a class="header" href="#type-aliases" id="type-aliases">Type Aliases</a></h2>
+<h2 id="type-aliases"><a class="header" href="#type-aliases">Type Aliases</a></h2>
 <table><thead><tr><th>name</th><th>type</th></tr></thead><tbody>
 <tr><td><a href="specs/data_structures.html#address"><code>Address</code></a></td><td><code>byte[32]</code></td></tr>
 <tr><td><code>Amount</code></td><td><code>uint64</code></td></tr>
@@ -350,8 +356,8 @@
 <tr><td><a href="specs/data_structures.html#timestamp"><code>Timestamp</code></a></td><td><code>google.protobuf.Timestamp</code></td></tr>
 <tr><td><code>VotingPower</code></td><td><code>uint64</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#blockchain-data-structures" id="blockchain-data-structures">Blockchain Data Structures</a></h2>
-<h3><a class="header" href="#block" id="block">Block</a></h3>
+<h2 id="blockchain-data-structures"><a class="header" href="#blockchain-data-structures">Blockchain Data Structures</a></h2>
+<h3 id="block"><a class="header" href="#block">Block</a></h3>
 <p>Blocks are the top-level data structure of the LazyLedger blockchain.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>header</code></td><td><a href="specs/data_structures.html#header">Header</a></td><td>Block header. Contains primarily identification info and commitments.</td></tr>
@@ -359,7 +365,7 @@
 <tr><td><code>availableData</code></td><td><a href="specs/data_structures.html#availabledata">AvailableData</a></td><td>Data that is erasure-coded for availability.</td></tr>
 <tr><td><code>lastCommit</code></td><td><a href="specs/data_structures.html#commit">Commit</a></td><td>Previous block's Tendermint commit.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#header" id="header">Header</a></h3>
+<h3 id="header"><a class="header" href="#header">Header</a></h3>
 <p>Block header, which is fully downloaded by both full clients and light clients.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>version</code></td><td><a href="specs/data_structures.html#consensusversion">ConsensusVersion</a></td><td>The consensus version struct.</td></tr>
@@ -376,7 +382,7 @@
 </tbody></table>
 <p>The size of the <a href="specs/data_structures.html#arranging-available-data-into-shares">original data square</a>, <code>availableDataOriginalSquareSize</code>, isn't explicitly declared in the block header. Instead, it is implicitly computed as the smallest power of 2 whose square is at least <code>availableDataOriginalSharesUsed</code> (in other words, the smallest power of 4 that is at least <code>availableDataOriginalSharesUsed</code>).</p>
 <p>The header hash is the <a href="specs/data_structures.html#hashing">hash</a> of the <a href="specs/data_structures.html#serialization">serialized</a> header.</p>
-<h3><a class="header" href="#availabledataheader" id="availabledataheader">AvailableDataHeader</a></h3>
+<h3 id="availabledataheader"><a class="header" href="#availabledataheader">AvailableDataHeader</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>rowRoots</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a><code>[]</code></td><td>Commitments to all erasure-coded data.</td></tr>
 <tr><td><code>colRoots</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a><code>[]</code></td><td>Commitments to all erasure-coded data.</td></tr>
@@ -384,7 +390,7 @@
 <p>The number of row/column roots of the original data <a href="specs/data_structures.html#share">shares</a> in <a href="specs/data_structures.html#arranging-available-data-into-shares">square layout</a> for this block. The <code>availableDataRoot</code> of the <a href="specs/data_structures.html#header">header</a> is computed using the compact row and column roots as described <a href="specs/data_structures.html#2d-reed-solomon-encoding-scheme">here</a>.</p>
 <p>The number of row and column roots is each <code>availableDataOriginalSquareSize * 2</code>, and must be a power of 2. Note that the minimum <code>availableDataOriginalSquareSize</code> is 1 (not 0), therefore the number of row and column roots are each at least 2.</p>
 <p>Implementations can prune rows containing only <a href="specs/./consensus.html#reserved-namespace-ids">tail padding</a> as they are implicitly available.</p>
-<h3><a class="header" href="#availabledata" id="availabledata">AvailableData</a></h3>
+<h3 id="availabledata"><a class="header" href="#availabledata">AvailableData</a></h3>
 <p>Data that is <a href="specs/data_structures.html#erasure-coding">erasure-coded</a> for <a href="https://arxiv.org/abs/1809.09044">data availability checks</a>.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>transactionData</code></td><td><a href="specs/data_structures.html#transactiondata">TransactionData</a></td><td>Transaction data. Transactions modify the validator set and balances, and pay fees for messages to be included.</td></tr>
@@ -392,29 +398,29 @@
 <tr><td><code>evidenceData</code></td><td><a href="specs/data_structures.html#evidencedata">EvidenceData</a></td><td>Evidence used for slashing conditions (e.g. equivocation).</td></tr>
 <tr><td><code>messageData</code></td><td><a href="specs/data_structures.html#messagedata">MessageData</a></td><td>Message data. Messages are app data.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#commit" id="commit">Commit</a></h3>
+<h3 id="commit"><a class="header" href="#commit">Commit</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>height</code></td><td><a href="specs/data_structures.html#type-aliases">Height</a></td><td>Block height.</td></tr>
 <tr><td><code>round</code></td><td><a href="specs/data_structures.html#type-aliases">Round</a></td><td>Round. Incremented on view change.</td></tr>
 <tr><td><code>headerHash</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a></td><td>Header hash of the previous block.</td></tr>
 <tr><td><code>signatures</code></td><td><a href="specs/data_structures.html#commitsig">CommitSig</a><code>[]</code></td><td>List of signatures.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#timestamp" id="timestamp">Timestamp</a></h3>
+<h3 id="timestamp"><a class="header" href="#timestamp">Timestamp</a></h3>
 <p>Timestamp is a <a href="specs/data_structures.html#type-aliases">type alias</a>.</p>
 <p>LazyLedger uses <a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp"><code>google.protobuf.Timestamp</code></a> to represent time.</p>
-<h3><a class="header" href="#hashdigest" id="hashdigest">HashDigest</a></h3>
+<h3 id="hashdigest"><a class="header" href="#hashdigest">HashDigest</a></h3>
 <p>HashDigest is a <a href="specs/data_structures.html#type-aliases">type alias</a>.</p>
 <p>Output of the <a href="specs/data_structures.html#hashing">hashing</a> function. Exactly 256 bits (32 bytes) long.</p>
-<h3><a class="header" href="#transactionfee" id="transactionfee">TransactionFee</a></h3>
+<h3 id="transactionfee"><a class="header" href="#transactionfee">TransactionFee</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>tipRate</code></td><td><code>uint64</code></td><td>The tip rate for this transaction.</td></tr>
 </tbody></table>
 <p>Abstraction over transaction fees.</p>
-<h3><a class="header" href="#address" id="address">Address</a></h3>
+<h3 id="address"><a class="header" href="#address">Address</a></h3>
 <p>Address is a <a href="specs/data_structures.html#type-aliases">type alias</a>.</p>
 <p>Addresses are the <a href="specs/data_structures.html#hashing">hash</a> <a href="specs/data_structures.html#hashdigest">digest</a> of the <a href="specs/data_structures.html#publickey">public key</a>.</p>
 <p>Addresses have a length of 32 bytes.</p>
-<h3><a class="header" href="#commitsig" id="commitsig">CommitSig</a></h3>
+<h3 id="commitsig"><a class="header" href="#commitsig">CommitSig</a></h3>
 <pre><code class="language-C++">enum CommitFlag : uint8_t {
     CommitFlagAbsent = 1,
     CommitFlagCommit = 2,
@@ -427,29 +433,29 @@
 <tr><td><code>timestamp</code></td><td><a href="specs/data_structures.html#timestamp">Timestamp</a></td><td></td></tr>
 <tr><td><code>signature</code></td><td><a href="specs/data_structures.html#signature">Signature</a></td><td></td></tr>
 </tbody></table>
-<h3><a class="header" href="#signature" id="signature">Signature</a></h3>
+<h3 id="signature"><a class="header" href="#signature">Signature</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>r</code></td><td><code>byte[32]</code></td><td><code>r</code> value of the signature.</td></tr>
 <tr><td><code>vs</code></td><td><code>byte[32]</code></td><td>1-bit <code>v</code> value followed by last 255 bits of <code>s</code> value of signature.</td></tr>
 </tbody></table>
 <p>Output of the <a href="specs/data_structures.html#public-key-cryptography">signing</a> process.</p>
-<h2><a class="header" href="#consensusversion" id="consensusversion">ConsensusVersion</a></h2>
+<h2 id="consensusversion"><a class="header" href="#consensusversion">ConsensusVersion</a></h2>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>block</code></td><td><code>uint64</code></td><td>The <code>VERSION_BLOCK</code>.</td></tr>
 <tr><td><code>app</code></td><td><code>uint64</code></td><td>The <code>VERSION_APP</code>.</td></tr>
 </tbody></table>
-<h2><a class="header" href="#serialization" id="serialization">Serialization</a></h2>
+<h2 id="serialization"><a class="header" href="#serialization">Serialization</a></h2>
 <p>Objects that are committed to or signed over require a canonical serialization. This is done using a deterministic (and thus, bijective) variant of protobuf defined <a href="https://github.com/cosmos/cosmos-sdk/blob/master/docs/architecture/adr-027-deterministic-protobuf-serialization.md">here</a>.</p>
 <p>Note: there are two requirements for a serialization scheme, should this need to be changed:</p>
 <ol>
 <li>Must be bijective.</li>
 <li>Serialization must include the length of dynamic structures (e.g. arrays with variable length).</li>
 </ol>
-<h2><a class="header" href="#hashing" id="hashing">Hashing</a></h2>
+<h2 id="hashing"><a class="header" href="#hashing">Hashing</a></h2>
 <p>All protocol-level hashing is done using SHA-2-256 as defined in <a href="https://doi.org/10.6028/NIST.FIPS.180-4">FIPS 180-4</a>. SHA-2-256 outputs a digest that is 256 bits (i.e. 32 bytes) long.</p>
 <p>Libraries implementing SHA-2-256 are available in Go (<a href="https://pkg.go.dev/crypto/sha256">https://pkg.go.dev/crypto/sha256</a>) and Rust (<a href="https://docs.rs/sha2">https://docs.rs/sha2</a>).</p>
 <p>Unless otherwise indicated explicitly, objects are first <a href="specs/data_structures.html#serialization">serialized</a> before being hashed.</p>
-<h2><a class="header" href="#public-key-cryptography" id="public-key-cryptography">Public-Key Cryptography</a></h2>
+<h2 id="public-key-cryptography"><a class="header" href="#public-key-cryptography">Public-Key Cryptography</a></h2>
 <p>Consensus-critical data is authenticated using <a href="https://www.secg.org/sec1-v2.pdf">ECDSA</a>, with the curve <a href="https://en.bitcoin.it/wiki/Secp256k1">secp256k1</a>. A highly-optimized library is available in C (<a href="https://github.com/bitcoin-core/secp256k1">https://github.com/bitcoin-core/secp256k1</a>), with wrappers in Go (<a href="https://pkg.go.dev/github.com/ethereum/go-ethereum/crypto/secp256k1">https://pkg.go.dev/github.com/ethereum/go-ethereum/crypto/secp256k1</a>) and Rust (<a href="https://docs.rs/crate/secp256k1">https://docs.rs/crate/secp256k1</a>).</p>
 <p><a href="specs/data_structures.html#publickey">Public keys</a> are encoded in uncompressed form, as the concatenation of the <code>x</code> and <code>y</code> values. No prefix is needed to distinguish between encoding schemes as this is the only encoding supported.</p>
 <p>Deterministic signatures (<a href="https://tools.ietf.org/rfc/rfc6979.txt">RFC-6979</a>) should be used when signing, but this is not enforced at the protocol level as it cannot be.</p>
@@ -461,9 +467,9 @@
 [256-bit r value][1-bit v value][255-bit s value]
 </code></pre>
 <p>This encoding scheme is derived from <a href="https://eips.ethereum.org/EIPS/eip-2098">EIP 2098: Compact Signature Representation</a>.</p>
-<h2><a class="header" href="#merkle-trees" id="merkle-trees">Merkle Trees</a></h2>
+<h2 id="merkle-trees"><a class="header" href="#merkle-trees">Merkle Trees</a></h2>
 <p>Merkle trees are used to authenticate various pieces of data across the LazyLedger stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.</p>
-<h3><a class="header" href="#binary-merkle-tree" id="binary-merkle-tree">Binary Merkle Tree</a></h3>
+<h3 id="binary-merkle-tree"><a class="header" href="#binary-merkle-tree">Binary Merkle Tree</a></h3>
 <p>Binary Merkle trees are constructed in the same fashion as described in <a href="https://tools.ietf.org/html/rfc6962">Certificate Transparency (RFC-6962)</a>, except for using <a href="specs/data_structures.html#hashing">a different hashing function</a>. Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).</p>
 <p>Nodes contain a single field:
 | name | type                      | description |
@@ -480,12 +486,12 @@
 </code></pre>
 <p>Note that rather than duplicating the last node if there are an odd number of nodes (the <a href="https://github.com/bitcoin/bitcoin/blob/5961b23898ee7c0af2626c46d5d70e80136578d3/src/consensus/merkle.cpp#L9-L43">Bitcoin design</a>), trees are allowed to be imbalanced. In other words, the height of each leaf may be different. For an example, see Section 2.1.3 of <a href="https://tools.ietf.org/html/rfc6962#section-2.1.3">Certificate Transparency (RFC-6962)</a>.</p>
 <p>Leaves and internal nodes are hashed differently: the one-byte <code>0x00</code> is prepended for leaf nodes while <code>0x01</code> is prepended for internal nodes. This avoids a second-preimage attack <a href="https://en.wikipedia.org/wiki/Merkle_tree#Second_preimage_attack">where internal nodes are presented as leaves</a> trees with leaves at different heights.</p>
-<h4><a class="header" href="#binarymerkletreeinclusionproof" id="binarymerkletreeinclusionproof">BinaryMerkleTreeInclusionProof</a></h4>
+<h4 id="binarymerkletreeinclusionproof"><a class="header" href="#binarymerkletreeinclusionproof">BinaryMerkleTreeInclusionProof</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>siblings</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a><code>[]</code></td><td>Sibling hash values, ordered starting from the leaf's neighbor.</td></tr>
 </tbody></table>
 <p>A proof for a leaf in a <a href="specs/data_structures.html#binary-merkle-tree">binary Merkle tree</a>, as per Section 2.1.1 of <a href="https://tools.ietf.org/html/rfc6962#section-2.1.1">Certificate Transparency (RFC-6962)</a>.</p>
-<h3><a class="header" href="#namespace-merkle-tree" id="namespace-merkle-tree">Namespace Merkle Tree</a></h3>
+<h3 id="namespace-merkle-tree"><a class="header" href="#namespace-merkle-tree">Namespace Merkle Tree</a></h3>
 <p><a href="specs/data_structures.html#share">Shares</a> in LazyLedger are associated with a provided <em>namespace ID</em>. The Namespace Merkle Tree (NMT) is a variation of the <a href="https://eprint.iacr.org/2018/642">Merkle Interval Tree</a>, which is itself an extension of the <a href="https://bitcointalk.org/index.php?topic=845978.0">Merkle Sum Tree</a>. It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.</p>
 <p>Nodes contain three fields:
 | name    | type                         | description                                      |
@@ -518,14 +524,14 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p>Note that the above snippet leverages the property that leaves are sorted by namespace ID: if <code>l.n_min</code> is <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, so must <code>{l,r}.n_max</code>. By construction, either both the min and max namespace IDs of a node will be <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, or neither will: if <code>r.n_min</code> is <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, so must <code>r.n_max</code>.</p>
 <p>For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as <a href="specs/data_structures.html#2d-reed-solomon-encoding-scheme">the right half of an NMT as used in LazyLedger will be parity shares</a>) <em>ignore</em> the namespace ID for the parity leaves. Subtree roots with <em>only parity leaves</em> have their min and max namespace ID set to <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>. This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>).</p>
 <p>A compact commitment can be computed by taking the <a href="specs/data_structures.html#hashing">hash</a> of the <a href="specs/data_structures.html#serialization">serialized</a> root node.</p>
-<h4><a class="header" href="#namespacemerkletreeinclusionproof" id="namespacemerkletreeinclusionproof">NamespaceMerkleTreeInclusionProof</a></h4>
+<h4 id="namespacemerkletreeinclusionproof"><a class="header" href="#namespacemerkletreeinclusionproof">NamespaceMerkleTreeInclusionProof</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>siblingValues</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a><code>[]</code></td><td>Sibling hash values, ordered starting from the leaf's neighbor.</td></tr>
 <tr><td><code>siblingMins</code></td><td><a href="specs/data_structures.html#type-aliases">NamespaceID</a><code>[]</code></td><td>Sibling min namespace IDs.</td></tr>
 <tr><td><code>siblingMaxes</code></td><td><a href="specs/data_structures.html#type-aliases">NamespaceID</a><code>[]</code></td><td>Sibling max namespace IDs.</td></tr>
 </tbody></table>
 <p>When verifying an NMT proof, the root hash is checked by reconstructing the root node <code>root_node</code> with the computed <code>root_node.v</code> (computed as with a <a href="specs/data_structures.html#binarymerkletreeproof">plain Merkle proof</a>) and the provided <code>rootNamespaceIDMin</code> and <code>rootNamespaceIDMax</code> as the <code>root_node.n_min</code> and <code>root_node.n_max</code>, respectively.</p>
-<h3><a class="header" href="#sparse-merkle-tree" id="sparse-merkle-tree">Sparse Merkle Tree</a></h3>
+<h3 id="sparse-merkle-tree"><a class="header" href="#sparse-merkle-tree">Sparse Merkle Tree</a></h3>
 <p>Sparse Merkle Trees (SMTs) are <em>sparse</em>, i.e. they contain mostly empty leaves. They can be used as key-value stores for arbitrary data, as each leaf is keyed by its index in the tree. Storage efficiency is achieved through clever use of implicit defaults, avoiding the need to store empty leaves.</p>
 <p>Additional rules are added on top of plain <a href="specs/data_structures.html#binary-merkle-tree">binary Merkle trees</a>:</p>
 <ol>
@@ -547,7 +553,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p>For internal node <code>node</code> with children <code>l</code> and <code>r</code>:</p>
 <pre><code class="language-C++">node.v = h(0x01, l.v, r.v)
 </code></pre>
-<h4><a class="header" href="#sparsemerkletreeinclusionproof" id="sparsemerkletreeinclusionproof">SparseMerkleTreeInclusionProof</a></h4>
+<h4 id="sparsemerkletreeinclusionproof"><a class="header" href="#sparsemerkletreeinclusionproof">SparseMerkleTreeInclusionProof</a></h4>
 <p>SMTs can further be extended with <em>compact</em> proofs. <a href="specs/data_structures.html#verifying-annotated-merkle-proofs">Merkle proofs</a> are composed, among other things, of a list of sibling node values. We note that, since nodes that are roots of empty subtrees have known values (the default value), these values do not need to be provided explicitly; it is sufficient to simply identify which siblings in the Merkle branch are roots of empty subtrees, which can be done with one bit per sibling.</p>
 <p>For a Merkle branch of height <code>h</code>, an <code>h</code>-bit value is appended to the proof. The lowest bit corresponds to the sibling of the leaf node, and each higher bit corresponds to the next parent. A value of <code>1</code> indicates that the next value in the list of values provided explicitly in the proof should be used, and a value of <code>0</code> indicates that the default value should be used.</p>
 <p>A proof into an SMT is structured as:</p>
@@ -557,10 +563,10 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>includedSiblings</code></td><td><code>byte[32]</code></td><td>Bitfield of explicitly included sibling hashes.</td></tr>
 </tbody></table>
 <p>The <code>includedSiblings</code> is ordered by most-significant-byte first, with each byte ordered by most-significant-bit first. The lowest bit corresponds the leaf node level.</p>
-<h2><a class="header" href="#erasure-coding" id="erasure-coding">Erasure Coding</a></h2>
+<h2 id="erasure-coding"><a class="header" href="#erasure-coding">Erasure Coding</a></h2>
 <p>In order to enable trust-minimized light clients (i.e. light clients that do not rely on an honest majority of validating state assumption), it is critical that light clients can determine whether the data in each block is <em>available</em> or not, without downloading the whole block itself. The technique used here was formally described in the paper <a href="https://arxiv.org/abs/1809.09044">Fraud and Data Availability Proofs: Maximising Light Client Security and Scaling Blockchains with Dishonest Majorities</a>.</p>
 <p>The remainder of the subsections below specify the <a href="specs/data_structures.html#2d-reed-solomon-encoding-scheme">2D Reed-Solomon erasure coding scheme</a> used, along with the format of <a href="specs/data_structures.html#share">shares</a> and how <a href="specs/data_structures.html#available-data">available data</a> is arranged into shares.</p>
-<h3><a class="header" href="#reed-solomon-erasure-coding" id="reed-solomon-erasure-coding">Reed-Solomon Erasure Coding</a></h3>
+<h3 id="reed-solomon-erasure-coding"><a class="header" href="#reed-solomon-erasure-coding">Reed-Solomon Erasure Coding</a></h3>
 <p>Note that while data is laid out in a two-dimensional square, rows and columns are erasure coded using a standard one-dimensional encoding.</p>
 <p>Reed-Solomon erasure coding is used as the underlying coding scheme. The parameters are:</p>
 <ul>
@@ -570,7 +576,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><a href="specs/./consensus.html#constants"><code>SHARE_SIZE</code></a> bytes per piece</li>
 </ul>
 <p>Note that <a href="specs/data_structures.html#header"><code>availableDataOriginalSquareSize</code></a> may vary each block, and <a href="specs/./block_proposer.html#deciding-on-a-block-size">is decided by the block proposer of that block</a>. <a href="https://github.com/catid/leopard">Leopard-RS</a> is a C library that implements the above scheme with quasilinear runtime.</p>
-<h3><a class="header" href="#2d-reed-solomon-encoding-scheme" id="2d-reed-solomon-encoding-scheme">2D Reed-Solomon Encoding Scheme</a></h3>
+<h3 id="2d-reed-solomon-encoding-scheme"><a class="header" href="#2d-reed-solomon-encoding-scheme">2D Reed-Solomon Encoding Scheme</a></h3>
 <p>The 2-dimensional data layout is described in this section. The roots of <a href="specs/data_structures.html#namespace-merkle-tree">NMTs</a> for each row and column across four quadrants of data in a <code>2k * 2k</code> matrix of shares, <code>Q0</code> to <code>Q3</code> (shown below), must be computed. In other words, <code>2k</code> row roots and <code>2k</code> column roots must be computed. The row and column roots are stored in the <code>availableDataCommitments</code> of the <a href="specs/data_structures.html#availabledataheader">AvailableDataHeader</a>.</p>
 <p><img src="specs/./figures/rs2d_quadrants.svg" alt="fig: RS2D encoding: data quadrants." /></p>
 <p>The data of <code>Q0</code> is the original data, and the remaining quadrants are parity data. Setting <code>k = availableDataOriginalSquareSize</code>, the original data first must be <a href="specs/data_structures.html#share">split into shares</a> and <a href="specs/data_structures.html#arranging-available-data-into-shares">arranged into a <code>k * k</code> matrix</a>. Then the parity data can be computed.</p>
@@ -587,16 +593,16 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p><img src="specs/./figures/rs2d_row.svg" alt="fig: RS2D encoding: a row root." /></p>
 <p>Finally, the <code>availableDataRoot</code> of the block <a href="specs/data_structures.html#header">Header</a> is computed as the Merkle root of the <a href="specs/data_structures.html#binary-merkle-tree">binary Merkle tree</a> with the row and column roots as leaves, in that order.</p>
 <p><img src="specs/./figures/data_root.svg" alt="fig: Available data root." /></p>
-<h3><a class="header" href="#invalid-erasure-coding" id="invalid-erasure-coding">Invalid Erasure Coding</a></h3>
+<h3 id="invalid-erasure-coding"><a class="header" href="#invalid-erasure-coding">Invalid Erasure Coding</a></h3>
 <p>If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.</p>
-<h4><a class="header" href="#shareproof" id="shareproof">ShareProof</a></h4>
+<h4 id="shareproof"><a class="header" href="#shareproof">ShareProof</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>share</code></td><td><a href="specs/data_structures.html#share">Share</a></td><td>The share.</td></tr>
 <tr><td><code>proof</code></td><td><a href="specs/data_structures.html#namespacemerkletreeproof">NamespaceMerkleTreeProof</a></td><td>The Merkle proof of the share in <a href="specs/data_structures.html#header"><code>availableDataRoot</code></a>.</td></tr>
 <tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if the proof is from a row root or column root; <code>false</code> if it is a row root.</td></tr>
 <tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the share in the offending row or column.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#badencodingfraudproof" id="badencodingfraudproof">BadEncodingFraudProof</a></h4>
+<h4 id="badencodingfraudproof"><a class="header" href="#badencodingfraudproof">BadEncodingFraudProof</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>shareProofs</code></td><td><a href="specs/data_structures.html#shareproof">ShareProof</a><code>[]</code></td><td>The available shares in the offending row or column.</td></tr>
 <tr><td><code>root</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a></td><td>The Merkle root of the offending row or column.</td></tr>
@@ -604,7 +610,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if it is an offending row or column; <code>false</code> if it is a row.</td></tr>
 <tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the row or column in the square.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#share" id="share">Share</a></h3>
+<h3 id="share"><a class="header" href="#share">Share</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>namespaceID</code></td><td><a href="specs/data_structures.html#type-aliases">NamespaceID</a></td><td>Namespace ID of the share.</td></tr>
 <tr><td><code>rawData</code></td><td><code>byte[SHARE_SIZE]</code></td><td>Raw share data.</td></tr>
@@ -628,7 +634,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li>Bytes carry no special meaning.</li>
 </ul>
 <p>For non-parity shares, if there is insufficient request data to fill the share, the remaining bytes are filled with <code>0</code>.</p>
-<h3><a class="header" href="#arranging-available-data-into-shares" id="arranging-available-data-into-shares">Arranging Available Data Into Shares</a></h3>
+<h3 id="arranging-available-data-into-shares"><a class="header" href="#arranging-available-data-into-shares">Arranging Available Data Into Shares</a></h3>
 <p>The previous sections described how some original data, arranged into a <code>k * k</code> matrix, can be extended into a <code>2k * 2k</code> matrix and committed to with NMT roots. This section specifies how <a href="specs/data_structures.html#available-data">available data</a> (which includes <a href="specs/data_structures.html#transactiondata">transactions</a>, <a href="specs/data_structures.html#intermediatestaterootdata">intermediate state roots</a>, <a href="specs/data_structures.html#evidencedata">evidence</a>, and <a href="specs/data_structures.html#messagedata">messages</a>) is arranged into the matrix in the first place.</p>
 <p>Then,</p>
 <ol>
@@ -669,24 +675,24 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p>In the example below, two messages (of lengths 2 and 1, respectively) are placed using the aforementioned default non-interactive rules.</p>
 <p><img src="specs/./figures/rs2d_originaldata_message.svg" alt="fig: Original data: messages." /></p>
 <p>The non-interactive default rules may introduce empty shares that do not belong to any message (in the example above, the top-right share is empty). These are zeroes with namespace ID equal to the either <a href="specs/./consensus.html#constants"><code>TAIL_TRANSACTION_PADDING_NAMESPACE_ID</code></a> if between a request with a reserved namespace ID and a message, or the namespace ID of the previous message if succeeded by a message. See the <a href="specs/../rationale/message_block_layout.html">rationale doc</a> for more info.</p>
-<h2><a class="header" href="#available-data" id="available-data">Available Data</a></h2>
-<h3><a class="header" href="#transactiondata" id="transactiondata">TransactionData</a></h3>
+<h2 id="available-data"><a class="header" href="#available-data">Available Data</a></h2>
+<h3 id="transactiondata"><a class="header" href="#transactiondata">TransactionData</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>wrappedTransactions</code></td><td><a href="specs/data_structures.html#wrappedtransaction">WrappedTransaction</a><code>[]</code></td><td>List of wrapped transactions.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#wrappedtransaction" id="wrappedtransaction">WrappedTransaction</a></h4>
+<h4 id="wrappedtransaction"><a class="header" href="#wrappedtransaction">WrappedTransaction</a></h4>
 <p>Wrapped transactions include additional metadata by the block proposer that is committed to in the <a href="specs/data_structures.html#arranging-available-data-into-shares">available data matrix</a>.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>index</code></td><td><code>uint64</code></td><td>Index of this transaction in the list of wrapped transactions. This information is lost when splitting transactions into <a href="specs/data_structures.html#share">fixed-sized shares</a>, and needs to be re-added here for fraud proof support. Allows linking a transaction to an <a href="specs/data_structures.html#wrappedintermediatestateroot">intermediate state root</a>.</td></tr>
 <tr><td><code>transaction</code></td><td><a href="specs/data_structures.html#transaction">Transaction</a></td><td>Actual transaction.</td></tr>
 <tr><td><code>messageStartIndex</code></td><td><code>uint64</code></td><td><em>Optional, only used if transaction pays for a message or padding</em>. Share index (in row-major order) of first share of message this transaction pays for. Needed for light verification of proper message inclusion.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#transaction" id="transaction">Transaction</a></h4>
+<h4 id="transaction"><a class="header" href="#transaction">Transaction</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>signedTransactionData</code></td><td><a href="specs/data_structures.html#signedtransactiondata">SignedTransactionData</a></td><td>Data payload that is signed over.</td></tr>
 <tr><td><code>signature</code></td><td><a href="specs/data_structures.html#signature">Signature</a></td><td>Signature.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#signedtransactiondata" id="signedtransactiondata">SignedTransactionData</a></h4>
+<h4 id="signedtransactiondata"><a class="header" href="#signedtransactiondata">SignedTransactionData</a></h4>
 <pre><code class="language-C++">enum TransactionType : uint8_t {
     Transfer = 1,
     PayForMessage = 2,
@@ -723,7 +729,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td>The fee information for this transaction.</td></tr>
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td>Nonce of sender.</td></tr>
 </tbody></table>
-<h5><a class="header" href="#signedtransactiondatatransfer" id="signedtransactiondatatransfer">SignedTransactionDataTransfer</a></h5>
+<h5 id="signedtransactiondatatransfer"><a class="header" href="#signedtransactiondatatransfer">SignedTransactionDataTransfer</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.Transfer</code>.</td></tr>
 <tr><td><code>amount</code></td><td><a href="specs/data_structures.html#type-aliases">Amount</a></td><td></td></tr>
@@ -732,7 +738,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Transfers <code>amount</code> coins to <code>to</code>.</p>
-<h5><a class="header" href="#signedtransactiondatapayformessage" id="signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a></h5>
+<h5 id="signedtransactiondatapayformessage"><a class="header" href="#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.PayForMessage</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
@@ -743,7 +749,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 </tbody></table>
 <p>Pays for the inclusion of a <a href="specs/data_structures.html#message">message</a> in the same block.</p>
 <p>The commitment to message shares <code>messageShareCommitment</code> is a <a href="specs/data_structures.html#binary-merkle-tree">Merkle root</a> of message share roots. Each message share root is <a href="specs/data_structures.html#arranging-available-data-into-shares">a subtree root in a row NMT</a>. For rationale, see <a href="specs/../rationale/message_block_layout.html">rationale doc</a>.</p>
-<h5><a class="header" href="#signedtransactiondatacreatevalidator" id="signedtransactiondatacreatevalidator">SignedTransactionDataCreateValidator</a></h5>
+<h5 id="signedtransactiondatacreatevalidator"><a class="header" href="#signedtransactiondatacreatevalidator">SignedTransactionDataCreateValidator</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.CreateValidator</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
@@ -751,21 +757,21 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>commissionRate</code></td><td><a href="specs/data_structures.html#decimal">Decimal</a></td><td></td></tr>
 </tbody></table>
 <p>Create a new <a href="specs/data_structures.html#validator">Validator</a> at this address.</p>
-<h5><a class="header" href="#signedtransactiondatabeginunbondingvalidator" id="signedtransactiondatabeginunbondingvalidator">SignedTransactionDataBeginUnbondingValidator</a></h5>
+<h5 id="signedtransactiondatabeginunbondingvalidator"><a class="header" href="#signedtransactiondatabeginunbondingvalidator">SignedTransactionDataBeginUnbondingValidator</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.BeginUnbondingValidator</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Begin unbonding the <a href="specs/data_structures.html#validator">Validator</a> at this address.</p>
-<h5><a class="header" href="#signedtransactiondataunbondvalidator" id="signedtransactiondataunbondvalidator">SignedTransactionDataUnbondValidator</a></h5>
+<h5 id="signedtransactiondataunbondvalidator"><a class="header" href="#signedtransactiondataunbondvalidator">SignedTransactionDataUnbondValidator</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.UnbondValidator</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Finish unbonding the <a href="specs/data_structures.html#validator">Validator</a> at this address.</p>
-<h5><a class="header" href="#signedtransactiondatacreatedelegation" id="signedtransactiondatacreatedelegation">SignedTransactionDataCreateDelegation</a></h5>
+<h5 id="signedtransactiondatacreatedelegation"><a class="header" href="#signedtransactiondatacreatedelegation">SignedTransactionDataCreateDelegation</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.CreateDelegation</code>.</td></tr>
 <tr><td><code>amount</code></td><td><a href="specs/data_structures.html#type-aliases">Amount</a></td><td></td></tr>
@@ -774,21 +780,21 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Create a new <a href="specs/data_structures.html#delegation">Delegation</a> of <code>amount</code> coins worth of voting power for validator with address <code>to</code>.</p>
-<h5><a class="header" href="#signedtransactiondatabeginunbondingdelegation" id="signedtransactiondatabeginunbondingdelegation">SignedTransactionDataBeginUnbondingDelegation</a></h5>
+<h5 id="signedtransactiondatabeginunbondingdelegation"><a class="header" href="#signedtransactiondatabeginunbondingdelegation">SignedTransactionDataBeginUnbondingDelegation</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.BeginUnbondingDelegation</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Begin unbonding the <a href="specs/data_structures.html#delegation">Delegation</a> at this address.</p>
-<h5><a class="header" href="#signedtransactiondataunbonddelegation" id="signedtransactiondataunbonddelegation">SignedTransactionDataUnbondDelegation</a></h5>
+<h5 id="signedtransactiondataunbonddelegation"><a class="header" href="#signedtransactiondataunbonddelegation">SignedTransactionDataUnbondDelegation</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.UnbondDelegation</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Finish unbonding the <a href="specs/data_structures.html#delegation">Delegation</a> at this address.</p>
-<h5><a class="header" href="#signedtransactiondataburn" id="signedtransactiondataburn">SignedTransactionDataBurn</a></h5>
+<h5 id="signedtransactiondataburn"><a class="header" href="#signedtransactiondataburn">SignedTransactionDataBurn</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.Burn</code>.</td></tr>
 <tr><td><code>amount</code></td><td><a href="specs/data_structures.html#type-aliases">Amount</a></td><td></td></tr>
@@ -796,7 +802,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 <tr><td><code>graffiti</code></td><td><a href="specs/data_structures.html#type-aliases">Graffiti</a></td><td>Graffiti to indicate the reason for burning.</td></tr>
 </tbody></table>
-<h5><a class="header" href="#signedtransactionredelegatecommission" id="signedtransactionredelegatecommission">SignedTransactionRedelegateCommission</a></h5>
+<h5 id="signedtransactionredelegatecommission"><a class="header" href="#signedtransactionredelegatecommission">SignedTransactionRedelegateCommission</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.RedelegateCommission</code>.</td></tr>
 <tr><td><code>to</code></td><td><a href="specs/data_structures.html#address">Address</a></td><td></td></tr>
@@ -804,43 +810,43 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Assigns validator's pending commission to a delegation.</p>
-<h5><a class="header" href="#signedtransactionredelegatereward" id="signedtransactionredelegatereward">SignedTransactionRedelegateReward</a></h5>
+<h5 id="signedtransactionredelegatereward"><a class="header" href="#signedtransactionredelegatereward">SignedTransactionRedelegateReward</a></h5>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>type</code></td><td><code>TransactionType</code></td><td>Must be <code>TransactionType.RedelegateReward</code>.</td></tr>
 <tr><td><code>fee</code></td><td><a href="specs/data_structures.html#transactionfee">TransactionFee</a></td><td></td></tr>
 <tr><td><code>nonce</code></td><td><a href="specs/data_structures.html#type-aliases">Nonce</a></td><td></td></tr>
 </tbody></table>
 <p>Adds delegation's pending rewards to voting power.</p>
-<h3><a class="header" href="#intermediatestaterootdata" id="intermediatestaterootdata">IntermediateStateRootData</a></h3>
+<h3 id="intermediatestaterootdata"><a class="header" href="#intermediatestaterootdata">IntermediateStateRootData</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>wrappedIntermediateStateRoots</code></td><td><a href="specs/data_structures.html#wrappedintermediatestateroot">WrappedIntermediateStateRoot</a><code>[]</code></td><td>List of wrapped intermediate state roots.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#wrappedintermediatestateroot" id="wrappedintermediatestateroot">WrappedIntermediateStateRoot</a></h4>
+<h4 id="wrappedintermediatestateroot"><a class="header" href="#wrappedintermediatestateroot">WrappedIntermediateStateRoot</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>index</code></td><td><code>uint64</code></td><td>Index of this intermediate state root in the list of intermediate state roots. This information is lost when splitting intermediate state roots into <a href="specs/data_structures.html#share">fixed-sized shares</a>, and needs to be re-added here for fraud proof support. Allows linking an intermediate state root to a <a href="specs/data_structures.html#wrappedtransaction">transaction</a>.</td></tr>
 <tr><td><code>intermediateStateRoot</code></td><td><a href="specs/data_structures.html#intermediatestateroot">IntermediateStateRoot</a></td><td>Intermediate state root. Used for fraud proofs.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#intermediatestateroot" id="intermediatestateroot">IntermediateStateRoot</a></h4>
+<h4 id="intermediatestateroot"><a class="header" href="#intermediatestateroot">IntermediateStateRoot</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>root</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a></td><td>Root of intermediate state, which is composed of the global state and the validator set.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#evidencedata" id="evidencedata">EvidenceData</a></h3>
+<h3 id="evidencedata"><a class="header" href="#evidencedata">EvidenceData</a></h3>
 <p>Wrapper for evidence data.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>evidences</code></td><td><a href="specs/data_structures.html#evidence">Evidence</a><code>[]</code></td><td>List of evidence used for slashing conditions.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#evidence" id="evidence">Evidence</a></h4>
+<h4 id="evidence"><a class="header" href="#evidence">Evidence</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>pubKey</code></td><td><a href="specs/data_structures.html#publickey">PublicKey</a></td><td></td></tr>
 <tr><td><code>voteA</code></td><td><a href="specs/data_structures.html#vote">Vote</a></td><td></td></tr>
 <tr><td><code>voteB</code></td><td><a href="specs/data_structures.html#vote">Vote</a></td><td></td></tr>
 </tbody></table>
-<h4><a class="header" href="#publickey" id="publickey">PublicKey</a></h4>
+<h4 id="publickey"><a class="header" href="#publickey">PublicKey</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>x</code></td><td><code>byte[32]</code></td><td><code>x</code> value of public key.</td></tr>
 <tr><td><code>y</code></td><td><code>byte[32]</code></td><td><code>y</code> value of public key.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#vote" id="vote">Vote</a></h4>
+<h4 id="vote"><a class="header" href="#vote">Vote</a></h4>
 <pre><code class="language-C++">enum VoteType : uint8_t {
     Prevote = 1,
     Precommit = 2,
@@ -854,16 +860,16 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>timestamp</code></td><td><a href="specs/data_structures.html#timestamp">Timestamp</a></td><td></td></tr>
 <tr><td><code>signature</code></td><td><a href="specs/data_structures.html#signature">Signature</a></td><td></td></tr>
 </tbody></table>
-<h3><a class="header" href="#messagedata" id="messagedata">MessageData</a></h3>
+<h3 id="messagedata"><a class="header" href="#messagedata">MessageData</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>messages</code></td><td><a href="specs/data_structures.html#message">Message</a><code>[]</code></td><td>List of messages.</td></tr>
 </tbody></table>
-<h4><a class="header" href="#message" id="message">Message</a></h4>
+<h4 id="message"><a class="header" href="#message">Message</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>namespaceID</code></td><td><a href="specs/data_structures.html#type-aliases">NamespaceID</a></td><td>Namespace ID of this message.</td></tr>
 <tr><td><code>rawData</code></td><td><code>byte[]</code></td><td>Raw message bytes.</td></tr>
 </tbody></table>
-<h2><a class="header" href="#state" id="state">State</a></h2>
+<h2 id="state"><a class="header" href="#state">State</a></h2>
 <p>The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified <a href="specs/data_structures.html#sparse-merkle-tree">Sparse Merkle Tree</a> is maintained for the entire chain state, the <em>state tree</em>. The root of this tree is committed to in the <a href="specs/data_structures.html#header">block header</a>.</p>
 <p>The state tree is separated into <code>2**(8*STATE_SUBTREE_RESERVED_BYTES)</code> subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest <code>STATE_SUBTREE_RESERVED_BYTES</code> bytes from the key and replacing them with the appropriate <a href="specs/consensus.html#reserved-state-subtree-ids">reserved state subtree ID</a>. Reducing the key size within subtrees also reduces the collision resistance of keys by <code>8*STATE_SUBTREE_RESERVED_BYTES</code> bits, but this is not an issue due the number of bits removed being small.</p>
 <p>A number of subtrees are maintained:</p>
@@ -874,7 +880,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><a href="specs/data_structures.html#delegation">Delegation set</a></li>
 <li><a href="specs/data_structures.html#message-paid">Message shares paid for</a></li>
 </ol>
-<h3><a class="header" href="#account" id="account">Account</a></h3>
+<h3 id="account"><a class="header" href="#account">Account</a></h3>
 <pre><code class="language-C++">enum AccountStatus : uint8_t {
     None = 1,
     DelegationBonded = 2,
@@ -904,7 +910,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><code>ValidatorUnbonded</code>: This validator has completed its unbonding and has withdrawn its stake. The validator object will remain in this status until <code>delegatedCount</code> reaches zero, at which point it is destroyed.</li>
 </ol>
 <p>In the accounts subtree, accounts (i.e. leaves) are keyed by the <a href="specs/data_structures.html#hashdigest">hash</a> of their <a href="specs/data_structures.html#address">address</a>. The first byte is then replaced with <a href="specs/./consensus.html#reserved-state-subtree-ids"><code>ACCOUNTS_SUBTREE_ID</code></a>.</p>
-<h3><a class="header" href="#delegation" id="delegation">Delegation</a></h3>
+<h3 id="delegation"><a class="header" href="#delegation">Delegation</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>validator</code></td><td><a href="specs/data_structures.html#address">Address</a></td><td>The validator being delegating to.</td></tr>
 <tr><td><code>stakedBalance</code></td><td><a href="specs/data_structures.html#type-aliases">VotingPower</a></td><td>Delegated stake, in <code>4u</code>.</td></tr>
@@ -914,7 +920,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 </tbody></table>
 <p>Delegation objects represent a delegation.</p>
 <p>In the delegation subtree, delegations are keyed by the <a href="specs/data_structures.html#hashdigest">hash</a> of their <a href="specs/data_structures.html#address">address</a>. The first byte is then replaced with <a href="specs/./consensus.html#reserved-state-subtree-ids"><code>DELEGATIONS_SUBTREE_ID</code></a>.</p>
-<h3><a class="header" href="#validator" id="validator">Validator</a></h3>
+<h3 id="validator"><a class="header" href="#validator">Validator</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>commissionRewards</code></td><td><code>uint64</code></td><td>Validator's commission rewards, in <code>1u</code>.</td></tr>
 <tr><td><code>commissionRate</code></td><td><a href="specs/data_structures.html#decimal">Decimal</a></td><td>Commission rate.</td></tr>
@@ -930,56 +936,56 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p>Validator objects represent all the information needed to be keep track of a validator.</p>
 <p>In the validators subtrees, validators are keyed by the <a href="specs/data_structures.html#hashdigest">hash</a> of their <a href="specs/data_structures.html#address">address</a>. The first byte is then replaced with <a href="specs/./consensus.html#reserved-state-subtree-ids"><code>ACTIVE_VALIDATORS_SUBTREE_ID</code></a> for the active validator set or <a href="specs/./consensus.html#reserved-state-subtree-ids"><code>INACTIVE_VALIDATORS_SUBTREE_ID</code></a> for the inactive validator set. Active validators are bonded, (i.e. <code>ValidatorBonded</code>), while inactive validators are not bonded (i.e. <code>ValidatorBonded</code>). By construction, the validators subtrees will be a subset of a mirror of the <a href="specs/data_structures.html#account">accounts subtree</a>.</p>
 <p>The validator queue (i.e. validators with status <code>ValidatorQueued</code>) is a subset of the inactive validator set. This queue is represented as a linked list, with each validator pointing to the <code>next</code> validator in the queue, and the head of the linked list stored in <a href="specs/data_structures.html#validatorqueuehead">ValidatorQueueHead</a>.</p>
-<h3><a class="header" href="#activevalidatorcount" id="activevalidatorcount">ActiveValidatorCount</a></h3>
+<h3 id="activevalidatorcount"><a class="header" href="#activevalidatorcount">ActiveValidatorCount</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>numValidators</code></td><td><code>uint32</code></td><td>Number of active validators.</td></tr>
 </tbody></table>
 <p>Since the <a href="specs/data_structures.html#validator">active validator set</a> is stored in a <a href="specs/data_structures.html#sparse-merkle-tree">Sparse Merkle Tree</a>, there is no compact way of proving that the number of active validators exceeds <code>MAX_VALIDATORS</code> without keeping track of the number of active validators. The active validator count is stored in the active validators subtree, and is keyed with <code>0</code> (i.e. <code>0x0000000000000000000000000000000000000000000000000000000000000000</code>), with the first byte replaced with <code>ACTIVE_VALIDATORS_SUBTREE_ID</code>.</p>
-<h3><a class="header" href="#activevotingpower" id="activevotingpower">ActiveVotingPower</a></h3>
+<h3 id="activevotingpower"><a class="header" href="#activevotingpower">ActiveVotingPower</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>votingPower</code></td><td><code>uint64</code></td><td>Active voting power.</td></tr>
 </tbody></table>
 <p>Since the <a href="specs/data_structures.html#validator">active validator set</a> is stored in a <a href="specs/data_structures.html#sparse-merkle-tree">Sparse Merkle Tree</a>, there is no compact way of proving the active voting power. The active voting power is stored in the active validators subtree, and is keyed with <code>1</code> (i.e. <code>0x0000000000000000000000000000000000000000000000000000000000000001</code>), with the first byte replaced with <code>ACTIVE_VALIDATORS_SUBTREE_ID</code>.</p>
-<h3><a class="header" href="#proposerblockreward" id="proposerblockreward">ProposerBlockReward</a></h3>
+<h3 id="proposerblockreward"><a class="header" href="#proposerblockreward">ProposerBlockReward</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>reward</code></td><td><code>uint64</code></td><td>Total block reward (subsidy + fees) in current block so far. Reset each block.</td></tr>
 </tbody></table>
 <p>The current block reward for the proposer is kept track of here. This is keyed with <code>2</code> (i.e. <code>0x0000000000000000000000000000000000000000000000000000000000000002</code>), with the first byte replaced with <code>ACTIVE_VALIDATORS_SUBTREE_ID</code>.</p>
-<h3><a class="header" href="#proposerinitialvotingpower" id="proposerinitialvotingpower">ProposerInitialVotingPower</a></h3>
+<h3 id="proposerinitialvotingpower"><a class="header" href="#proposerinitialvotingpower">ProposerInitialVotingPower</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>votingPower</code></td><td><code>uint64</code></td><td>Voting power of the proposer at the start of each block. Set each block.</td></tr>
 </tbody></table>
 <p>The proposer's voting power at the beginning of the block is kept track of here. This is keyed with <code>3</code> (i.e. <code>0x0000000000000000000000000000000000000000000000000000000000000003</code>), with the first byte replaced with <code>ACTIVE_VALIDATORS_SUBTREE_ID</code>.</p>
-<h3><a class="header" href="#validatorqueuehead" id="validatorqueuehead">ValidatorQueueHead</a></h3>
+<h3 id="validatorqueuehead"><a class="header" href="#validatorqueuehead">ValidatorQueueHead</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>head</code></td><td><a href="specs/data_structures.html#address">Address</a></td><td>Address of inactive validator at the head of the validator queue.</td></tr>
 </tbody></table>
 <p>The head of the queue for validators that are waiting to become active validators is stored in the inactive validators subtree, and is keyed with <code>0</code> (i.e. <code>0x0000000000000000000000000000000000000000000000000000000000000000</code>), with the first byte replaced with <code>INACTIVE_VALIDATORS_SUBTREE_ID</code>.</p>
 <p>If the queue is empty, <code>head</code> is set to the default value (i.e. the hash of the leaf is <a href="specs/data_structures.html#sparse-merkle-tree">the default value for a Sparse Merkle Tree</a>).</p>
-<h3><a class="header" href="#periodentry" id="periodentry">PeriodEntry</a></h3>
+<h3 id="periodentry"><a class="header" href="#periodentry">PeriodEntry</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>rewardRate</code></td><td><a href="specs/data_structures.html#type-aliases">Amount</a></td><td>Rewards per unit of voting power accumulated so far, in <code>1u</code>.</td></tr>
 </tbody></table>
 <p>For explanation on entries, see the <a href="specs/../rationale/distributing_rewards.html">reward distribution rationale document</a>.</p>
-<h3><a class="header" href="#decimal" id="decimal">Decimal</a></h3>
+<h3 id="decimal"><a class="header" href="#decimal">Decimal</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>numerator</code></td><td>uint64</td><td>Rational numerator.</td></tr>
 <tr><td><code>denominator</code></td><td>uint64</td><td>Rational denominator.</td></tr>
 </tbody></table>
 <p>Represents a (potentially) non-integer number.</p>
-<h3><a class="header" href="#messagepaid" id="messagepaid">MessagePaid</a></h3>
+<h3 id="messagepaid"><a class="header" href="#messagepaid">MessagePaid</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>start</code></td><td><code>uint64</code></td><td>Share index (in row-major order) of first share paid for (inclusive).</td></tr>
 <tr><td><code>finish</code></td><td><code>uint64</code></td><td>Share index (in row-major order) of last share paid for (inclusive).</td></tr>
 <tr><td><code>next</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a></td><td>Next transaction ID in the list.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#messagepaidhead" id="messagepaidhead">MessagePaidHead</a></h3>
+<h3 id="messagepaidhead"><a class="header" href="#messagepaidhead">MessagePaidHead</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>head</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a></td><td>Transaction hash at the head of the list (has the smallest start index).</td></tr>
 </tbody></table>
 <p>The head of the list of paid message shares is stored in the message share paid subtree, and is keyed with <code>0</code> (i.e. <code>0x0000000000000000000000000000000000000000000000000000000000000000</code>), with the first byte replaced with <code>MESSAGE_PAID_SUBTREE_ID</code>.</p>
 <p>If the paid list is empty, <code>head</code> is set to the default value (i.e. the hash of the leaf is <a href="specs/data_structures.html#sparse-merkle-tree">the default value for a Sparse Merkle Tree</a>).</p>
-<h2><a class="header" href="#consensus-parameters" id="consensus-parameters">Consensus Parameters</a></h2>
+<h2 id="consensus-parameters"><a class="header" href="#consensus-parameters">Consensus Parameters</a></h2>
 <p>Various <a href="specs/consensus.html#system-parameters">consensus parameters</a> are committed to in the block header, such a limits and constants.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>version</code></td><td><a href="specs/data_structures.html#consensusversion">ConsensusVersion</a></td><td>The consensus version struct.</td></tr>
@@ -989,7 +995,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>availableDataOriginalSquareMax</code></td><td><code>uint64</code></td><td>The <code>AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code>.</td></tr>
 </tbody></table>
 <p>In order to compute the <code>consensusHash</code> field in the <a href="specs/data_structures.html#header">block header</a>, the above list of parameters is <a href="specs/data_structures.html#hashing">hashed</a>.</p>
-<h1><a class="header" href="#consensus-rules" id="consensus-rules">Consensus Rules</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="consensus-rules"><a class="header" href="#consensus-rules">Consensus Rules</a></h1>
 <ul>
 <li><a href="specs/consensus.html#system-parameters">System Parameters</a>
 <ul>
@@ -1034,15 +1040,15 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#system-parameters" id="system-parameters">System Parameters</a></h2>
-<h3><a class="header" href="#units" id="units">Units</a></h3>
+<h2 id="system-parameters"><a class="header" href="#system-parameters">System Parameters</a></h2>
+<h3 id="units"><a class="header" href="#units">Units</a></h3>
 <table><thead><tr><th>name</th><th>SI</th><th>value</th><th>description</th></tr></thead><tbody>
 <tr><td><code>1u</code></td><td><code>1u</code></td><td><code>10**0</code></td><td><code>1</code> unit.</td></tr>
 <tr><td><code>2u</code></td><td><code>k1u</code></td><td><code>10**3</code></td><td><code>1000</code> units.</td></tr>
 <tr><td><code>3u</code></td><td><code>M1u</code></td><td><code>10**6</code></td><td><code>1000000</code> units.</td></tr>
 <tr><td><code>4u</code></td><td><code>G1u</code></td><td><code>10**9</code></td><td><code>1000000000</code> units.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#constants" id="constants">Constants</a></h3>
+<h3 id="constants"><a class="header" href="#constants">Constants</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>unit</th><th>description</th></tr></thead><tbody>
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Maximum number of rows/columns of the original data <a href="specs/data_structures.html#share">shares</a> in <a href="specs/data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Target number of rows/columns of the original data <a href="specs/data_structures.html#share">shares</a> in <a href="specs/data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
@@ -1060,7 +1066,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>VERSION_APP</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger application. Breaking changes (hard forks) must update this parameter.</td></tr>
 <tr><td><code>VERSION_BLOCK</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#reserved-namespace-ids" id="reserved-namespace-ids">Reserved Namespace IDs</a></h3>
+<h3 id="reserved-namespace-ids"><a class="header" href="#reserved-namespace-ids">Reserved Namespace IDs</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>description</th></tr></thead><tbody>
 <tr><td><code>TRANSACTION_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0x0000000000000001</code></td><td>Transactions: requests that modify the state.</td></tr>
 <tr><td><code>INTERMEDIATE_STATE_ROOT_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0x0000000000000002</code></td><td>Intermediate state roots, committed after every transaction.</td></tr>
@@ -1069,7 +1075,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>TAIL_PADDING_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0xFFFFFFFFFFFFFFFE</code></td><td>Tail padding for messages: padding after all messages to fill up the original data square.</td></tr>
 <tr><td><code>PARITY_SHARE_NAMESPACE_ID</code></td><td><code>NamespaceID</code></td><td><code>0xFFFFFFFFFFFFFFFF</code></td><td>Parity shares: extended shares in the available data matrix.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#reserved-state-subtree-ids" id="reserved-state-subtree-ids">Reserved State Subtree IDs</a></h3>
+<h3 id="reserved-state-subtree-ids"><a class="header" href="#reserved-state-subtree-ids">Reserved State Subtree IDs</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th></tr></thead><tbody>
 <tr><td><code>ACCOUNTS_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x01</code></td></tr>
 <tr><td><code>ACTIVE_VALIDATORS_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x02</code></td></tr>
@@ -1077,23 +1083,23 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>DELEGATIONS_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x04</code></td></tr>
 <tr><td><code>MESSAGE_PAID_SUBTREE_ID</code></td><td><code>StateSubtreeID</code></td><td><code>0x05</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#rewards-and-penalties" id="rewards-and-penalties">Rewards and Penalties</a></h3>
+<h3 id="rewards-and-penalties"><a class="header" href="#rewards-and-penalties">Rewards and Penalties</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>unit</th><th>description</th></tr></thead><tbody>
 <tr><td><code>SECONDS_PER_YEAR</code></td><td><code>uint64</code></td><td><code>31536000</code></td><td>second</td><td>Seconds per year. Omit leap seconds.</td></tr>
 <tr><td><code>TARGET_ANNUAL_ISSUANCE</code></td><td><code>uint64</code></td><td><code>2 * 10**6</code></td><td><code>4u</code></td><td><code>(= 2000000)</code> Target number of coins to issue per year.</td></tr>
 </tbody></table>
-<h2><a class="header" href="#leader-selection" id="leader-selection">Leader Selection</a></h2>
+<h2 id="leader-selection"><a class="header" href="#leader-selection">Leader Selection</a></h2>
 <p>TODO</p>
-<h2><a class="header" href="#fork-choice" id="fork-choice">Fork Choice</a></h2>
+<h2 id="fork-choice"><a class="header" href="#fork-choice">Fork Choice</a></h2>
 <p>TODO</p>
-<h2><a class="header" href="#block-validity" id="block-validity">Block Validity</a></h2>
+<h2 id="block-validity"><a class="header" href="#block-validity">Block Validity</a></h2>
 <p>The validity of a newly-seen block, <code>block</code>, is determined by two components, detailed in subsequent sections:</p>
 <ol>
 <li><a href="specs/consensus.html#block-structure">Block structure</a>: whether the block header is valid, and data in a block is arranged into a valid and matching data root (i.e. syntax).</li>
 <li><a href="specs/consensus.html#state-transitions">State transition</a>: whether the application of transactions in the block produces a matching and valid state root (i.e. semantics).</li>
 </ol>
 <p>Pseudocode in this section is not in any specific language and should be interpreted as being in a neutral and sane language.</p>
-<h2><a class="header" href="#block-structure" id="block-structure">Block Structure</a></h2>
+<h2 id="block-structure"><a class="header" href="#block-structure">Block Structure</a></h2>
 <p>Before executing <a href="specs/consensus.html#state-transitions">state transitions</a>, the structure of the <a href="specs/./data_structures.html#block">block</a> must be verified.</p>
 <p>The following block fields are acquired from the network and parsed (i.e. <a href="specs/./data_structures.html#serialization">deserialized</a>). If they cannot be parsed, the block is ignored but is not explicitly considered invalid by consensus rules. Further implications of ignoring a block are found in the <a href="specs/./networking.html">networking spec</a>.</p>
 <ol>
@@ -1102,7 +1108,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><a href="specs/./data_structures.html#commit">block.lastCommit</a></li>
 </ol>
 <p>If the above fields are parsed successfully, the available data <code>block.availableData</code> is acquired in erasure-coded form as <a href="specs/./networking.html#availabledata">a list of share rows</a>, then parsed. If it cannot be parsed, the block is ignored but not explicitly invalid, as above.</p>
-<h3><a class="header" href="#blockheader" id="blockheader"><code>block.header</code></a></h3>
+<h3 id="blockheader"><a class="header" href="#blockheader"><code>block.header</code></a></h3>
 <p>The <a href="specs/./data_structures.html#header">block header</a> <code>block.header</code> (<code>header</code> for short) is the first thing that is downloaded from the new block, and commits to everything inside the block in some way. For previous block <code>prev</code> (if <code>prev</code> is not known, then the block is ignored), and previous block header <code>prev.header</code>, the following checks must be <code>true</code>:</p>
 <p><code>availableDataOriginalSquareSize</code> is computed as described <a href="specs/./data_structures.html#header">here</a>.</p>
 <ol>
@@ -1116,14 +1122,14 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><code>header.availableDataRoot</code> == the <a href="specs/./data_structures.html#binary-merkle-tree">Merkle root</a> of the tree with the row and column roots of <code>block.availableDataHeader</code> as leaves.</li>
 <li><code>header.proposerAddress</code> == the <a href="specs/consensus.html#leader-selection">leader</a> for <code>header.height</code>.</li>
 </ol>
-<h3><a class="header" href="#blockavailabledataheader" id="blockavailabledataheader"><code>block.availableDataHeader</code></a></h3>
+<h3 id="blockavailabledataheader"><a class="header" href="#blockavailabledataheader"><code>block.availableDataHeader</code></a></h3>
 <p>The <a href="specs/./data_structures.html#availabledataheader">available data header</a>) <code>block.availableDataHeader</code> (<code>availableDataHeader</code> for short) is then processed. This commits to the available data, which is only downloaded after the <a href="specs/consensus.html#blocklastcommit">consensus commit</a> is processed. The following checks must be <code>true</code>:</p>
 <ol>
 <li>Length of <code>availableDataHeader.rowRoots</code> == <code>availableDataOriginalSquareSize * 2</code>.</li>
 <li>Length of <code>availableDataHeader.colRoots</code> == <code>availableDataOriginalSquareSize * 2</code>.</li>
 <li>The length of each element in <code>availableDataHeader.rowRoots</code> and <code>availableDataHeader.colRoots</code> must be <a href="specs/./consensus.html#hashing"><code>32</code></a>.</li>
 </ol>
-<h3><a class="header" href="#blocklastcommit" id="blocklastcommit"><code>block.lastCommit</code></a></h3>
+<h3 id="blocklastcommit"><a class="header" href="#blocklastcommit"><code>block.lastCommit</code></a></h3>
 <p>The last <a href="specs/./data_structures.html#commit">commit</a> <code>block.lastCommit</code> (<code>lastCommit</code> for short) is processed next. This is the Tendermint commit (i.e. polka of votes) <em>for the previous block</em>. For previous block <code>prev</code> and previous block header <code>prev.header</code>, the following checks must be <code>true</code>:</p>
 <ol>
 <li><code>lastCommit.height</code> == <code>prev.header.height</code>.</li>
@@ -1133,14 +1139,14 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li>Each of <code>lastCommit.signatures</code> must be a valid <a href="specs/./data_structures.html#commitsig">CommitSig</a></li>
 <li>The sum of the votes for <code>prev</code> in <code>lastCommit</code> must be at least 2/3 (rounded up) of the voting power of <code>prev</code>'s next validator set.</li>
 </ol>
-<h3><a class="header" href="#blockavailabledata" id="blockavailabledata"><code>block.availableData</code></a></h3>
+<h3 id="blockavailabledata"><a class="header" href="#blockavailabledata"><code>block.availableData</code></a></h3>
 <p>The block's <a href="specs/./data_structures.html#availabledata">available data</a> (analogous to transactions in contemporary blockchain designs) <code>block.availableData</code> (<code>availableData</code> for short) is finally processed. The <a href="specs/./networking.html#availabledata">list of share rows</a> is parsed into the <a href="specs/./data_structures.html#availabledata">actual data structures</a> using the reverse of <a href="specs/./data_structures.html#arranging-available-data-into-shares">the process to encode available data into shares</a>; if parsing fails here, the block is invalid.</p>
 <p>Once parsed, the following checks must be <code>true</code>:</p>
 <ol>
 <li>The commitments of the <a href="specs/./data_structures.html#2d-reed-solomon-encoding-scheme">erasure-coded extended</a> <code>availableData</code> must match those in <code>header.availableDataHeader</code>. Implicitly, this means that both rows and columns must be ordered lexicographically by namespace ID since they are committed to in a <a href="specs/data_structures.html#namespace-merkle-tree">Namespace Merkle Tree</a>.</li>
 <li>Length of <code>availableData.intermediateStateRootData</code> == length of <code>availableData.transactionData</code> + length of <code>availableData.evidenceData</code> + 2. (Two additional state transitions are the <a href="specs/consensus.html#begin-block">begin</a> and <a href="specs/consensus.html#end-block">end block</a> implicit transitions.)</li>
 </ol>
-<h2><a class="header" href="#state-transitions" id="state-transitions">State Transitions</a></h2>
+<h2 id="state-transitions"><a class="header" href="#state-transitions">State Transitions</a></h2>
 <p>Once the basic structure of the block <a href="specs/consensus.html#block-structure">has been validated</a>, state transitions must be applied to compute the new state and state root.</p>
 <p>For this section, the variable <code>state</code> represents the <a href="specs/./data_structures.html#state">state tree</a>, with <code>state.accounts[k]</code>, <code>state.inactiveValidatorSet[k]</code>, <code>state.activeValidatorSet[k]</code>, and <code>state.delegationSet[k]</code> being shorthand for the leaf in the state tree in the <a href="specs/./data_structures.html#state">accounts, inactive validator set, active validator set, and delegation set subtrees</a> with <a href="specs/./data_structures.html#state">pre-hashed key</a> <code>k</code>. E.g. <code>state.accounts[a]</code> is shorthand for <code>state[(ACCOUNTS_SUBTREE_ID &lt;&lt; 8*(32-STATE_SUBTREE_RESERVED_BYTES)) | ((-1 &gt;&gt; 8*STATE_SUBTREE_RESERVED_BYTES) &amp; hash(a))]</code>.</p>
 <p>State transitions are applied in the following order:</p>
@@ -1150,10 +1156,10 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><a href="specs/consensus.html#blockavailabledatatransactiondata">Transactions</a>.</li>
 <li><a href="specs/consensus.html#end-block">End block</a>.</li>
 </ol>
-<h3><a class="header" href="#blockavailabledataevidencedata" id="blockavailabledataevidencedata"><code>block.availableData.evidenceData</code></a></h3>
+<h3 id="blockavailabledataevidencedata"><a class="header" href="#blockavailabledataevidencedata"><code>block.availableData.evidenceData</code></a></h3>
 <p>Evidence is the second set of state transitions that are applied, ahead of <a href="specs/consensus.html#blockavailabledatatransactiondata">transactions</a>.
 Each evidence represents proof of validator misbehavior, and causes a penalty against the validator(s).</p>
-<h3><a class="header" href="#blockavailabledatatransactiondata" id="blockavailabledatatransactiondata"><code>block.availableData.transactionData</code></a></h3>
+<h3 id="blockavailabledatatransactiondata"><a class="header" href="#blockavailabledatatransactiondata"><code>block.availableData.transactionData</code></a></h3>
 <p>Once <a href="specs/consensus.html#blockavailabledataevidencedata">evidence has been processed</a>, transactions are applied to the state. Note that <em>transactions</em> mutate the state (essentially, the validator set and minimal balances), while <em>messages</em> do not. See <a href="specs/./architecture.html">the architecture documentation</a> for more info.</p>
 <p><code>block.availableData.transactionData</code> is simply a list of <a href="specs/./data_structures.html#wrappedtransaction">WrappedTransaction</a>s. For each wrapped transaction in this list, <code>wrappedTransaction</code>, with index <code>i</code> (starting from <code>0</code>), the following checks must be <code>true</code>:</p>
 <ol>
@@ -1233,7 +1239,7 @@ totalCost(x, y, z) = x + tipCost(y, z)
     return reward // power
 </code></pre>
 <p>After applying a transaction, the new state state root is computed.</p>
-<h4><a class="header" href="#signedtransactiondatatransfer-1" id="signedtransactiondatatransfer-1">SignedTransactionDataTransfer</a></h4>
+<h4 id="signedtransactiondatatransfer-1"><a class="header" href="#signedtransactiondatatransfer-1">SignedTransactionDataTransfer</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1250,7 +1256,7 @@ state.accounts[tx.to].balance += tx.amount
 
 state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatapayformessage-1" id="signedtransactiondatapayformessage-1">SignedTransactionDataPayForMessage</a></h4>
+<h4 id="signedtransactiondatapayformessage-1"><a class="header" href="#signedtransactiondatapayformessage-1">SignedTransactionDataPayForMessage</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx) + tx.messageSize
 currentStartFinish = state.messagesPaid[findFromMessagePaidList(tx.messageStartIndex)]
 parentStartFinish = state.messagesPaid[parentFromMessagePaidList(findFromMessagePaidList(tx.messageStartIndex))]
@@ -1277,7 +1283,7 @@ messagePaidListInsert(tx, id(tx))
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatacreatevalidator-1" id="signedtransactiondatacreatevalidator-1">SignedTransactionDataCreateValidator</a></h4>
+<h4 id="signedtransactiondatacreatevalidator-1"><a class="header" href="#signedtransactiondatacreatevalidator-1">SignedTransactionDataCreateValidator</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1309,7 +1315,7 @@ state.inactiveValidatorSet[sender] = validator
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatabeginunbondingvalidator-1" id="signedtransactiondatabeginunbondingvalidator-1">SignedTransactionDataBeginUnbondingValidator</a></h4>
+<h4 id="signedtransactiondatabeginunbondingvalidator-1"><a class="header" href="#signedtransactiondatabeginunbondingvalidator-1">SignedTransactionDataBeginUnbondingValidator</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1342,7 +1348,7 @@ state.activeValidatorSet.activeVotingPower -= validator.votingPower
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondataunbondvalidator-1" id="signedtransactiondataunbondvalidator-1">SignedTransactionDataUnbondValidator</a></h4>
+<h4 id="signedtransactiondataunbondvalidator-1"><a class="header" href="#signedtransactiondataunbondvalidator-1">SignedTransactionDataUnbondValidator</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1370,7 +1376,7 @@ if validator.delegatedCount == 0
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatacreatedelegation-1" id="signedtransactiondatacreatedelegation-1">SignedTransactionDataCreateDelegation</a></h4>
+<h4 id="signedtransactiondatacreatedelegation-1"><a class="header" href="#signedtransactiondatacreatedelegation-1">SignedTransactionDataCreateDelegation</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1418,7 +1424,7 @@ else if state.accounts[tx.to].status == AccountStatus.ValidatorBonded
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondatabeginunbondingdelegation-1" id="signedtransactiondatabeginunbondingdelegation-1">SignedTransactionDataBeginUnbondingDelegation</a></h4>
+<h4 id="signedtransactiondatabeginunbondingdelegation-1"><a class="header" href="#signedtransactiondatabeginunbondingdelegation-1">SignedTransactionDataBeginUnbondingDelegation</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1470,7 +1476,7 @@ else if state.accounts[delegation.validator].status == AccountStatus.ValidatorBo
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondataunbonddelegation-1" id="signedtransactiondataunbonddelegation-1">SignedTransactionDataUnbondDelegation</a></h4>
+<h4 id="signedtransactiondataunbonddelegation-1"><a class="header" href="#signedtransactiondataunbonddelegation-1">SignedTransactionDataUnbondDelegation</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1509,7 +1515,7 @@ delete state.accounts[sender].delegationInfo
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactiondataburn-1" id="signedtransactiondataburn-1">SignedTransactionDataBurn</a></h4>
+<h4 id="signedtransactiondataburn-1"><a class="header" href="#signedtransactiondataburn-1">SignedTransactionDataBurn</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1524,7 +1530,7 @@ state.accounts[sender].balance -= totalCost(tx.amount, tx.fee.tipRate, bytesPaid
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactionredelegatecommission-1" id="signedtransactionredelegatecommission-1">SignedTransactionRedelegateCommission</a></h4>
+<h4 id="signedtransactionredelegatecommission-1"><a class="header" href="#signedtransactionredelegatecommission-1">SignedTransactionRedelegateCommission</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1564,7 +1570,7 @@ state.activeValidatorSet[delegation.validator] = validator
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#signedtransactionredelegatereward-1" id="signedtransactionredelegatereward-1">SignedTransactionRedelegateReward</a></h4>
+<h4 id="signedtransactionredelegatereward-1"><a class="header" href="#signedtransactionredelegatereward-1">SignedTransactionRedelegateReward</a></h4>
 <pre><code class="language-py">bytesPaid = len(tx)
 </code></pre>
 <p>The following checks must be <code>true</code>:</p>
@@ -1599,7 +1605,7 @@ state.activeValidatorSet[delegation.validator] = validator
 
 state.activeValidatorSet.proposerBlockReward += tipCost(tx.fee.tipRate, bytesPaid)
 </code></pre>
-<h4><a class="header" href="#begin-block" id="begin-block">Begin Block</a></h4>
+<h4 id="begin-block"><a class="header" href="#begin-block">Begin Block</a></h4>
 <p>At the beginning of the block, rewards are distributed to the block proposer.</p>
 <p>Apply the following to the state:</p>
 <pre><code class="language-py">proposer = state.activeValidatorSet[block.header.proposerAddress]
@@ -1614,7 +1620,7 @@ state.activeValidatorSet.proposerInitialVotingPower = proposer.votingPower
 
 state.activeValidatorSet[block.header.proposerAddress] = proposer
 </code></pre>
-<h4><a class="header" href="#end-block" id="end-block">End Block</a></h4>
+<h4 id="end-block"><a class="header" href="#end-block">End Block</a></h4>
 <p>Apply the following to the state:</p>
 <pre><code class="language-py">account = state.accounts[block.header.proposerAddress]
 
@@ -1647,13 +1653,13 @@ else if account.status == AccountStatus.ValidatorBonded
 <p>Bonding validators is simply setting their status to <code>AccountStatus.ValidatorBonded</code>. The logic for validator unbonding is found <a href="specs/consensus.html#signedtransactiondatabeginunbondingvalidator">here</a>, minus transaction sender updates (nonce, balance, and fee).</p>
 <p>Finally, the state subtree with ID <a href="specs/consensus.html#reserved-state-subtree-ids"><code>MESSAGE_PAID_SUBTREE_ID</code></a> is deleted.</p>
 <p>This end block implicit state transition is a single state transition, and <a href="specs/consensus.html#blockavailabledata">only has a single intermediate state root</a> associated with it.</p>
-<h1><a class="header" href="#honest-block-proposer" id="honest-block-proposer">Honest Block Proposer</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="honest-block-proposer"><a class="header" href="#honest-block-proposer">Honest Block Proposer</a></h1>
 <ul>
 <li><a href="specs/block_proposer.html#deciding-on-a-block-size">Deciding on a Block Size</a></li>
 <li><a href="specs/block_proposer.html#laying-out-transactions-and-messages">Laying out Transactions and Messages</a></li>
 </ul>
 <p>This document describes the tasks of an honest block proposer to assemble a new block. Performing these actions is not enforced by the <a href="specs/./consensus.html">consensus rules</a>, so long as a valid block is produced.</p>
-<h2><a class="header" href="#deciding-on-a-block-size" id="deciding-on-a-block-size">Deciding on a Block Size</a></h2>
+<h2 id="deciding-on-a-block-size"><a class="header" href="#deciding-on-a-block-size">Deciding on a Block Size</a></h2>
 <p>Before <a href="specs/./data_structures.html#arranging-available-data-into-shares">arranging available data into shares</a>, the size of the original data's square must be determined.</p>
 <p>There are two restrictions on the original data's square size:</p>
 <ol>
@@ -1671,8 +1677,8 @@ else if account.status == AccountStatus.ValidatorBonded
 </li>
 </ol>
 <p>Note: the maximum padding shares between messages should be at most twice the number of message shares. Doubling the square size (i.e. quadrupling the number of shares in the square) should thus only have to happen at most once.</p>
-<h2><a class="header" href="#laying-out-transactions-and-messages" id="laying-out-transactions-and-messages">Laying out Transactions and Messages</a></h2>
-<h1><a class="header" href="#networking" id="networking">Networking</a></h1>
+<h2 id="laying-out-transactions-and-messages"><a class="header" href="#laying-out-transactions-and-messages">Laying out Transactions and Messages</a></h2>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="networking"><a class="header" href="#networking">Networking</a></h1>
 <ul>
 <li><a href="specs/networking.html#wire-format">Wire Format</a>
 <ul>
@@ -1683,16 +1689,16 @@ else if account.status == AccountStatus.ValidatorBonded
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#wire-format" id="wire-format">Wire Format</a></h2>
-<h3><a class="header" href="#availabledata-1" id="availabledata-1">AvailableData</a></h3>
+<h2 id="wire-format"><a class="header" href="#wire-format">Wire Format</a></h2>
+<h3 id="availabledata-1"><a class="header" href="#availabledata-1">AvailableData</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>availableDataRows</code></td><td><a href="specs/networking.html#availabledatarow">AvailableDataRow</a><code>[]</code></td><td>List of rows.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#availabledatarow" id="availabledatarow">AvailableDataRow</a></h3>
+<h3 id="availabledatarow"><a class="header" href="#availabledatarow">AvailableDataRow</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>shares</code></td><td><a href="specs/./data_structures.html#share">Share</a><code>[]</code></td><td>Shares in a row.</td></tr>
 </tbody></table>
-<h3><a class="header" href="#consensusproposal" id="consensusproposal">ConsensusProposal</a></h3>
+<h3 id="consensusproposal"><a class="header" href="#consensusproposal">ConsensusProposal</a></h3>
 <p>Defined as <code>ConsensusProposal</code>:</p>
 <pre><code class="language-protobuf">message ConsensusProposal {
   SignedMsgType type = 1;
@@ -1731,7 +1737,7 @@ else if account.status == AccountStatus.ValidatorBonded
 <li>For <a href="specs/./node_types.html#node-type-definitions">full nodes</a>, <code>proposal.da_header</code> must be the result of computing the roots of the shares (received separately).</li>
 <li>For <a href="specs/./node_types.html#node-type-definitions">light nodes</a>, <code>proposal.da_header</code> should be sampled from for availability.</li>
 </ol>
-<h3><a class="header" href="#wiretxpayformessage" id="wiretxpayformessage">WireTxPayForMessage</a></h3>
+<h3 id="wiretxpayformessage"><a class="header" href="#wiretxpayformessage">WireTxPayForMessage</a></h3>
 <p>Defined as <code>WireTxPayForMessage</code>:</p>
 <pre><code class="language-protobuf">message WireTxPayForMessage {
   TransactionFee fee = 1;
@@ -1746,7 +1752,7 @@ else if account.status == AccountStatus.ValidatorBonded
 <p>Accepting a <code>WireTxPayForMessage</code> into the mempool requires different logic than other transactions in LazyLedger, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> (the canonical data type that is included in blocks and committed to with a data root in the block header), each <code>WireTxPayForMessage</code> (the over-the-wire representation of the same) has potentially multiple signatures.</p>
 <p>Transaction senders who want to pay for a message will create a <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> object, <code>stx</code>, filling in the <code>stx.messageShareCommitment</code> field <a href="specs/../rationale/message_block_layout.html#non-interactive-default-rules">based on the non-interactive default rules</a> for <code>k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code>, then signing it to get a <a href="specs/./data_structures.html#transaction">transaction</a> <code>tx</code>. This process is repeated with successively smaller <code>k</code>s, decreasing by powers of 2 until <code>k * k &lt;= stx.messageSize</code>. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of <code>(tx.signedTransactionData.messageShareCommitment, tx.signature)</code>, a <code>WireTxPayForMessage</code> object is constructed.</p>
 <p>Receiving a <code>WireTxPayForMessage</code> object from the network follows the reverse process: for each <code>message_commitment_and_signature</code>, verify using the <a href="specs/../rationale/message_block_layout.html#non-interactive-default-rules">based on the non-interactive default rules</a> that the signature is valid.</p>
-<h1><a class="header" href="#node-types" id="node-types">Node Types</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="node-types"><a class="header" href="#node-types">Node Types</a></h1>
 <ul>
 <li><a href="specs/node_types.html#node-parameters">Node Parameters</a>
 <ul>
@@ -1774,38 +1780,38 @@ else if account.status == AccountStatus.ValidatorBonded
 </li>
 <li><a href="specs/node_types.html#node-type-definitions">Node Type Definitions</a></li>
 </ul>
-<h2><a class="header" href="#node-parameters" id="node-parameters">Node Parameters</a></h2>
+<h2 id="node-parameters"><a class="header" href="#node-parameters">Node Parameters</a></h2>
 <p>Nodes that run the <a href="specs/./consensus.html">LazyLedger protocol</a> have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the <code>header</code> and <code>lastCommit</code> fields of each <a href="specs/./data_structures.html#block">block</a>, but can handle the <code>availableDataHeader</code> and <code>availableData</code> fields differently.</p>
 <p>We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority (&gt; 2/3) of validator voting power performs an attributable—and thus <a href="specs/./consensus.html#blockavailabledataevidencedata">penalizable</a>—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).</p>
-<h3><a class="header" href="#block-headers" id="block-headers">Block Headers</a></h3>
-<h4><a class="header" href="#compact-block-headers" id="compact-block-headers">Compact Block Headers</a></h4>
+<h3 id="block-headers"><a class="header" href="#block-headers">Block Headers</a></h3>
+<h4 id="compact-block-headers"><a class="header" href="#compact-block-headers">Compact Block Headers</a></h4>
 <p>Nodes that only process compact block headers will download and validate the <a href="specs/./data_structures.html#header">block header</a> <em>without</em> downloading or validating the <code>availableDataHeader</code> <a href="specs/./data_structures.html#block">block</a> field that is committed to in the block header. These nodes cannot perform Data Availability Sampling on <a href="specs/node_types.html#block-bodies">block bodies</a>.</p>
 <p>Secure under an honest supermajority of validator voting power and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#extended-block-headers" id="extended-block-headers">Extended Block Headers</a></h4>
+<h4 id="extended-block-headers"><a class="header" href="#extended-block-headers">Extended Block Headers</a></h4>
 <p>Nodes that process extended block headers will download and validate both the <a href="specs/node_types.html#compact-block-headers">compact block header</a> and the
 <a href="specs/./data_structures.html##availabledataheader"><code>availabledataheader</code></a> <a href="specs/./data_structures.html#block">block</a> field. These nodes can perform Data Availability Sampling on <a href="specs/node_types.html#block-bodies">block bodies</a>, and their security assumptions depend on how block bodies are handled.</p>
-<h3><a class="header" href="#block-bodies" id="block-bodies">Block Bodies</a></h3>
+<h3 id="block-bodies"><a class="header" href="#block-bodies">Block Bodies</a></h3>
 <p>Block bodies (the <code>availableData</code> <a href="specs/./data_structures.html#block">block</a> field) can be downloaded and optionally stored and/or served. Storing and serving block body data has no effect on node security assumptions.</p>
-<h4><a class="header" href="#no-bodies" id="no-bodies">No Bodies</a></h4>
+<h4 id="no-bodies"><a class="header" href="#no-bodies">No Bodies</a></h4>
 <p>Nodes that only process <a href="specs/node_types.html#compact-block-headers">compact block headers</a> have no need for block bodies and simply do not process block bodies.</p>
 <p>Secure under an honest supermajority majority of validator voting power and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#sampled-bodies" id="sampled-bodies">Sampled Bodies</a></h4>
+<h4 id="sampled-bodies"><a class="header" href="#sampled-bodies">Sampled Bodies</a></h4>
 <p>These nodes perform Data Availability Sampling on block bodies.</p>
 <p>Secure under an honest minority of nodes and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#partial-bodies" id="partial-bodies">Partial Bodies</a></h4>
+<h4 id="partial-bodies"><a class="header" href="#partial-bodies">Partial Bodies</a></h4>
 <p>These nodes fully download and validate <a href="specs/./data_structures.html#2d-reed-solomon-encoding-scheme">the erasure coding</a> of a random subset of block bodies (configurable locally). Since the erasure coding of each block is stateless, nodes that perform validation of partial bodies contribute to the overall security of the network by being able to produce <a href="specs/./data_structures.html#invalid-erasure-coding">fraud proofs of invalid erasure coding</a>.</p>
 <p>Secure under an honest minority of nodes and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#full-bodies" id="full-bodies">Full Bodies</a></h4>
+<h4 id="full-bodies"><a class="header" href="#full-bodies">Full Bodies</a></h4>
 <p>These nodes fully download and validate <a href="specs/./data_structures.html#2d-reed-solomon-encoding-scheme">the erasure coding</a> of all block bodies.</p>
 <p>If <a href="specs/node_types.html#no-transactions">transactions are not processed</a>, secure under an honest minority of nodes and a weak subjectivity assumption. If <a href="specs/node_types.html#full-transactions">transactions are processed</a>, secure under a weak subjectivity assumption.</p>
-<h3><a class="header" href="#transactions" id="transactions">Transactions</a></h3>
-<h4><a class="header" href="#no-transactions" id="no-transactions">No Transactions</a></h4>
+<h3 id="transactions"><a class="header" href="#transactions">Transactions</a></h3>
+<h4 id="no-transactions"><a class="header" href="#no-transactions">No Transactions</a></h4>
 <p>These nodes process do not process requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> and thus to not know the chain state without relying on a third party.</p>
 <p>At most secure under an honest minority of nodes and a weak subjectivity assumption.</p>
-<h4><a class="header" href="#full-transactions" id="full-transactions">Full Transactions</a></h4>
+<h4 id="full-transactions"><a class="header" href="#full-transactions">Full Transactions</a></h4>
 <p>Nodes that wish to produce new blocks must know the <a href="specs/./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the LazyLedger state, as <a href="specs/./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
 <p>At most secure under a weak subjectivity assumption.</p>
-<h2><a class="header" href="#node-type-definitions" id="node-type-definitions">Node Type Definitions</a></h2>
+<h2 id="node-type-definitions"><a class="header" href="#node-type-definitions">Node Type Definitions</a></h2>
 <p>For convenience, we will define several common parameter configurations:</p>
 <ol>
 <li><a href="https://en.bitcoin.it/wiki/Full_node">Full nodes</a> provide the strongest security guarantees. Block bodies do not need to be stored.
@@ -1851,13 +1857,13 @@ else if account.status == AccountStatus.ValidatorBonded
 </ul>
 </li>
 </ol>
-<h1><a class="header" href="#rationale" id="rationale">Rationale</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="rationale"><a class="header" href="#rationale">Rationale</a></h1>
 <ul>
 <li><a href="rationale/./rewards.html">Block Rewards</a></li>
 <li><a href="rationale/./distributing_rewards.html">Distributing Rewards and Penalties</a></li>
 <li><a href="rationale/./message_block_layout.html">Message Layout</a></li>
 </ul>
-<h1><a class="header" href="#block-rewards" id="block-rewards">Block Rewards</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="block-rewards"><a class="header" href="#block-rewards">Block Rewards</a></h1>
 <p>Block rewards scale with the inverse square root of the total validating stake. This gives us a nice property: as the total validating stake decreases, returns per validator increases. This encourages additional validators to join and makes the system as a whole more robust even in the presence of secondary uses of the staking coin, e.g. being used as collateral in Decentralized Finance protocols.</p>
 <p>Note that non-constant reward scaling opens up the system to <a href="https://arxiv.org/abs/1811.00742">gatekeeping attacks</a>, whereby validators are incentivized to prevent new validators from joining the validator set to keep their returns high. This should not be an issue in practice in the same way as <a href="https://bitcointalk.org/index.php?topic=312668.0">feather forks</a> are not an issue in practice, but is nonetheless a theoretical issue that is noted here.</p>
 <p>The formula to calculate the reward per block uses the following symbols:</p>
@@ -1875,7 +1881,7 @@ else if account.status == AccountStatus.ValidatorBonded
 R_B(S_T) = I_T \frac{t_B}{t_Y} \frac{\sqrt{S_T}}{\sqrt{S_0}} = \left( \frac{I_T t_B }{t_Y \sqrt{S_0}} \right) \sqrt{S_T}
 $$</p>
 <p>If 100% of the initial supply of coins stake, then exactly \( I_T \) new coins will be issued per \( \frac{t_Y}{t_B} \) blocks. If fewer than 100% of the initial supply of coins stake, then fewer than \( I_T \) new coins will be issued, but the decrease will be square-root rather than linear. If greater than 100% of the initial supply of coins stake (e.g. after some time, additional coins will be in circulation due to previous issuance), then greater than \( I_T \) new coins will be issued, but again scaling sub-linearly.</p>
-<h1><a class="header" href="#rationale-distributing-rewards-and-penalties" id="rationale-distributing-rewards-and-penalties">Rationale: Distributing Rewards and Penalties</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="rationale-distributing-rewards-and-penalties"><a class="header" href="#rationale-distributing-rewards-and-penalties">Rationale: Distributing Rewards and Penalties</a></h1>
 <ul>
 <li><a href="rationale/distributing_rewards.html#preamble">Preamble</a></li>
 <li><a href="rationale/distributing_rewards.html#distribution-scheme">Distribution Scheme</a>
@@ -1884,7 +1890,7 @@ $$</p>
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#preamble" id="preamble">Preamble</a></h2>
+<h2 id="preamble"><a class="header" href="#preamble">Preamble</a></h2>
 <p>Due to the requirement that all incorrect state transitions on LazyLedger be provable with a <a href="https://arxiv.org/abs/1809.09044">compact fraud proof</a> that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:</p>
 <ol>
 <li>In-protocol stake delegation: this makes it easier for users to participate in the consensus process, and reduces reliance on custodial staking services.</li>
@@ -1892,14 +1898,14 @@ $$</p>
 </ol>
 <p>Naively, rewards and penalties (henceforth referred to collectively as &quot;rewards&quot;, since penalties are simply negative rewards) can be distributed immediately. For example, when a validator produces a new block and is entitled to collecting transaction fees, these fees can be distributed to every single account delegating stake to this validator. This requires iterating over potentially a huge number of state elements for a single state transition (i.e. transaction), which is computationally expensive. The specific problem is that it would be infeasible to prove that such a state transition was <em>incorrect</em> (i.e. with a fraud proof) within the execution system of a remote blockchain (i.e. with a smart contract).</p>
 <p>This forms the primary motivation of the scheme discussed here: a mechanism for distributing rewards that is state-efficient and requires no iteration over state elements for any state transition.</p>
-<h2><a class="header" href="#distribution-scheme" id="distribution-scheme">Distribution Scheme</a></h2>
+<h2 id="distribution-scheme"><a class="header" href="#distribution-scheme">Distribution Scheme</a></h2>
 <p>The scheme presented here is an incarnation of Cosmos' <a href="https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/fee_distribution/f1_fee_distr.pdf">F1 fee distribution scheme</a>. F1 has the nice property of being approximation-free and, with proper implementation details, can be highly efficient with state usage and completely iteration-free in all cases.</p>
 <p>Naively, when considering a single block, the reward that should be given to a delegator with stake \( x \), who is delegating to a validator with total voting power \( n \), whose reward in that block is \( T \), is:</p>
 <p>$$
 \text{naive reward} = x \frac{T}{n}
 $$</p>
 <p>In other words, the voting power contributed by the delegator multiplied by the <em>reward rate</em>, i.e. the rewards per unit of voting power. We note that if the total voting power of a validator remains constant forever, then the above equation holds and is approximation-free. However, changes to the total voting power need to be accounted for.</p>
-<p>Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a <em>period</em>. Every time a validator's voting power changes (i.e. a new period \( f \) begins), an entry \( Entry_f \) for this period is saved in state, which records_the reward rate up to the beginning of_ \( f \). This is simply the sum of the reward rate up to the beginning of previous period \( f-1 \) and the reward rate of the period \( f \) itself:</p>
+<p>Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a <em>period</em>. Every time a validator's voting power changes (i.e. a new period \( f \) begins), an entry \( Entry_f \) for this period is saved in state, which records <em>the reward rate up to the beginning of</em> \( f \). This is simply the sum of the reward rate up to the beginning of previous period \( f-1 \) and the reward rate of the period \( f \) itself:</p>
 <p>$$
 Entry_f = \begin{cases}
 0 &amp; f = 0 \\
@@ -1912,14 +1918,14 @@ $$</p>
 \text{reward} = x (Entry_f - Entry_k)
 $$</p>
 <p>This raw reward can be scaled by additional factors, such as commissions or slashing penalties.</p>
-<h3><a class="header" href="#state-efficient-implementation" id="state-efficient-implementation">State-Efficient Implementation</a></h3>
+<h3 id="state-efficient-implementation"><a class="header" href="#state-efficient-implementation">State-Efficient Implementation</a></h3>
 <p>The F1 paper does not specify where entries are stored in state, but the understanding is that they are placed in independent state elements. This has the downside of requiring multiple Merkle branches to prove the inclusion of entries for e.g. fraud proofs. We can improve on this by leveraging a specific property of entries, namely that each entry is only used in exactly two cases:</p>
 <ol>
 <li>To compute the next entry.</li>
 <li>To compute the reward of a delegator.</li>
 </ol>
 <p>Intuitively, after having being used twice, an entry can be pruned from the state. We can make use of this by storing only the latest entry with its respective validator object, and a copy of the two entries each delegation needs with the delegation object. By storing entries directly with the objects that require them, state transitions can be statelessly validated without extra inclusion proofs.</p>
-<h1><a class="header" href="#message-layout" id="message-layout">Message Layout</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="message-layout"><a class="header" href="#message-layout">Message Layout</a></h1>
 <ul>
 <li><a href="rationale/message_block_layout.html#preamble">Preamble</a></li>
 <li><a href="rationale/message_block_layout.html#message-layout-rationale">Message Layout Rationale</a>
@@ -1929,9 +1935,9 @@ $$</p>
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#preamble-1" id="preamble-1">Preamble</a></h2>
+<h2 id="preamble-1"><a class="header" href="#preamble-1">Preamble</a></h2>
 <p>LazyLedger uses <a href="https://arxiv.org/abs/1809.09044">a data availability scheme</a> that allows nodes to determine whether a block's data was published without downloading the whole block. The core of this scheme is arranging data in a two-dimensional matrix then applying erasure coding to each row and column. This document describes the rationale for how data—transactions, messages, and other data—<a href="rationale/../specs/data_structures.html#arranging-available-data-into-shares">is actually arranged</a>. Familiarity with the <a href="https://arxiv.org/abs/1809.09044">originally proposed data layout format</a> is assumed.</p>
-<h2><a class="header" href="#message-layout-rationale" id="message-layout-rationale">Message Layout Rationale</a></h2>
+<h2 id="message-layout-rationale"><a class="header" href="#message-layout-rationale">Message Layout Rationale</a></h2>
 <p>Block data consists of transactions (which modify the LazyLedger chain's state), intermediate state roots (required for fraud proofs of the aforementioned transactions), messages (binary blobs which do not modify the LazyLedger state, but which are intended for a LazyLedger application identified with a provided namespace ID), and other relevant pieces of data (e.g. evidence for slashing). We want to arrange this data into a <code>k * k</code> matrix of fixed-sized shares, which will later be committed to in <a href="rationale/../specs/data_structures.html#namespace-merkle-tree">Namespace Merkle Trees (NMTs)</a>.</p>
 <p>The simplest way we can imagine arranging block data is to simply serialize it all in no particular order, split it into fixed-sized shares, then arrange those shares into the <code>k * k</code> matrix in row-major order. However, this naive scheme can be improved in a number of ways, described below.</p>
 <p>First, we impose some ground rules:</p>
@@ -1949,7 +1955,7 @@ $$</p>
 </ol>
 <p>Specifically, messages must begin at a new share, unlike non-message data which can span multiple shares. We note a nice property from this rule: if the transaction sender knows 1) <code>k</code>, the size of the matrix, 2) the starting location of their message in a row, and 3) the length of the message (they know this since they are sending the message), then they can actually compute a sequence of roots to <em>subtrees in the row NMTs</em>. More importantly, anyone can compute this, and can compute <em>the simple Merkle root of these subtree roots</em>.</p>
 <p>This, however, requires the block producer to interact with the transaction sender to provide them the starting location of their message. This can be done selectively, but is not ideal as a default for e.g. end-user wallets.</p>
-<h3><a class="header" href="#non-interactive-default-rules" id="non-interactive-default-rules">Non-Interactive Default Rules</a></h3>
+<h3 id="non-interactive-default-rules"><a class="header" href="#non-interactive-default-rules">Non-Interactive Default Rules</a></h3>
 <p>As a non-consensus-critical default, we can impose some additional rules on message placement to make the possible starting locations of messages sufficiently predictable and constrained such that users can deterministically compute subtree roots without interaction:</p>
 <ol>
 <li>Messages that span multiple rows must begin at the start of a row (this can occur if a message is longer than <code>k</code> shares <em>or</em> if the block producer decides to start a message partway through a row and it cannot fit).</li>
@@ -1958,7 +1964,7 @@ $$</p>
 <p>With the above constraints, we can compute subtree roots deterministically easily: simply slice off either the largest power of 2 that isn't larger than the remaining message length, or <code>k</code>, whichever is smaller. This is done recursively. As an example, with <code>k = 4</code> and message length of <code>11</code>, the message would be sliced with lengths <code>4, 4, 2, 1</code>. The resulting slices are the leaves of subtrees whose roots can be computed. Due to the rules above, the subtrees are guaranteed to be aligned to powers of 2, and thus the subtree roots will be present as internal nodes in the NMT of <em>some</em> row(s).</p>
 <p>This is similar to <a href="https://www.usenix.org/legacy/event/sec09/tech/full_papers/crosby.pdf">Merkle Mountain Ranges</a>, though with the largest subtree bounded by <code>k</code> rather than being unbounded.</p>
 <p>The last piece of the puzzle is determining <em>which</em> row the message is placed at (or, more specifically, the starting location). This is needed to keep the block producer accountable. To this end, the block producer simply augments each fee-paying transaction with some metadata: the starting location of the message the transaction pays for.</p>
-<h3><a class="header" href="#caveats" id="caveats">Caveats</a></h3>
+<h3 id="caveats"><a class="header" href="#caveats">Caveats</a></h3>
 <p>The message placement rules described above conflict with the first rule that shares must be ordered by namespace ID, as shares between two messages that are not placed adjacent to each other do not have a natural namespace they belong to. This is resolved by requiring that such shares have a value of zero and a namespace ID equal to the preceding message's. Since their value is known, they can be omitted from NMT proofs of all shares of a given namespace ID.</p>
 
                     </main>

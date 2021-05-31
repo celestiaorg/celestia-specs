@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -131,21 +133,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -166,18 +172,18 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#architecture" id="architecture">Architecture</a></h1>
+                        <h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
 <ul>
 <li><a href="#common-terms-and-expressions">Common Terms and Expressions</a></li>
 <li><a href="#system-architecture">System Architecture</a></li>
 </ul>
-<h2><a class="header" href="#common-terms-and-expressions" id="common-terms-and-expressions">Common Terms and Expressions</a></h2>
+<h2 id="common-terms-and-expressions"><a class="header" href="#common-terms-and-expressions">Common Terms and Expressions</a></h2>
 <table><thead><tr><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>App (application)</td><td>Alternate name for &quot;<a href="https://arxiv.org/abs/1905.09274">virtual sidechain</a>.&quot; LazyLedger apps are sidechains that post all their data onto the LazyLedger chain to share security.</td></tr>
 <tr><td>Transaction</td><td>Request that modifies the consensus-critical state (validator balances and statuses).</td></tr>
 <tr><td>Message</td><td>Request that is executed by a non-consensus-critical app.</td></tr>
 </tbody></table>
-<h2><a class="header" href="#system-architecture" id="system-architecture">System Architecture</a></h2>
+<h2 id="system-architecture"><a class="header" href="#system-architecture">System Architecture</a></h2>
 <p>LazyLedger has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native <em>transactions</em>, distinct from the <em>messages</em> processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.</p>
 <p>Transactions pay fees similarly to how they would in a normal blockchain (e.g. Bitcoin), and their side effects are restricted to modifying the validator set and their balances. Transactions can additionally pay fees for the inclusion of a message (identified by a hash) in the same block. The validator set is committed to in the block header, and since the entire system state <em>is</em> the validator set, this is the only state commitment needed in the header.</p>
 <p>One desideratum that will most likely be included is <a href="https://github.com/lazyledger/lazyledger-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md">burning a non-proportional amount of coins for each transaction as a network fee</a>. This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.</p>

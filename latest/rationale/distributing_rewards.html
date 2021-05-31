@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -131,21 +133,25 @@
                     <h1 class="menu-title">LazyLedger Specifications</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                         <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -166,7 +172,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#rationale-distributing-rewards-and-penalties" id="rationale-distributing-rewards-and-penalties">Rationale: Distributing Rewards and Penalties</a></h1>
+                        <h1 id="rationale-distributing-rewards-and-penalties"><a class="header" href="#rationale-distributing-rewards-and-penalties">Rationale: Distributing Rewards and Penalties</a></h1>
 <ul>
 <li><a href="#preamble">Preamble</a></li>
 <li><a href="#distribution-scheme">Distribution Scheme</a>
@@ -175,7 +181,7 @@
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#preamble" id="preamble">Preamble</a></h2>
+<h2 id="preamble"><a class="header" href="#preamble">Preamble</a></h2>
 <p>Due to the requirement that all incorrect state transitions on LazyLedger be provable with a <a href="https://arxiv.org/abs/1809.09044">compact fraud proof</a> that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:</p>
 <ol>
 <li>In-protocol stake delegation: this makes it easier for users to participate in the consensus process, and reduces reliance on custodial staking services.</li>
@@ -183,14 +189,14 @@
 </ol>
 <p>Naively, rewards and penalties (henceforth referred to collectively as &quot;rewards&quot;, since penalties are simply negative rewards) can be distributed immediately. For example, when a validator produces a new block and is entitled to collecting transaction fees, these fees can be distributed to every single account delegating stake to this validator. This requires iterating over potentially a huge number of state elements for a single state transition (i.e. transaction), which is computationally expensive. The specific problem is that it would be infeasible to prove that such a state transition was <em>incorrect</em> (i.e. with a fraud proof) within the execution system of a remote blockchain (i.e. with a smart contract).</p>
 <p>This forms the primary motivation of the scheme discussed here: a mechanism for distributing rewards that is state-efficient and requires no iteration over state elements for any state transition.</p>
-<h2><a class="header" href="#distribution-scheme" id="distribution-scheme">Distribution Scheme</a></h2>
+<h2 id="distribution-scheme"><a class="header" href="#distribution-scheme">Distribution Scheme</a></h2>
 <p>The scheme presented here is an incarnation of Cosmos' <a href="https://github.com/cosmos/cosmos-sdk/blob/master/docs/spec/fee_distribution/f1_fee_distr.pdf">F1 fee distribution scheme</a>. F1 has the nice property of being approximation-free and, with proper implementation details, can be highly efficient with state usage and completely iteration-free in all cases.</p>
 <p>Naively, when considering a single block, the reward that should be given to a delegator with stake \( x \), who is delegating to a validator with total voting power \( n \), whose reward in that block is \( T \), is:</p>
 <p>$$
 \text{naive reward} = x \frac{T}{n}
 $$</p>
 <p>In other words, the voting power contributed by the delegator multiplied by the <em>reward rate</em>, i.e. the rewards per unit of voting power. We note that if the total voting power of a validator remains constant forever, then the above equation holds and is approximation-free. However, changes to the total voting power need to be accounted for.</p>
-<p>Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a <em>period</em>. Every time a validator's voting power changes (i.e. a new period \( f \) begins), an entry \( Entry_f \) for this period is saved in state, which records_the reward rate up to the beginning of_ \( f \). This is simply the sum of the reward rate up to the beginning of previous period \( f-1 \) and the reward rate of the period \( f \) itself:</p>
+<p>Blocks between two changes to a validator's voting power (i.e. whenever a user delegates or undelegates stake) are a <em>period</em>. Every time a validator's voting power changes (i.e. a new period \( f \) begins), an entry \( Entry_f \) for this period is saved in state, which records <em>the reward rate up to the beginning of</em> \( f \). This is simply the sum of the reward rate up to the beginning of previous period \( f-1 \) and the reward rate of the period \( f \) itself:</p>
 <p>$$
 Entry_f = \begin{cases}
 0 &amp; f = 0 \\
@@ -203,7 +209,7 @@ $$</p>
 \text{reward} = x (Entry_f - Entry_k)
 $$</p>
 <p>This raw reward can be scaled by additional factors, such as commissions or slashing penalties.</p>
-<h3><a class="header" href="#state-efficient-implementation" id="state-efficient-implementation">State-Efficient Implementation</a></h3>
+<h3 id="state-efficient-implementation"><a class="header" href="#state-efficient-implementation">State-Efficient Implementation</a></h3>
 <p>The F1 paper does not specify where entries are stored in state, but the understanding is that they are placed in independent state elements. This has the downside of requiring multiple Merkle branches to prove the inclusion of entries for e.g. fraud proofs. We can improve on this by leveraging a specific property of entries, namely that each entry is only used in exactly two cases:</p>
 <ol>
 <li>To compute the next entry.</li>

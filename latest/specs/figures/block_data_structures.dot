@@ -7,17 +7,12 @@ digraph G {
 
         subgraph cluster_availableheader {
             label = "availableDataHeader";
-            struct5 [label = "{<f0> | { rowRoots | colRoots } }"];
+            struct4 [label = "{<f0> | { rowRoots | colRoots } }"];
         }
 
         subgraph cluster_body {
             label = "availableData";
-            struct4 [label = "{ | { transactionData | intermediateStateRoots | evidenceData | messageData } }"];
-        }
-
-        subgraph cluster_feeheader {
-            label = "feeHeader";
-            struct3 [label = "baseRate | tipRate"];
+            struct3 [label = "{ | { transactionData | intermediateStateRoots | evidenceData | messageData } }"];
         }
 
         subgraph cluster_lastcommit {
@@ -27,16 +22,15 @@ digraph G {
 
         subgraph cluster_header {
             label = "header";
-            struct1 [label = "height | timestamp | lastHeaderHash | <f3> lastCommitHash | consensusRoot | <f5> feeHeader | stateCommitment | availableDataOriginalSharesUsed | <f8> availableDataRoot | proposerAddress"];
+            struct1 [label = "version | chainID | height | timestamp | lastHeaderHash | <f5> lastCommitHash | consensusHash | stateCommitment | availableDataOriginalSharesUsed | <f9> availableDataRoot | proposerAddress"];
         }
     }
 
-    struct1:f4 -> struct2;
-    struct1:f5 -> struct3;
-    struct1:f8 -> struct5 [label = "Merkle root of"];
-    struct5:f0 -> struct4 [label = "NMT roots to\nerasure-coded data"];
+    struct1:f5 -> struct2;
+    struct1:f9 -> struct4 [label = "Merkle root of"];
+    struct4:f0 -> struct3 [label = "NMT roots to\nerasure-coded data"];
 
     edge [style = invis];
+    struct1 -> struct3;
     struct1 -> struct4;
-    struct1 -> struct5;
 }
