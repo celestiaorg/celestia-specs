@@ -103,3 +103,5 @@ For convenience, we will define several common parameter configurations:
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Full Bodies](#full-bodies)
     - Transactions: [Full Transactions](#full-transactions)
+
+Note: partial nodes may also serve the purpose of storage nodes (distributing shares to the network) for a subset of blocks.
