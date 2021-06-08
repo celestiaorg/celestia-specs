@@ -79,29 +79,57 @@ At most secure under a weak subjectivity assumption.
 
 For convenience, we will define several common parameter configurations:
 
-1. [Full nodes](https://en.bitcoin.it/wiki/Full_node) provide the strongest security guarantees. Block bodies do not need to be stored.
+1. [Full nodes](https://en.bitcoin.it/wiki/Full_node) provide the strongest security guarantees.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Full Bodies](#full-bodies)
+        - Storage: Not stored beyond a parameter
+        - Serving: Served to the network
     - Transactions: [Full Transactions](#full-transactions)
+    - Fraud proofs:
+        - State transition: produce, consume
+        - Erasure coding: produce, consume
 1. Partial nodes are capable of producing fraud proofs of invalid transactions and contribute to validating the erasure coding of random blocks.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Partial Bodies](#partial-bodies)
+        - Storage: Not stored beyond a parameter
+        - Serving: Served to the network
     - Transactions: [Full Transactions](#full-transactions)
+    - Fraud proofs:
+        - State transition: produce, consume
+        - Erasure coding: produce (partial), consume
 1. Light nodes perform Data Availability Sampling (DAS) and are secure under an honest minority.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Sampled Bodies](#sampled-bodies)
+        - Storage: Not stored beyond a parameter
+        - Serving: Served to the network
     - Transactions: [No Transactions](#no-transactions)
+    - Fraud proofs:
+        - State transition: consume
+        - Erasure coding: consume
 1. Superlight nodes do not perform DAS and are secure under an honest majority.
     - Block headers: [Compact Block Headers](#compact-block-headers)
     - Block bodies: [No Bodies](#no-bodies)
+        - Storage: Not stored
+        - Serving: Not served to the network
     - Transactions: [No Transactions](#no-transactions)
-1. Light validator nodes can produce new blocks with strong security guarantees and light resource requirements.
-    - Block headers: [Extended Block Headers](#extended-block-headers)
-    - Block bodies: [Sampled Bodies](#sampled-bodies)
-    - Transactions: [Full Transactions](#full-transactions)
-1. Storage nodes provide the same security guarantees as full nodes. Block bodies (in [erasure-coded form](./data_structures.md#2d-reed-solomon-encoding-scheme)) are stored and served to the network.
+    - Fraud proofs:
+        - State transition: consume
+        - Erasure coding: consume
+1. Storage nodes provide the same security guarantees as full nodes.
     - Block headers: [Extended Block Headers](#extended-block-headers)
     - Block bodies: [Full Bodies](#full-bodies)
+        - Storage: Fully stored in [erasure-coded form](./data_structures.md#2d-reed-solomon-encoding-scheme)
+        - Serving: Served to the network
     - Transactions: [Full Transactions](#full-transactions)
-
-Note: partial nodes may also serve the purpose of storage nodes (distributing shares to the network) for a subset of blocks.
+    - Fraud proofs:
+        - State transition: produce, consume
+        - Erasure coding: produce, consume
+1. Partial storage nodes provide the same security guarantees as partial nodes.
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Full Bodies](#full-bodies)
+        - Storage: Partially stored in [erasure-coded form](./data_structures.md#2d-reed-solomon-encoding-scheme)
+        - Serving: Served to the network
+    - Transactions: [Full Transactions](#full-transactions)
+    - Fraud proofs:
+        - State transition: produce, consume
+        - Erasure coding: produce (partial), consume
