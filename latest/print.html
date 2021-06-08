@@ -1814,46 +1814,112 @@ else if account.status == AccountStatus.ValidatorBonded
 <h2 id="node-type-definitions"><a class="header" href="#node-type-definitions">Node Type Definitions</a></h2>
 <p>For convenience, we will define several common parameter configurations:</p>
 <ol>
-<li><a href="https://en.bitcoin.it/wiki/Full_node">Full nodes</a> provide the strongest security guarantees. Block bodies do not need to be stored.
+<li><a href="https://en.bitcoin.it/wiki/Full_node">Full nodes</a> provide the strongest security guarantees.
 <ul>
 <li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
-<li>Block bodies: <a href="specs/node_types.html#full-bodies">Full Bodies</a></li>
+<li>Block bodies: <a href="specs/node_types.html#full-bodies">Full Bodies</a>
+<ul>
+<li>Storage: Not stored beyond a parameter</li>
+<li>Serving: Served to the network</li>
+</ul>
+</li>
 <li>Transactions: <a href="specs/node_types.html#full-transactions">Full Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: produce, consume</li>
+<li>Erasure coding: produce, consume</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>Partial nodes are capable of producing fraud proofs of invalid transactions and contribute to validating the erasure coding of random blocks.
 <ul>
 <li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
-<li>Block bodies: <a href="specs/node_types.html#partial-bodies">Partial Bodies</a></li>
+<li>Block bodies: <a href="specs/node_types.html#partial-bodies">Partial Bodies</a>
+<ul>
+<li>Storage: Not stored beyond a parameter</li>
+<li>Serving: Served to the network</li>
+</ul>
+</li>
 <li>Transactions: <a href="specs/node_types.html#full-transactions">Full Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: produce, consume</li>
+<li>Erasure coding: produce (partial), consume</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>Light nodes perform Data Availability Sampling (DAS) and are secure under an honest minority.
 <ul>
 <li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
-<li>Block bodies: <a href="specs/node_types.html#sampled-bodies">Sampled Bodies</a></li>
+<li>Block bodies: <a href="specs/node_types.html#sampled-bodies">Sampled Bodies</a>
+<ul>
+<li>Storage: Not stored beyond a parameter</li>
+<li>Serving: Served to the network</li>
+</ul>
+</li>
 <li>Transactions: <a href="specs/node_types.html#no-transactions">No Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: consume</li>
+<li>Erasure coding: consume</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>Superlight nodes do not perform DAS and are secure under an honest majority.
 <ul>
 <li>Block headers: <a href="specs/node_types.html#compact-block-headers">Compact Block Headers</a></li>
-<li>Block bodies: <a href="specs/node_types.html#no-bodies">No Bodies</a></li>
+<li>Block bodies: <a href="specs/node_types.html#no-bodies">No Bodies</a>
+<ul>
+<li>Storage: Not stored</li>
+<li>Serving: Not served to the network</li>
+</ul>
+</li>
 <li>Transactions: <a href="specs/node_types.html#no-transactions">No Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: consume</li>
+<li>Erasure coding: consume</li>
 </ul>
 </li>
-<li>Light validator nodes can produce new blocks with strong security guarantees and light resource requirements.
-<ul>
-<li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
-<li>Block bodies: <a href="specs/node_types.html#sampled-bodies">Sampled Bodies</a></li>
-<li>Transactions: <a href="specs/node_types.html#full-transactions">Full Transactions</a></li>
 </ul>
 </li>
-<li>Storage nodes provide the same security guarantees as full nodes. Block bodies (in <a href="specs/./data_structures.html#2d-reed-solomon-encoding-scheme">erasure-coded form</a>) are stored and served to the network.
+<li>Storage nodes provide the same security guarantees as full nodes.
 <ul>
 <li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
-<li>Block bodies: <a href="specs/node_types.html#full-bodies">Full Bodies</a></li>
+<li>Block bodies: <a href="specs/node_types.html#full-bodies">Full Bodies</a>
+<ul>
+<li>Storage: Fully stored in <a href="specs/./data_structures.html#2d-reed-solomon-encoding-scheme">erasure-coded form</a></li>
+<li>Serving: Served to the network</li>
+</ul>
+</li>
 <li>Transactions: <a href="specs/node_types.html#full-transactions">Full Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: produce, consume</li>
+<li>Erasure coding: produce, consume</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Partial storage nodes provide the same security guarantees as partial nodes.
+<ul>
+<li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
+<li>Block bodies: <a href="specs/node_types.html#full-bodies">Full Bodies</a>
+<ul>
+<li>Storage: Partially stored in <a href="specs/./data_structures.html#2d-reed-solomon-encoding-scheme">erasure-coded form</a></li>
+<li>Serving: Served to the network</li>
+</ul>
+</li>
+<li>Transactions: <a href="specs/node_types.html#full-transactions">Full Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: produce, consume</li>
+<li>Erasure coding: produce (partial), consume</li>
+</ul>
+</li>
 </ul>
 </li>
 </ol>
