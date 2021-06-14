@@ -14,7 +14,7 @@ Contemporary blockchains support full nodes (which are secure under no assumptio
 1. light nodes (and partial nodes) are secure under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044), and no assumptions on voting power honesty
 1. superlight nodes are secure under an honest majority of voting assumption
 
-The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.
+Note that _secure_ in this context is defined as "not accepting invalid blocks," as is orthogonal to _consensus safety_. The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.
 
 ## Invalid vs Unavailable
 
