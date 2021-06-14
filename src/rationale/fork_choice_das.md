@@ -8,7 +8,7 @@
 
 Tendermint provides finality under an honest 2/3 of stake assumption. It is one of several ["BFT" consensus protocols](https://arxiv.org/abs/1807.04938) (also known as "classical" consensus protocols). Under that assumptions, new _valid_ blocks are immediately and forever final as soon as 2/3 of stake commits to the block. Therefore, under that assumption, Tendermint is fork-free.
 
-Contemporary blockchains support full nodes (which are secure under no assumption on stake honesty) and light nodes (which are secure under an honest majority of stake assumption). LazyLedger is unique in [supporting light nodes with stronger security guarantees](./../specs/node_types.md#node-type-definitions):
+Contemporary blockchains support full nodes (which are secure under no assumption on stake honesty) and light nodes (which are secure under an honest majority of stake assumption). LazyLedger is unique in [supporting light nodes with stronger security guarantees](../specs/node_types.md#node-type-definitions):
 
 1. full nodes are secure under no assumptions on stake honesty
 1. light nodes (and partial nodes) are secure under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044), and no assumptions on stake honesty
