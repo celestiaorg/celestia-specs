@@ -6,13 +6,13 @@
 
 ## Preamble
 
-Tendermint provides finality under an honest 2/3 of stake assumption. It is one of several ["BFT" consensus protocols](https://arxiv.org/abs/1807.04938) (also known as "classical" consensus protocols). Under that assumptions, new _valid_ blocks are immediately and forever final as soon as 2/3 of stake commits to the block. Therefore, under that assumption, Tendermint is fork-free.
+Tendermint provides finality under an honest 2/3 of voting power assumption. It is one of several ["BFT" consensus protocols](https://arxiv.org/abs/1807.04938) (also known as "classical" consensus protocols). Under that assumptions, new _valid_ blocks are immediately and forever final as soon as 2/3 of voting power commits to the block. Therefore, under that assumption, Tendermint is fork-free.
 
-Contemporary blockchains support full nodes (which are secure under no assumption on stake honesty) and light nodes (which are secure under an honest majority of stake assumption). LazyLedger is unique in [supporting light nodes with stronger security guarantees](../specs/node_types.md#node-type-definitions):
+Contemporary blockchains support full nodes (which are secure under no assumption on voting power honesty) and light nodes (which are secure under an honest majority of voting power assumption). LazyLedger is unique in [supporting light nodes with stronger security guarantees](../specs/node_types.md#node-type-definitions):
 
-1. full nodes are secure under no assumptions on stake honesty
-1. light nodes (and partial nodes) are secure under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044), and no assumptions on stake honesty
-1. superlight nodes are secure under an honest majority of stake assumption
+1. full nodes are secure under no assumptions on voting power honesty
+1. light nodes (and partial nodes) are secure under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044), and no assumptions on voting power honesty
+1. superlight nodes are secure under an honest majority of voting assumption
 
 The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.
 
@@ -26,7 +26,7 @@ With [Data Availability Sampling](https://arxiv.org/abs/1809.09044) (DAS), there
 
 We consider two scenarios.
 
-**A dishonest majority hide a committed block, commit to a second block at the same height within the weak subjectivity window to fork the chain, then reveal the first block**. This is trivially equivocation and requires social consensus to resolve which fork to accept. The unavailability of the first block is orthogonal. Nodes that detect equivocation by a majority of stake within the weak subjectivity window must halt regardless.
+**A dishonest majority hide a committed block, commit to a second block at the same height within the weak subjectivity window to fork the chain, then reveal the first block**. This is trivially equivocation and requires social consensus to resolve which fork to accept. The unavailability of the first block is orthogonal. Nodes that detect equivocation by a majority of voting power within the weak subjectivity window must halt regardless.
 
 **A dishonest majority hide a committed block, commit additional blocks on top of it, then reveal the first block within the weak subjectivity window**. There is no equivocation. Note that a node cannot distinguish a dishonest majority in this scenario from a transient network failure on their end and an honest majority.
 
