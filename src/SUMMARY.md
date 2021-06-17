@@ -1,6 +1,6 @@
 # Summary
 
-[LazyLedger Specifications](./README.md)
+[Celestia Specifications](./README.md)
 
 - [Specification](./specs/README.md)
   - [Architecture](./specs/architecture.md)

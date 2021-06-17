@@ -1,4 +1,4 @@
-# LazyLedger Specifications
+# Celestia Specifications
 
 [![Community](https://img.shields.io/badge/chat%20on-discord-orange?&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/YsnTPcSfWQ)
 

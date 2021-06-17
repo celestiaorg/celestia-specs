@@ -1,13 +1,13 @@
 [book]
-authors = ["LazyLedger Labs"]
+authors = ["Celestia Labs"]
 language = "en"
 multilingual = false
 src = "src"
-title = "LazyLedger Specifications"
+title = "Celestia Specifications"
 
 [output.html]
 mathjax-support = true
-git-repository-url = "https://github.com/lazyledger/lazyledger-specs"
+git-repository-url = "https://github.com/celestiaorg/celestia-specs"
 
 [rust]
 edition = "2018"
