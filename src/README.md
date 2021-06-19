@@ -1,4 +1,4 @@
-# LazyLedger Specifications
+# Celestia Specifications
 
 - [Specification](./specs/README.md)
   - [Architecture](./specs/architecture.md)

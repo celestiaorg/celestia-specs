@@ -6,7 +6,7 @@
 
 ## Preamble
 
-Due to the requirement that all incorrect state transitions on LazyLedger be provable with a [compact fraud proof](https://arxiv.org/abs/1809.09044) that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:
+Due to the requirement that all incorrect state transitions on Celestia be provable with a [compact fraud proof](https://arxiv.org/abs/1809.09044) that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:
 
 1. In-protocol stake delegation: this makes it easier for users to participate in the consensus process, and reduces reliance on custodial staking services.
 1. In-protocol enforcement of proper distribution of rewards and penalities to delegators: rewards and penalties collected by validators should be distributed to delegators trustlessly.

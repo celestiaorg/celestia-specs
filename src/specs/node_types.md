@@ -16,7 +16,7 @@
 
 ## Node Parameters
 
-Nodes that run the [LazyLedger protocol](./consensus.md) have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the `header` and `lastCommit` fields of each [block](./data_structures.md#block), but can handle the `availableDataHeader` and `availableData` fields differently.
+Nodes that run the [Celestia protocol](./consensus.md) have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the `header` and `lastCommit` fields of each [block](./data_structures.md#block), but can handle the `availableDataHeader` and `availableData` fields differently.
 
 We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority (> 2/3) of validator voting power performs an attributable—and thus [penalizable](./consensus.md#blockavailabledataevidencedata)—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).
 
@@ -71,7 +71,7 @@ At most secure under an honest minority of nodes and a weak subjectivity assumpt
 
 #### Full Transactions
 
-Nodes that wish to produce new blocks must know the [chain state](./data_structures.md#state). Processing all block bodies is actually not needed to know the LazyLedger state, as [transactions that pay for message inclusion commit to messages](./../rationale/message_block_layout.md). These nodes process all requests [with a reserved namespace ID](./data_structures.md#arranging-available-data-into-shares) from block bodies and perform Data Availability Sampling for the remaining (message) data.
+Nodes that wish to produce new blocks must know the [chain state](./data_structures.md#state). Processing all block bodies is actually not needed to know the Celestia state, as [transactions that pay for message inclusion commit to messages](./../rationale/message_block_layout.md). These nodes process all requests [with a reserved namespace ID](./data_structures.md#arranging-available-data-into-shares) from block bodies and perform Data Availability Sampling for the remaining (message) data.
 
 At most secure under a weak subjectivity assumption.
 
