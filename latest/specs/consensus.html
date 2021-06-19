@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Consensus - LazyLedger Specifications</title>
+        <title>Consensus - Celestia Specifications</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">LazyLedger Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html" class="active"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html" class="active"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -130,7 +130,7 @@
                         
                     </div>
 
-                    <h1 class="menu-title">LazyLedger Specifications</h1>
+                    <h1 class="menu-title">Celestia Specifications</h1>
 
                     <div class="right-buttons">
                         
@@ -139,7 +139,7 @@
                         </a>
                         
                         
-                        <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/celestiaorg/celestia-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
@@ -230,7 +230,7 @@
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Maximum number of rows/columns of the original data <a href="data_structures.html#share">shares</a> in <a href="data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Target number of rows/columns of the original data <a href="data_structures.html#share">shares</a> in <a href="data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
 <tr><td><code>BLOCK_TIME</code></td><td><code>uint64</code></td><td></td><td>second</td><td>Block time, in seconds.</td></tr>
-<tr><td><code>CHAIN_ID</code></td><td><code>string</code></td><td><code>&quot;LazyLedger&quot;</code></td><td></td><td>Chain ID. Each chain assigns itself a (unique) ID.</td></tr>
+<tr><td><code>CHAIN_ID</code></td><td><code>string</code></td><td><code>&quot;Celestia&quot;</code></td><td></td><td>Chain ID. Each chain assigns itself a (unique) ID.</td></tr>
 <tr><td><code>GENESIS_COIN_COUNT</code></td><td><code>uint64</code></td><td><code>10**8</code></td><td><code>4u</code></td><td><code>(= 100000000)</code> Number of coins at genesis.</td></tr>
 <tr><td><code>MAX_GRAFFITI_BYTES</code></td><td><code>uint64</code></td><td><code>32</code></td><td><code>byte</code></td><td>Maximum size of transaction graffiti, in bytes.</td></tr>
 <tr><td><code>MAX_VALIDATORS</code></td><td><code>uint16</code></td><td><code>64</code></td><td></td><td>Maximum number of active validators.</td></tr>
@@ -240,8 +240,8 @@
 <tr><td><code>SHARE_SIZE</code></td><td><code>uint64</code></td><td><code>256</code></td><td><code>byte</code></td><td>Size of transaction and message <a href="data_structures.html#share">shares</a>, in bytes.</td></tr>
 <tr><td><code>STATE_SUBTREE_RESERVED_BYTES</code></td><td><code>uint64</code></td><td><code>1</code></td><td><code>byte</code></td><td>Number of bytes reserved to identify state subtrees.</td></tr>
 <tr><td><code>UNBONDING_DURATION</code></td><td><code>uint32</code></td><td></td><td><code>block</code></td><td>Duration, in blocks, for unbonding a validator or delegation.</td></tr>
-<tr><td><code>VERSION_APP</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger application. Breaking changes (hard forks) must update this parameter.</td></tr>
-<tr><td><code>VERSION_BLOCK</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.</td></tr>
+<tr><td><code>VERSION_APP</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the Celestia application. Breaking changes (hard forks) must update this parameter.</td></tr>
+<tr><td><code>VERSION_BLOCK</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the Celestia chain. Breaking changes (hard forks) must update this parameter.</td></tr>
 </tbody></table>
 <h3 id="reserved-namespace-ids"><a class="header" href="#reserved-namespace-ids">Reserved Namespace IDs</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>description</th></tr></thead><tbody>

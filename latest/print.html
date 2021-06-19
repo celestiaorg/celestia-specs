@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>LazyLedger Specifications</title>
+        <title>Celestia Specifications</title>
         
         <meta name="robots" content="noindex" />
         
@@ -100,7 +100,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">LazyLedger Specifications</a></li><li class="chapter-item expanded "><a href="specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -132,7 +132,7 @@
                         
                     </div>
 
-                    <h1 class="menu-title">LazyLedger Specifications</h1>
+                    <h1 class="menu-title">Celestia Specifications</h1>
 
                     <div class="right-buttons">
                         
@@ -141,7 +141,7 @@
                         </a>
                         
                         
-                        <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/celestiaorg/celestia-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
@@ -174,7 +174,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="lazyledger-specifications"><a class="header" href="#lazyledger-specifications">LazyLedger Specifications</a></h1>
+                        <h1 id="celestia-specifications"><a class="header" href="#celestia-specifications">Celestia Specifications</a></h1>
 <ul>
 <li><a href="./specs/README.html">Specification</a>
 <ul>
@@ -212,14 +212,14 @@
 </ul>
 <h2 id="common-terms-and-expressions"><a class="header" href="#common-terms-and-expressions">Common Terms and Expressions</a></h2>
 <table><thead><tr><th>name</th><th>description</th></tr></thead><tbody>
-<tr><td>App (application)</td><td>Alternate name for &quot;<a href="https://arxiv.org/abs/1905.09274">virtual sidechain</a>.&quot; LazyLedger apps are sidechains that post all their data onto the LazyLedger chain to share security.</td></tr>
+<tr><td>App (application)</td><td>Alternate name for &quot;<a href="https://arxiv.org/abs/1905.09274">virtual sidechain</a>.&quot; Celestia apps are sidechains that post all their data onto the Celestia chain to share security.</td></tr>
 <tr><td>Transaction</td><td>Request that modifies the consensus-critical state (validator balances and statuses).</td></tr>
 <tr><td>Message</td><td>Request that is executed by a non-consensus-critical app.</td></tr>
 </tbody></table>
 <h2 id="system-architecture"><a class="header" href="#system-architecture">System Architecture</a></h2>
-<p>LazyLedger has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native <em>transactions</em>, distinct from the <em>messages</em> processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.</p>
+<p>Celestia has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native <em>transactions</em>, distinct from the <em>messages</em> processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.</p>
 <p>Transactions pay fees similarly to how they would in a normal blockchain (e.g. Bitcoin), and their side effects are restricted to modifying the validator set and their balances. Transactions can additionally pay fees for the inclusion of a message (identified by a hash) in the same block. The validator set is committed to in the block header, and since the entire system state <em>is</em> the validator set, this is the only state commitment needed in the header.</p>
-<p>One desideratum that will most likely be included is <a href="https://github.com/lazyledger/lazyledger-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md">burning a non-proportional amount of coins for each transaction as a network fee</a>. This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.</p>
+<p>One desideratum that will most likely be included is <a href="https://github.com/celestiaorg/celestia-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md">burning a non-proportional amount of coins for each transaction as a network fee</a>. This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.</p>
 <p>This architecture has the benefit of allowing a spectrum of clients. Since different components are made available through commitments, client that are only interested in a portion of the block data do not need to download and process the whole block.</p>
 <p>Non-consensus full clients have easy and direct access to all the data they need to validate: the transactions. Messages do not need to be validated, as they do not change the state, they simply need to be verified as available.</p>
 <p>Light clients are almost identical to full clients here: they simply need to process all the validator set changes (i.e. transactions) and run data availability checks on the rest of the block. Unlike full clients, light clients do not need to verify the signatures of transactions and can instead trust the majority of validators to sign off on validator set changes, with the addition of fraud proofs in case of an invalid signature.</p>
@@ -358,7 +358,7 @@
 </tbody></table>
 <h2 id="blockchain-data-structures"><a class="header" href="#blockchain-data-structures">Blockchain Data Structures</a></h2>
 <h3 id="block"><a class="header" href="#block">Block</a></h3>
-<p>Blocks are the top-level data structure of the LazyLedger blockchain.</p>
+<p>Blocks are the top-level data structure of the Celestia blockchain.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>header</code></td><td><a href="specs/data_structures.html#header">Header</a></td><td>Block header. Contains primarily identification info and commitments.</td></tr>
 <tr><td><code>availableDataHeader</code></td><td><a href="specs/data_structures.html#availabledataheader">AvailableDataHeader</a></td><td>Header of available data. Contains commitments to erasure-coded data.</td></tr>
@@ -407,7 +407,7 @@
 </tbody></table>
 <h3 id="timestamp"><a class="header" href="#timestamp">Timestamp</a></h3>
 <p>Timestamp is a <a href="specs/data_structures.html#type-aliases">type alias</a>.</p>
-<p>LazyLedger uses <a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp"><code>google.protobuf.Timestamp</code></a> to represent time.</p>
+<p>Celestia uses <a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp"><code>google.protobuf.Timestamp</code></a> to represent time.</p>
 <h3 id="hashdigest"><a class="header" href="#hashdigest">HashDigest</a></h3>
 <p>HashDigest is a <a href="specs/data_structures.html#type-aliases">type alias</a>.</p>
 <p>Output of the <a href="specs/data_structures.html#hashing">hashing</a> function. Exactly 256 bits (32 bytes) long.</p>
@@ -468,7 +468,7 @@
 </code></pre>
 <p>This encoding scheme is derived from <a href="https://eips.ethereum.org/EIPS/eip-2098">EIP 2098: Compact Signature Representation</a>.</p>
 <h2 id="merkle-trees"><a class="header" href="#merkle-trees">Merkle Trees</a></h2>
-<p>Merkle trees are used to authenticate various pieces of data across the LazyLedger stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.</p>
+<p>Merkle trees are used to authenticate various pieces of data across the Celestia stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.</p>
 <h3 id="binary-merkle-tree"><a class="header" href="#binary-merkle-tree">Binary Merkle Tree</a></h3>
 <p>Binary Merkle trees are constructed in the same fashion as described in <a href="https://tools.ietf.org/html/rfc6962">Certificate Transparency (RFC-6962)</a>, except for using <a href="specs/data_structures.html#hashing">a different hashing function</a>. Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).</p>
 <p>Nodes contain a single field:
@@ -492,7 +492,7 @@
 </tbody></table>
 <p>A proof for a leaf in a <a href="specs/data_structures.html#binary-merkle-tree">binary Merkle tree</a>, as per Section 2.1.1 of <a href="https://tools.ietf.org/html/rfc6962#section-2.1.1">Certificate Transparency (RFC-6962)</a>.</p>
 <h3 id="namespace-merkle-tree"><a class="header" href="#namespace-merkle-tree">Namespace Merkle Tree</a></h3>
-<p><a href="specs/data_structures.html#share">Shares</a> in LazyLedger are associated with a provided <em>namespace ID</em>. The Namespace Merkle Tree (NMT) is a variation of the <a href="https://eprint.iacr.org/2018/642">Merkle Interval Tree</a>, which is itself an extension of the <a href="https://bitcointalk.org/index.php?topic=845978.0">Merkle Sum Tree</a>. It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.</p>
+<p><a href="specs/data_structures.html#share">Shares</a> in Celestia are associated with a provided <em>namespace ID</em>. The Namespace Merkle Tree (NMT) is a variation of the <a href="https://eprint.iacr.org/2018/642">Merkle Interval Tree</a>, which is itself an extension of the <a href="https://bitcointalk.org/index.php?topic=845978.0">Merkle Sum Tree</a>. It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.</p>
 <p>Nodes contain three fields:
 | name    | type                         | description                                      |
 |---------|------------------------------|--------------------------------------------------|
@@ -522,7 +522,7 @@ else
 node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 </code></pre>
 <p>Note that the above snippet leverages the property that leaves are sorted by namespace ID: if <code>l.n_min</code> is <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, so must <code>{l,r}.n_max</code>. By construction, either both the min and max namespace IDs of a node will be <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, or neither will: if <code>r.n_min</code> is <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, so must <code>r.n_max</code>.</p>
-<p>For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as <a href="specs/data_structures.html#2d-reed-solomon-encoding-scheme">the right half of an NMT as used in LazyLedger will be parity shares</a>) <em>ignore</em> the namespace ID for the parity leaves. Subtree roots with <em>only parity leaves</em> have their min and max namespace ID set to <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>. This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>).</p>
+<p>For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as <a href="specs/data_structures.html#2d-reed-solomon-encoding-scheme">the right half of an NMT as used in Celestia will be parity shares</a>) <em>ignore</em> the namespace ID for the parity leaves. Subtree roots with <em>only parity leaves</em> have their min and max namespace ID set to <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>. This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be <a href="specs/consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>).</p>
 <p>A compact commitment can be computed by taking the <a href="specs/data_structures.html#hashing">hash</a> of the <a href="specs/data_structures.html#serialization">serialized</a> root node.</p>
 <h4 id="namespacemerkletreeinclusionproof"><a class="header" href="#namespacemerkletreeinclusionproof">NamespaceMerkleTreeInclusionProof</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
@@ -870,7 +870,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>rawData</code></td><td><code>byte[]</code></td><td>Raw message bytes.</td></tr>
 </tbody></table>
 <h2 id="state"><a class="header" href="#state">State</a></h2>
-<p>The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified <a href="specs/data_structures.html#sparse-merkle-tree">Sparse Merkle Tree</a> is maintained for the entire chain state, the <em>state tree</em>. The root of this tree is committed to in the <a href="specs/data_structures.html#header">block header</a>.</p>
+<p>The state of the Celestia chain is intentionally restricted to containing only account balances and the validator set metadata. One unified <a href="specs/data_structures.html#sparse-merkle-tree">Sparse Merkle Tree</a> is maintained for the entire chain state, the <em>state tree</em>. The root of this tree is committed to in the <a href="specs/data_structures.html#header">block header</a>.</p>
 <p>The state tree is separated into <code>2**(8*STATE_SUBTREE_RESERVED_BYTES)</code> subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest <code>STATE_SUBTREE_RESERVED_BYTES</code> bytes from the key and replacing them with the appropriate <a href="specs/consensus.html#reserved-state-subtree-ids">reserved state subtree ID</a>. Reducing the key size within subtrees also reduces the collision resistance of keys by <code>8*STATE_SUBTREE_RESERVED_BYTES</code> bits, but this is not an issue due the number of bits removed being small.</p>
 <p>A number of subtrees are maintained:</p>
 <ol>
@@ -1053,7 +1053,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Maximum number of rows/columns of the original data <a href="specs/data_structures.html#share">shares</a> in <a href="specs/data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
 <tr><td><code>AVAILABLE_DATA_ORIGINAL_SQUARE_TARGET</code></td><td><code>uint64</code></td><td></td><td><code>share</code></td><td>Target number of rows/columns of the original data <a href="specs/data_structures.html#share">shares</a> in <a href="specs/data_structures.html#arranging-available-data-into-shares">square layout</a>.</td></tr>
 <tr><td><code>BLOCK_TIME</code></td><td><code>uint64</code></td><td></td><td>second</td><td>Block time, in seconds.</td></tr>
-<tr><td><code>CHAIN_ID</code></td><td><code>string</code></td><td><code>&quot;LazyLedger&quot;</code></td><td></td><td>Chain ID. Each chain assigns itself a (unique) ID.</td></tr>
+<tr><td><code>CHAIN_ID</code></td><td><code>string</code></td><td><code>&quot;Celestia&quot;</code></td><td></td><td>Chain ID. Each chain assigns itself a (unique) ID.</td></tr>
 <tr><td><code>GENESIS_COIN_COUNT</code></td><td><code>uint64</code></td><td><code>10**8</code></td><td><code>4u</code></td><td><code>(= 100000000)</code> Number of coins at genesis.</td></tr>
 <tr><td><code>MAX_GRAFFITI_BYTES</code></td><td><code>uint64</code></td><td><code>32</code></td><td><code>byte</code></td><td>Maximum size of transaction graffiti, in bytes.</td></tr>
 <tr><td><code>MAX_VALIDATORS</code></td><td><code>uint16</code></td><td><code>64</code></td><td></td><td>Maximum number of active validators.</td></tr>
@@ -1063,8 +1063,8 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>SHARE_SIZE</code></td><td><code>uint64</code></td><td><code>256</code></td><td><code>byte</code></td><td>Size of transaction and message <a href="specs/data_structures.html#share">shares</a>, in bytes.</td></tr>
 <tr><td><code>STATE_SUBTREE_RESERVED_BYTES</code></td><td><code>uint64</code></td><td><code>1</code></td><td><code>byte</code></td><td>Number of bytes reserved to identify state subtrees.</td></tr>
 <tr><td><code>UNBONDING_DURATION</code></td><td><code>uint32</code></td><td></td><td><code>block</code></td><td>Duration, in blocks, for unbonding a validator or delegation.</td></tr>
-<tr><td><code>VERSION_APP</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger application. Breaking changes (hard forks) must update this parameter.</td></tr>
-<tr><td><code>VERSION_BLOCK</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the LazyLedger chain. Breaking changes (hard forks) must update this parameter.</td></tr>
+<tr><td><code>VERSION_APP</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the Celestia application. Breaking changes (hard forks) must update this parameter.</td></tr>
+<tr><td><code>VERSION_BLOCK</code></td><td><code>uint64</code></td><td><code>1</code></td><td></td><td>Version of the Celestia chain. Breaking changes (hard forks) must update this parameter.</td></tr>
 </tbody></table>
 <h3 id="reserved-namespace-ids"><a class="header" href="#reserved-namespace-ids">Reserved Namespace IDs</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>value</th><th>description</th></tr></thead><tbody>
@@ -1749,7 +1749,7 @@ else if account.status == AccountStatus.ValidatorBonded
   repeated MessageCommitmentAndSignature message_commitment_and_signature = 6;
 }
 </code></pre>
-<p>Accepting a <code>WireTxPayForMessage</code> into the mempool requires different logic than other transactions in LazyLedger, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> (the canonical data type that is included in blocks and committed to with a data root in the block header), each <code>WireTxPayForMessage</code> (the over-the-wire representation of the same) has potentially multiple signatures.</p>
+<p>Accepting a <code>WireTxPayForMessage</code> into the mempool requires different logic than other transactions in Celestia, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> (the canonical data type that is included in blocks and committed to with a data root in the block header), each <code>WireTxPayForMessage</code> (the over-the-wire representation of the same) has potentially multiple signatures.</p>
 <p>Transaction senders who want to pay for a message will create a <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> object, <code>stx</code>, filling in the <code>stx.messageShareCommitment</code> field <a href="specs/../rationale/message_block_layout.html#non-interactive-default-rules">based on the non-interactive default rules</a> for <code>k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code>, then signing it to get a <a href="specs/./data_structures.html#transaction">transaction</a> <code>tx</code>. This process is repeated with successively smaller <code>k</code>s, decreasing by powers of 2 until <code>k * k &lt;= stx.messageSize</code>. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of <code>(tx.signedTransactionData.messageShareCommitment, tx.signature)</code>, a <code>WireTxPayForMessage</code> object is constructed.</p>
 <p>Receiving a <code>WireTxPayForMessage</code> object from the network follows the reverse process: for each <code>message_commitment_and_signature</code>, verify using the <a href="specs/../rationale/message_block_layout.html#non-interactive-default-rules">based on the non-interactive default rules</a> that the signature is valid.</p>
 <div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="node-types"><a class="header" href="#node-types">Node Types</a></h1>
@@ -1781,7 +1781,7 @@ else if account.status == AccountStatus.ValidatorBonded
 <li><a href="specs/node_types.html#node-type-definitions">Node Type Definitions</a></li>
 </ul>
 <h2 id="node-parameters"><a class="header" href="#node-parameters">Node Parameters</a></h2>
-<p>Nodes that run the <a href="specs/./consensus.html">LazyLedger protocol</a> have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the <code>header</code> and <code>lastCommit</code> fields of each <a href="specs/./data_structures.html#block">block</a>, but can handle the <code>availableDataHeader</code> and <code>availableData</code> fields differently.</p>
+<p>Nodes that run the <a href="specs/./consensus.html">Celestia protocol</a> have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the <code>header</code> and <code>lastCommit</code> fields of each <a href="specs/./data_structures.html#block">block</a>, but can handle the <code>availableDataHeader</code> and <code>availableData</code> fields differently.</p>
 <p>We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority (&gt; 2/3) of validator voting power performs an attributable—and thus <a href="specs/./consensus.html#blockavailabledataevidencedata">penalizable</a>—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).</p>
 <h3 id="block-headers"><a class="header" href="#block-headers">Block Headers</a></h3>
 <h4 id="compact-block-headers"><a class="header" href="#compact-block-headers">Compact Block Headers</a></h4>
@@ -1809,7 +1809,7 @@ else if account.status == AccountStatus.ValidatorBonded
 <p>These nodes process do not process requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> and thus to not know the chain state without relying on a third party.</p>
 <p>At most secure under an honest minority of nodes and a weak subjectivity assumption.</p>
 <h4 id="full-transactions"><a class="header" href="#full-transactions">Full Transactions</a></h4>
-<p>Nodes that wish to produce new blocks must know the <a href="specs/./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the LazyLedger state, as <a href="specs/./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
+<p>Nodes that wish to produce new blocks must know the <a href="specs/./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the Celestia state, as <a href="specs/./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
 <p>At most secure under a weak subjectivity assumption.</p>
 <h2 id="node-type-definitions"><a class="header" href="#node-type-definitions">Node Type Definitions</a></h2>
 <p>For convenience, we will define several common parameter configurations:</p>
@@ -1957,7 +1957,7 @@ $$</p>
 </li>
 </ul>
 <h2 id="preamble"><a class="header" href="#preamble">Preamble</a></h2>
-<p>Due to the requirement that all incorrect state transitions on LazyLedger be provable with a <a href="https://arxiv.org/abs/1809.09044">compact fraud proof</a> that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:</p>
+<p>Due to the requirement that all incorrect state transitions on Celestia be provable with a <a href="https://arxiv.org/abs/1809.09044">compact fraud proof</a> that is cheap enough to verify within a smart contract on a remote chain (e.g. Ethereum), computing how rewards and penalties are distributed must involve no iterations. To understand why, let us consider the following desiderata in a staking system:</p>
 <ol>
 <li>In-protocol stake delegation: this makes it easier for users to participate in the consensus process, and reduces reliance on custodial staking services.</li>
 <li>In-protocol enforcement of proper distribution of rewards and penalities to delegators: rewards and penalties collected by validators should be distributed to delegators trustlessly.</li>
@@ -2002,9 +2002,9 @@ $$</p>
 </li>
 </ul>
 <h2 id="preamble-1"><a class="header" href="#preamble-1">Preamble</a></h2>
-<p>LazyLedger uses <a href="https://arxiv.org/abs/1809.09044">a data availability scheme</a> that allows nodes to determine whether a block's data was published without downloading the whole block. The core of this scheme is arranging data in a two-dimensional matrix then applying erasure coding to each row and column. This document describes the rationale for how data—transactions, messages, and other data—<a href="rationale/../specs/data_structures.html#arranging-available-data-into-shares">is actually arranged</a>. Familiarity with the <a href="https://arxiv.org/abs/1809.09044">originally proposed data layout format</a> is assumed.</p>
+<p>Celestia uses <a href="https://arxiv.org/abs/1809.09044">a data availability scheme</a> that allows nodes to determine whether a block's data was published without downloading the whole block. The core of this scheme is arranging data in a two-dimensional matrix then applying erasure coding to each row and column. This document describes the rationale for how data—transactions, messages, and other data—<a href="rationale/../specs/data_structures.html#arranging-available-data-into-shares">is actually arranged</a>. Familiarity with the <a href="https://arxiv.org/abs/1809.09044">originally proposed data layout format</a> is assumed.</p>
 <h2 id="message-layout-rationale"><a class="header" href="#message-layout-rationale">Message Layout Rationale</a></h2>
-<p>Block data consists of transactions (which modify the LazyLedger chain's state), intermediate state roots (required for fraud proofs of the aforementioned transactions), messages (binary blobs which do not modify the LazyLedger state, but which are intended for a LazyLedger application identified with a provided namespace ID), and other relevant pieces of data (e.g. evidence for slashing). We want to arrange this data into a <code>k * k</code> matrix of fixed-sized shares, which will later be committed to in <a href="rationale/../specs/data_structures.html#namespace-merkle-tree">Namespace Merkle Trees (NMTs)</a>.</p>
+<p>Block data consists of transactions (which modify the Celestia chain's state), intermediate state roots (required for fraud proofs of the aforementioned transactions), messages (binary blobs which do not modify the Celestia state, but which are intended for a Celestia application identified with a provided namespace ID), and other relevant pieces of data (e.g. evidence for slashing). We want to arrange this data into a <code>k * k</code> matrix of fixed-sized shares, which will later be committed to in <a href="rationale/../specs/data_structures.html#namespace-merkle-tree">Namespace Merkle Trees (NMTs)</a>.</p>
 <p>The simplest way we can imagine arranging block data is to simply serialize it all in no particular order, split it into fixed-sized shares, then arrange those shares into the <code>k * k</code> matrix in row-major order. However, this naive scheme can be improved in a number of ways, described below.</p>
 <p>First, we impose some ground rules:</p>
 <ol>
@@ -2013,7 +2013,7 @@ $$</p>
 <li>By construction, the above two rules mean that non-message data always precedes message data in the row-major matrix, even when considering single rows or columns.</li>
 <li>Data with different namespaces must not be in the same share. This might cause a small amount of wasted block space, but makes the NMT easier to reason about in general since leaves are guaranteed to belong to a single namespace.</li>
 </ol>
-<p>Transactions can pay fees for a message to be included in the same block as the transaction itself. However, we do not want serialized transactions to include the entire message they pay for (which is the case in other blockchains with native execution, e.g. calldata in Ethereum transactions or OP_RETURN data in Bitcoin transactions), otherwise every node that validates the sanctity of the LazyLedger coin would need to download all message data. Transactions must therefore only include a commitment to (i.e. some hash of) the message they pay fees for. If implemented naively (e.g. with a simple hash of the message, or a simple binary Merkle tree root of the message), this can lead to a data availability problem, as there are no guarantees that the data behind these commitments is actually part of the block data.</p>
+<p>Transactions can pay fees for a message to be included in the same block as the transaction itself. However, we do not want serialized transactions to include the entire message they pay for (which is the case in other blockchains with native execution, e.g. calldata in Ethereum transactions or OP_RETURN data in Bitcoin transactions), otherwise every node that validates the sanctity of the Celestia coin would need to download all message data. Transactions must therefore only include a commitment to (i.e. some hash of) the message they pay fees for. If implemented naively (e.g. with a simple hash of the message, or a simple binary Merkle tree root of the message), this can lead to a data availability problem, as there are no guarantees that the data behind these commitments is actually part of the block data.</p>
 <p>To that end, we impose some additional rules onto <em>messages only</em>: messages must be placed is a way such that both the transaction sender and the block producer can be held accountable—a necessary property for e.g. fee burning. Accountable in this context means that</p>
 <ol>
 <li>The transaction sender must pay sufficient fees for message inclusion.</li>

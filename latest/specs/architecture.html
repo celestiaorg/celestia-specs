@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Architecture - LazyLedger Specifications</title>
+        <title>Architecture - Celestia Specifications</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">LazyLedger Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html" class="active"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html" class="active"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -130,7 +130,7 @@
                         
                     </div>
 
-                    <h1 class="menu-title">LazyLedger Specifications</h1>
+                    <h1 class="menu-title">Celestia Specifications</h1>
 
                     <div class="right-buttons">
                         
@@ -139,7 +139,7 @@
                         </a>
                         
                         
-                        <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/celestiaorg/celestia-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
@@ -179,14 +179,14 @@
 </ul>
 <h2 id="common-terms-and-expressions"><a class="header" href="#common-terms-and-expressions">Common Terms and Expressions</a></h2>
 <table><thead><tr><th>name</th><th>description</th></tr></thead><tbody>
-<tr><td>App (application)</td><td>Alternate name for &quot;<a href="https://arxiv.org/abs/1905.09274">virtual sidechain</a>.&quot; LazyLedger apps are sidechains that post all their data onto the LazyLedger chain to share security.</td></tr>
+<tr><td>App (application)</td><td>Alternate name for &quot;<a href="https://arxiv.org/abs/1905.09274">virtual sidechain</a>.&quot; Celestia apps are sidechains that post all their data onto the Celestia chain to share security.</td></tr>
 <tr><td>Transaction</td><td>Request that modifies the consensus-critical state (validator balances and statuses).</td></tr>
 <tr><td>Message</td><td>Request that is executed by a non-consensus-critical app.</td></tr>
 </tbody></table>
 <h2 id="system-architecture"><a class="header" href="#system-architecture">System Architecture</a></h2>
-<p>LazyLedger has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native <em>transactions</em>, distinct from the <em>messages</em> processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.</p>
+<p>Celestia has a minimal state: the validator set (account balances, validator status, etc.). Changes to the validator set are done with native <em>transactions</em>, distinct from the <em>messages</em> processed by apps. Transactions are signed and must be processed by clients to determine the validator set, while messages are un-signed data blobs that will usually represent an app's block data.</p>
 <p>Transactions pay fees similarly to how they would in a normal blockchain (e.g. Bitcoin), and their side effects are restricted to modifying the validator set and their balances. Transactions can additionally pay fees for the inclusion of a message (identified by a hash) in the same block. The validator set is committed to in the block header, and since the entire system state <em>is</em> the validator set, this is the only state commitment needed in the header.</p>
-<p>One desideratum that will most likely be included is <a href="https://github.com/lazyledger/lazyledger-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md">burning a non-proportional amount of coins for each transaction as a network fee</a>. This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.</p>
+<p>One desideratum that will most likely be included is <a href="https://github.com/celestiaorg/celestia-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md">burning a non-proportional amount of coins for each transaction as a network fee</a>. This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.</p>
 <p>This architecture has the benefit of allowing a spectrum of clients. Since different components are made available through commitments, client that are only interested in a portion of the block data do not need to download and process the whole block.</p>
 <p>Non-consensus full clients have easy and direct access to all the data they need to validate: the transactions. Messages do not need to be validated, as they do not change the state, they simply need to be verified as available.</p>
 <p>Light clients are almost identical to full clients here: they simply need to process all the validator set changes (i.e. transactions) and run data availability checks on the rest of the block. Unlike full clients, light clients do not need to verify the signatures of transactions and can instead trust the majority of validators to sign off on validator set changes, with the addition of fraud proofs in case of an invalid signature.</p>

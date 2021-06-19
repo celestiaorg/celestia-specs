@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Data Structures - LazyLedger Specifications</title>
+        <title>Data Structures - Celestia Specifications</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">LazyLedger Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html" class="active"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html" class="active"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -130,7 +130,7 @@
                         
                     </div>
 
-                    <h1 class="menu-title">LazyLedger Specifications</h1>
+                    <h1 class="menu-title">Celestia Specifications</h1>
 
                     <div class="right-buttons">
                         
@@ -139,7 +139,7 @@
                         </a>
                         
                         
-                        <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/celestiaorg/celestia-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
@@ -307,7 +307,7 @@
 </tbody></table>
 <h2 id="blockchain-data-structures"><a class="header" href="#blockchain-data-structures">Blockchain Data Structures</a></h2>
 <h3 id="block"><a class="header" href="#block">Block</a></h3>
-<p>Blocks are the top-level data structure of the LazyLedger blockchain.</p>
+<p>Blocks are the top-level data structure of the Celestia blockchain.</p>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>header</code></td><td><a href="#header">Header</a></td><td>Block header. Contains primarily identification info and commitments.</td></tr>
 <tr><td><code>availableDataHeader</code></td><td><a href="#availabledataheader">AvailableDataHeader</a></td><td>Header of available data. Contains commitments to erasure-coded data.</td></tr>
@@ -356,7 +356,7 @@
 </tbody></table>
 <h3 id="timestamp"><a class="header" href="#timestamp">Timestamp</a></h3>
 <p>Timestamp is a <a href="#type-aliases">type alias</a>.</p>
-<p>LazyLedger uses <a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp"><code>google.protobuf.Timestamp</code></a> to represent time.</p>
+<p>Celestia uses <a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp"><code>google.protobuf.Timestamp</code></a> to represent time.</p>
 <h3 id="hashdigest"><a class="header" href="#hashdigest">HashDigest</a></h3>
 <p>HashDigest is a <a href="#type-aliases">type alias</a>.</p>
 <p>Output of the <a href="#hashing">hashing</a> function. Exactly 256 bits (32 bytes) long.</p>
@@ -417,7 +417,7 @@
 </code></pre>
 <p>This encoding scheme is derived from <a href="https://eips.ethereum.org/EIPS/eip-2098">EIP 2098: Compact Signature Representation</a>.</p>
 <h2 id="merkle-trees"><a class="header" href="#merkle-trees">Merkle Trees</a></h2>
-<p>Merkle trees are used to authenticate various pieces of data across the LazyLedger stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.</p>
+<p>Merkle trees are used to authenticate various pieces of data across the Celestia stack, including transactions, messages, the validator set, etc. This section provides an overview of the different tree types used, and specifies how to construct them.</p>
 <h3 id="binary-merkle-tree"><a class="header" href="#binary-merkle-tree">Binary Merkle Tree</a></h3>
 <p>Binary Merkle trees are constructed in the same fashion as described in <a href="https://tools.ietf.org/html/rfc6962">Certificate Transparency (RFC-6962)</a>, except for using <a href="#hashing">a different hashing function</a>. Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).</p>
 <p>Nodes contain a single field:
@@ -441,7 +441,7 @@
 </tbody></table>
 <p>A proof for a leaf in a <a href="#binary-merkle-tree">binary Merkle tree</a>, as per Section 2.1.1 of <a href="https://tools.ietf.org/html/rfc6962#section-2.1.1">Certificate Transparency (RFC-6962)</a>.</p>
 <h3 id="namespace-merkle-tree"><a class="header" href="#namespace-merkle-tree">Namespace Merkle Tree</a></h3>
-<p><a href="#share">Shares</a> in LazyLedger are associated with a provided <em>namespace ID</em>. The Namespace Merkle Tree (NMT) is a variation of the <a href="https://eprint.iacr.org/2018/642">Merkle Interval Tree</a>, which is itself an extension of the <a href="https://bitcointalk.org/index.php?topic=845978.0">Merkle Sum Tree</a>. It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.</p>
+<p><a href="#share">Shares</a> in Celestia are associated with a provided <em>namespace ID</em>. The Namespace Merkle Tree (NMT) is a variation of the <a href="https://eprint.iacr.org/2018/642">Merkle Interval Tree</a>, which is itself an extension of the <a href="https://bitcointalk.org/index.php?topic=845978.0">Merkle Sum Tree</a>. It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.</p>
 <p>Nodes contain three fields:
 | name    | type                         | description                                      |
 |---------|------------------------------|--------------------------------------------------|
@@ -471,7 +471,7 @@ else
 node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 </code></pre>
 <p>Note that the above snippet leverages the property that leaves are sorted by namespace ID: if <code>l.n_min</code> is <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, so must <code>{l,r}.n_max</code>. By construction, either both the min and max namespace IDs of a node will be <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, or neither will: if <code>r.n_min</code> is <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>, so must <code>r.n_max</code>.</p>
-<p>For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as <a href="#2d-reed-solomon-encoding-scheme">the right half of an NMT as used in LazyLedger will be parity shares</a>) <em>ignore</em> the namespace ID for the parity leaves. Subtree roots with <em>only parity leaves</em> have their min and max namespace ID set to <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>. This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>).</p>
+<p>For some intuition: the min and max namespace IDs for subtree roots with at least one non-parity leaf (which includes the root of an NMT, as <a href="#2d-reed-solomon-encoding-scheme">the right half of an NMT as used in Celestia will be parity shares</a>) <em>ignore</em> the namespace ID for the parity leaves. Subtree roots with <em>only parity leaves</em> have their min and max namespace ID set to <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>. This allows for shorter proofs into the tree than if the namespace ID of parity shares was not ignored (which would cause the max namespace ID of the root to always be <a href="consensus.html#reserved-state-subtree-ids"><code>PARITY_SHARE_NAMESPACE_ID</code></a>).</p>
 <p>A compact commitment can be computed by taking the <a href="#hashing">hash</a> of the <a href="#serialization">serialized</a> root node.</p>
 <h4 id="namespacemerkletreeinclusionproof"><a class="header" href="#namespacemerkletreeinclusionproof">NamespaceMerkleTreeInclusionProof</a></h4>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
@@ -819,7 +819,7 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <tr><td><code>rawData</code></td><td><code>byte[]</code></td><td>Raw message bytes.</td></tr>
 </tbody></table>
 <h2 id="state"><a class="header" href="#state">State</a></h2>
-<p>The state of the LazyLedger chain is intentionally restricted to containing only account balances and the validator set metadata. One unified <a href="#sparse-merkle-tree">Sparse Merkle Tree</a> is maintained for the entire chain state, the <em>state tree</em>. The root of this tree is committed to in the <a href="#header">block header</a>.</p>
+<p>The state of the Celestia chain is intentionally restricted to containing only account balances and the validator set metadata. One unified <a href="#sparse-merkle-tree">Sparse Merkle Tree</a> is maintained for the entire chain state, the <em>state tree</em>. The root of this tree is committed to in the <a href="#header">block header</a>.</p>
 <p>The state tree is separated into <code>2**(8*STATE_SUBTREE_RESERVED_BYTES)</code> subtrees, each of which can be used to store a different component of the state. This is done by slicing off the highest <code>STATE_SUBTREE_RESERVED_BYTES</code> bytes from the key and replacing them with the appropriate <a href="consensus.html#reserved-state-subtree-ids">reserved state subtree ID</a>. Reducing the key size within subtrees also reduces the collision resistance of keys by <code>8*STATE_SUBTREE_RESERVED_BYTES</code> bits, but this is not an issue due the number of bits removed being small.</p>
 <p>A number of subtrees are maintained:</p>
 <ol>

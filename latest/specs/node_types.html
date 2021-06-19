@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Node types - LazyLedger Specifications</title>
+        <title>Node types - Celestia Specifications</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">LazyLedger Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html" class="active"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="../specs/index.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html" class="active"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/index.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -130,7 +130,7 @@
                         
                     </div>
 
-                    <h1 class="menu-title">LazyLedger Specifications</h1>
+                    <h1 class="menu-title">Celestia Specifications</h1>
 
                     <div class="right-buttons">
                         
@@ -139,7 +139,7 @@
                         </a>
                         
                         
-                        <a href="https://github.com/lazyledger/lazyledger-specs" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/celestiaorg/celestia-specs" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
@@ -201,7 +201,7 @@
 <li><a href="#node-type-definitions">Node Type Definitions</a></li>
 </ul>
 <h2 id="node-parameters"><a class="header" href="#node-parameters">Node Parameters</a></h2>
-<p>Nodes that run the <a href="./consensus.html">LazyLedger protocol</a> have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the <code>header</code> and <code>lastCommit</code> fields of each <a href="./data_structures.html#block">block</a>, but can handle the <code>availableDataHeader</code> and <code>availableData</code> fields differently.</p>
+<p>Nodes that run the <a href="./consensus.html">Celestia protocol</a> have a number of parameters that can be tweaked with regards to which parts of the data is downloaded, validated, and/or stored. All nodes process the <code>header</code> and <code>lastCommit</code> fields of each <a href="./data_structures.html#block">block</a>, but can handle the <code>availableDataHeader</code> and <code>availableData</code> fields differently.</p>
 <p>We define security assumptions as assumptions under which a given node is guaranteed accountable consensus safety (i.e. that finalized blocks will remain in the prefix of all future sequences of blocks accepted by the node, unless a supermajority (&gt; 2/3) of validator voting power performs an attributable—and thus <a href="./consensus.html#blockavailabledataevidencedata">penalizable</a>—malicious action) and state safety (i.e. that an invalid state transition will not be included in the chain accepted by the node).</p>
 <h3 id="block-headers"><a class="header" href="#block-headers">Block Headers</a></h3>
 <h4 id="compact-block-headers"><a class="header" href="#compact-block-headers">Compact Block Headers</a></h4>
@@ -229,7 +229,7 @@
 <p>These nodes process do not process requests <a href="./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> and thus to not know the chain state without relying on a third party.</p>
 <p>At most secure under an honest minority of nodes and a weak subjectivity assumption.</p>
 <h4 id="full-transactions"><a class="header" href="#full-transactions">Full Transactions</a></h4>
-<p>Nodes that wish to produce new blocks must know the <a href="./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the LazyLedger state, as <a href="./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
+<p>Nodes that wish to produce new blocks must know the <a href="./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the Celestia state, as <a href="./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
 <p>At most secure under a weak subjectivity assumption.</p>
 <h2 id="node-type-definitions"><a class="header" href="#node-type-definitions">Node Type Definitions</a></h2>
 <p>For convenience, we will define several common parameter configurations:</p>
