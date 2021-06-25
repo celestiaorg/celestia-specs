@@ -32,7 +32,7 @@ We consider two scenarios.
 
 A requirement is that full nodes and light nodes agree on the same head of the chain automatically in this case, i.e. without human intervention.
 
-Light nodes follow consensus (i.e. validator set changes and commits) and perform DAS. If a block is seen as unavailable but has a commit, DAS is performed on the block continuously until either DAS passes, or the weak subjectivity window is exceeded at which point the node halts.
+Light nodes follow consensus state (i.e. validator set changes and commits) and perform DAS. If a block is seen as unavailable but has a commit, DAS is performed on the block continuously until either DAS passes, or the weak subjectivity window is exceeded at which point the node halts.
 
 Full nodes fully download and execute blocks. If a block is seen as unavailable but has a commit, full downloading is re-attempted continuously until either it succeeds, or the weak subjectivity window is exceeded at which point the node halts.
 
