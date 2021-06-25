@@ -1,6 +1,6 @@
 # Celestia Specifications
 
-- [Specification](specs/specification.md)
+- [Specification](./specs/specification.md)
   - [Architecture](./specs/architecture.md)
   - [Data Structures](./specs/data_structures.md)
   - [Consensus](./specs/consensus.md)
