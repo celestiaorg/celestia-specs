@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // Define wire messages for transaction types.
-// https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#signedtransactiondata
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#signedtransactiondata
 
 message TransactionFee {
   // Tip fee rate (rewarded to block proposer)
@@ -9,7 +9,7 @@ message TransactionFee {
 }
 
 message Decimal {
-  // https://github.com/lazyledger/lazyledger-specs/issues/120
+  // https://github.com/celestiaorg/celestia-specs/issues/120
   uint64 todo = 1;
 }
 
@@ -19,7 +19,7 @@ message MessageCommitmentAndSignature {
   // 32-byte hash: commitment to message shares
   bytes share_commitment = 2;
   // 64-byte signature a single SignedTransactionPayForMessage
-  // https://github.com/lazyledger/lazyledger-specs/blob/master/specs/data_structures.md#signedtransactiondatapayformessage
+  // https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#signedtransactiondatapayformessage
   bytes signature = 3;
 }
 
