@@ -36,4 +36,8 @@ Light nodes follow consensus state (i.e. validator set changes and commits) and 
 
 Full nodes fully download and execute blocks. If a block is seen as unavailable but has a commit, full downloading is re-attempted continuously until either it succeeds, or the weak subjectivity window is exceeded at which point the node halts.
 
-Under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044) assumptions, passing DAS probabilistically guarantees the block can be fully downloaded. Therefore, the above protocol guarantees light nodes and full nodes will agree on the same head.
+Under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044) assumptions, passing DAS probabilistically guarantees the block can be fully downloaded. Therefore, the above protocol guarantees light nodes and full nodes will agree on the same head automatically without manual intervention, under a synchrony assumption equal to the unbonding window (formal proof pending).
+
+> Note: whether re-downloading/re-sampling is attempted at a fixed interval or on receipt of a new block header with a Tendermint commit is an implementation detail.
+
+> Note: users may wish to set a much shorter timeout than the unbonding window before they are notified of their node being unable to verify the availability of a committed block. This does not affect the properties analyzed above, but may result in more manual attention in the event of intermittent network disruptions.
