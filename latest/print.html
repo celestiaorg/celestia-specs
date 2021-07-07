@@ -1922,6 +1922,24 @@ else if account.status == AccountStatus.ValidatorBonded
 </li>
 </ul>
 </li>
+<li>Validator nodes are identical to full nodes, but should additionally create and sign consensus messages (proposals, votes, etc.).
+<ul>
+<li>Block headers: <a href="specs/node_types.html#extended-block-headers">Extended Block Headers</a></li>
+<li>Block bodies: <a href="specs/node_types.html#full-bodies">Full Bodies</a>
+<ul>
+<li>Storage: Not stored beyond a parameter</li>
+<li>Serving: Served to the network</li>
+</ul>
+</li>
+<li>Transactions: <a href="specs/node_types.html#full-transactions">Full Transactions</a></li>
+<li>Fraud proofs:
+<ul>
+<li>State transition: produce, consume</li>
+<li>Erasure coding: produce, consume</li>
+</ul>
+</li>
+</ul>
+</li>
 </ol>
 <div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="rationale"><a class="header" href="#rationale">Rationale</a></h1>
 <ul>
