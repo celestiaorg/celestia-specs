@@ -133,3 +133,12 @@ For convenience, we will define several common parameter configurations:
     - Fraud proofs:
         - State transition: produce, consume
         - Erasure coding: produce (partial), consume
+1. Validator nodes are identical to full nodes, but should additionally create and sign consensus messages (proposals, votes, etc.).
+    - Block headers: [Extended Block Headers](#extended-block-headers)
+    - Block bodies: [Full Bodies](#full-bodies)
+        - Storage: Not stored beyond a parameter
+        - Serving: Served to the network
+    - Transactions: [Full Transactions](#full-transactions)
+    - Fraud proofs:
+        - State transition: produce, consume
+        - Erasure coding: produce, consume
