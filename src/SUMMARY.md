@@ -13,4 +13,5 @@
 - [Rationale](./rationale/rationale.md)
   - [Block Rewards](./rationale/rewards.md)
   - [Distributing Rewards and Penalties](./rationale/distributing_rewards.md)
+  - [Fork Choice Rule with Data Availability Sampling](./rationale/fork_choice_das.md)
   - [Message Layout](./rationale/message_block_layout.md)

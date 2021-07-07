@@ -71,7 +71,7 @@ At most secure under an honest minority of nodes and a weak subjectivity assumpt
 
 #### Full Transactions
 
-Nodes that wish to produce new blocks must know the [chain state](./data_structures.md#state). Processing all block bodies is actually not needed to know the Celestia state, as [transactions that pay for message inclusion commit to messages](./../rationale/message_block_layout.md). These nodes process all requests [with a reserved namespace ID](./data_structures.md#arranging-available-data-into-shares) from block bodies and perform Data Availability Sampling for the remaining (message) data.
+Nodes that wish to produce new blocks must know the [chain state](./data_structures.md#state). Processing all block bodies is actually not needed to know the Celestia state, as [transactions that pay for message inclusion commit to messages](../rationale/message_block_layout.md). These nodes process all requests [with a reserved namespace ID](./data_structures.md#arranging-available-data-into-shares) from block bodies and perform Data Availability Sampling for the remaining (message) data.
 
 At most secure under a weak subjectivity assumption.
 
