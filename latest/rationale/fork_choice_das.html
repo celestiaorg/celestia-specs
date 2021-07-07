@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Block Rewards - Celestia Specifications</title>
+        <title>Fork Choice Rule with Data Availability Sampling - Celestia Specifications</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="../specs/specification.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/rationale.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html" class="active"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/fork_choice_das.html"><strong aria-hidden="true">2.3.</strong> Fork Choice Rule with Data Availability Sampling</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.4.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="../specs/specification.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="../specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="../specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="../specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="../specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="../specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="../rationale/rationale.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="../rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="../rationale/fork_choice_das.html" class="active"><strong aria-hidden="true">2.3.</strong> Fork Choice Rule with Data Availability Sampling</a></li><li class="chapter-item expanded "><a href="../rationale/message_block_layout.html"><strong aria-hidden="true">2.4.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -172,37 +172,51 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="block-rewards"><a class="header" href="#block-rewards">Block Rewards</a></h1>
-<p>Block rewards scale with the inverse square root of the total validating stake. This gives us a nice property: as the total validating stake decreases, returns per validator increases. This encourages additional validators to join and makes the system as a whole more robust even in the presence of secondary uses of the staking coin, e.g. being used as collateral in Decentralized Finance protocols.</p>
-<p>Note that non-constant reward scaling opens up the system to <a href="https://arxiv.org/abs/1811.00742">gatekeeping attacks</a>, whereby validators are incentivized to prevent new validators from joining the validator set to keep their returns high. This should not be an issue in practice in the same way as <a href="https://bitcointalk.org/index.php?topic=312668.0">feather forks</a> are not an issue in practice, but is nonetheless a theoretical issue that is noted here.</p>
-<p>The formula to calculate the reward per block uses the following symbols:</p>
-<table><thead><tr><th>symbol</th><th>note</th></tr></thead><tbody>
-<tr><td>\( R_B \)</td><td>Rewards per block, in coins.</td></tr>
-<tr><td>\( I_T \)</td><td>Target annual issuance, in coins.</td></tr>
-<tr><td>\( t_B \)</td><td>Block time, in seconds.</td></tr>
-<tr><td>\( t_Y \)</td><td>Seconds per year.</td></tr>
-<tr><td>\( S_0 \)</td><td>Initial coin supply.</td></tr>
-<tr><td>\( S_T \)</td><td>Total staked coins.</td></tr>
-</tbody></table>
-<p>Note that for the seconds per year we use a fixed <code>31,536,000</code>, omitting leap seconds for simplicity.</p>
-<p>The reward for a given block is thus only dependent on the validating stake, with remaining terms being constant:</p>
-<p>$$
-R_B(S_T) = I_T \frac{t_B}{t_Y} \frac{\sqrt{S_T}}{\sqrt{S_0}} = \left( \frac{I_T t_B }{t_Y \sqrt{S_0}} \right) \sqrt{S_T}
-$$</p>
-<p>If 100% of the initial supply of coins stake, then exactly \( I_T \) new coins will be issued per \( \frac{t_Y}{t_B} \) blocks. If fewer than 100% of the initial supply of coins stake, then fewer than \( I_T \) new coins will be issued, but the decrease will be square-root rather than linear. If greater than 100% of the initial supply of coins stake (e.g. after some time, additional coins will be in circulation due to previous issuance), then greater than \( I_T \) new coins will be issued, but again scaling sub-linearly.</p>
+                        <h1 id="fork-choice-rule-with-data-availability-sampling"><a class="header" href="#fork-choice-rule-with-data-availability-sampling">Fork Choice Rule with Data Availability Sampling</a></h1>
+<ul>
+<li><a href="#preamble">Preamble</a></li>
+<li><a href="#invalid-vs-unavailable">Invalid vs Unavailable</a></li>
+<li><a href="#scenarios">Scenarios</a></li>
+</ul>
+<h2 id="preamble"><a class="header" href="#preamble">Preamble</a></h2>
+<p>Tendermint provides finality under an honest 2/3 of voting power assumption. It is one of several <a href="https://arxiv.org/abs/1807.04938">&quot;BFT&quot; consensus protocols</a> (also known as &quot;classical&quot; consensus protocols). Under that assumptions, new <em>valid</em> blocks are immediately and forever final as soon as 2/3 of voting power commits to the block. Therefore, under that assumption, Tendermint is fork-free.</p>
+<p>Contemporary blockchains support full nodes (which are secure under no assumption on voting power honesty) and light nodes (which are secure under an honest majority of voting power assumption). LazyLedger is unique in <a href="../specs/node_types.html#node-type-definitions">supporting light nodes with stronger security guarantees</a>:</p>
+<ol>
+<li>full nodes are secure under no assumptions on voting power honesty</li>
+<li>light nodes (and partial nodes) are secure under <a href="https://arxiv.org/abs/1809.09044">an honest minority of nodes and synchronous communication</a>, and no assumptions on voting power honesty</li>
+<li>superlight nodes are secure under an honest majority of voting assumption</li>
+</ol>
+<p>Note that <em>secure</em> in this context is defined as &quot;not accepting invalid blocks,&quot; as is orthogonal to <em>consensus safety</em>. The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.</p>
+<h2 id="invalid-vs-unavailable"><a class="header" href="#invalid-vs-unavailable">Invalid vs Unavailable</a></h2>
+<p>Tendermint (and other consensus protocols) requires blocks to be <em>valid</em>, i.e. pass a <a href="https://arxiv.org/abs/1807.04938">validity predicate</a> before they are accepted by an honest node. Note that both validity and invalidity are deterministic and monotonic, i.e. that once a block is valid or invalid, it will be valid or invalid for all future time.</p>
+<p>With <a href="https://arxiv.org/abs/1809.09044">Data Availability Sampling</a> (DAS), there is a notion of <em>available</em> and <em>unavailable</em> blocks. Both are probabilistic rather than deterministic. Availability is assumed monotonic (i.e. once a block is available, it will remain available since The Internet Never Forgets), but unavailability is not. A block proposer may hide a block to make currently-online nodes see the block as unavailable, then reveal the entire (valid) block at a later time.</p>
+<h2 id="scenarios"><a class="header" href="#scenarios">Scenarios</a></h2>
+<p>We consider two scenarios.</p>
+<p><strong>A dishonest majority hide a committed block, commit to a second block at the same height within the weak subjectivity window to fork the chain, then reveal the first block</strong>. This is trivially equivocation and requires social consensus to resolve which fork to accept. The unavailability of the first block is orthogonal. Nodes that detect equivocation by a majority of voting power within the weak subjectivity window must halt regardless.</p>
+<p><strong>A dishonest majority hide a committed block, commit additional blocks on top of it, then reveal the first block within the weak subjectivity window</strong>. There is no equivocation. Note that a node cannot distinguish a dishonest majority in this scenario from a transient network failure on their end and an honest majority.</p>
+<p>A requirement is that full nodes and light nodes agree on the same head of the chain automatically in this case, i.e. without human intervention.</p>
+<p>Light nodes follow consensus state (i.e. validator set changes and commits) and perform DAS. If a block is seen as unavailable but has a commit, DAS is performed on the block continuously until either DAS passes, or the weak subjectivity window is exceeded at which point the node halts.</p>
+<p>Full nodes fully download and execute blocks. If a block is seen as unavailable but has a commit, full downloading is re-attempted continuously until either it succeeds, or the weak subjectivity window is exceeded at which point the node halts.</p>
+<p>Under <a href="https://arxiv.org/abs/1809.09044">an honest minority of nodes and synchronous communication</a> assumptions, passing DAS probabilistically guarantees the block can be fully downloaded. Therefore, the above protocol guarantees light nodes and full nodes will agree on the same head automatically without manual intervention, under a synchrony assumption equal to the unbonding window (formal proof pending).</p>
+<blockquote>
+<p>Note: whether re-downloading/re-sampling is attempted at a fixed interval or on receipt of a new block header with a Tendermint commit is an implementation detail.</p>
+</blockquote>
+<blockquote>
+<p>Note: users may wish to set a much shorter timeout than the unbonding window before they are notified of their node being unable to verify the availability of a committed block. This does not affect the properties analyzed above, but may result in more manual attention in the event of intermittent network disruptions.</p>
+</blockquote>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../rationale/rationale.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../rationale/distributing_rewards.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../rationale/distributing_rewards.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../rationale/message_block_layout.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -214,13 +228,13 @@ $$</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../rationale/rationale.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../rationale/distributing_rewards.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../rationale/distributing_rewards.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../rationale/message_block_layout.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

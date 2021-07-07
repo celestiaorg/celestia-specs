@@ -100,7 +100,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="specs/specification.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="rationale/rationale.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="rationale/message_block_layout.html"><strong aria-hidden="true">2.3.</strong> Message Layout</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Celestia Specifications</a></li><li class="chapter-item expanded "><a href="specs/specification.html"><strong aria-hidden="true">1.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="specs/architecture.html"><strong aria-hidden="true">1.1.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="specs/data_structures.html"><strong aria-hidden="true">1.2.</strong> Data Structures</a></li><li class="chapter-item expanded "><a href="specs/consensus.html"><strong aria-hidden="true">1.3.</strong> Consensus</a></li><li class="chapter-item expanded "><a href="specs/block_proposer.html"><strong aria-hidden="true">1.4.</strong> Block Proposer</a></li><li class="chapter-item expanded "><a href="specs/networking.html"><strong aria-hidden="true">1.5.</strong> Networking</a></li><li class="chapter-item expanded "><a href="specs/light_client.html"><strong aria-hidden="true">1.6.</strong> Light client</a></li><li class="chapter-item expanded "><a href="specs/node_types.html"><strong aria-hidden="true">1.7.</strong> Node types</a></li></ol></li><li class="chapter-item expanded "><a href="rationale/rationale.html"><strong aria-hidden="true">2.</strong> Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="rationale/rewards.html"><strong aria-hidden="true">2.1.</strong> Block Rewards</a></li><li class="chapter-item expanded "><a href="rationale/distributing_rewards.html"><strong aria-hidden="true">2.2.</strong> Distributing Rewards and Penalties</a></li><li class="chapter-item expanded "><a href="rationale/fork_choice_das.html"><strong aria-hidden="true">2.3.</strong> Fork Choice Rule with Data Availability Sampling</a></li><li class="chapter-item expanded "><a href="rationale/message_block_layout.html"><strong aria-hidden="true">2.4.</strong> Message Layout</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -191,6 +191,7 @@
 <ul>
 <li><a href="./rationale/rewards.html">Block Rewards</a></li>
 <li><a href="./rationale/distributing_rewards.html">Distributing Rewards and Penalties</a></li>
+<li><a href="./rationale/fork_choice_das.html">Fork Choice Rule with Data Availability Sampling</a></li>
 <li><a href="./rationale/message_block_layout.html">Message Layout</a></li>
 </ul>
 </li>
@@ -1091,7 +1092,8 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <h2 id="leader-selection"><a class="header" href="#leader-selection">Leader Selection</a></h2>
 <p>TODO</p>
 <h2 id="fork-choice"><a class="header" href="#fork-choice">Fork Choice</a></h2>
-<p>TODO</p>
+<p>The Tendermint consensus protocol is fork-free by construction under an honest majority of stake assumption.</p>
+<p>If a block has a <a href="specs/consensus.html#blocklastcommit">valid commit</a>, it is part of the canonical chain. If equivocation <a href="specs/./data_structures.html#evidence">evidence</a> is detected for more than 1/3 of voting power, the node must halt. See <a href="specs/../rationale/fork_choice_das.html">rationale doc</a> for more information.</p>
 <h2 id="block-validity"><a class="header" href="#block-validity">Block Validity</a></h2>
 <p>The validity of a newly-seen block, <code>block</code>, is determined by two components, detailed in subsequent sections:</p>
 <ol>
@@ -1809,7 +1811,7 @@ else if account.status == AccountStatus.ValidatorBonded
 <p>These nodes process do not process requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> and thus to not know the chain state without relying on a third party.</p>
 <p>At most secure under an honest minority of nodes and a weak subjectivity assumption.</p>
 <h4 id="full-transactions"><a class="header" href="#full-transactions">Full Transactions</a></h4>
-<p>Nodes that wish to produce new blocks must know the <a href="specs/./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the Celestia state, as <a href="specs/./../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
+<p>Nodes that wish to produce new blocks must know the <a href="specs/./data_structures.html#state">chain state</a>. Processing all block bodies is actually not needed to know the Celestia state, as <a href="specs/../rationale/message_block_layout.html">transactions that pay for message inclusion commit to messages</a>. These nodes process all requests <a href="specs/./data_structures.html#arranging-available-data-into-shares">with a reserved namespace ID</a> from block bodies and perform Data Availability Sampling for the remaining (message) data.</p>
 <p>At most secure under a weak subjectivity assumption.</p>
 <h2 id="node-type-definitions"><a class="header" href="#node-type-definitions">Node Type Definitions</a></h2>
 <p>For convenience, we will define several common parameter configurations:</p>
@@ -1945,6 +1947,7 @@ else if account.status == AccountStatus.ValidatorBonded
 <ul>
 <li><a href="rationale/./rewards.html">Block Rewards</a></li>
 <li><a href="rationale/./distributing_rewards.html">Distributing Rewards and Penalties</a></li>
+<li><a href="rationale/./fork_choice_das.html">Fork Choice Rule with Data Availability Sampling</a></li>
 <li><a href="rationale/./message_block_layout.html">Message Layout</a></li>
 </ul>
 <div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="block-rewards"><a class="header" href="#block-rewards">Block Rewards</a></h1>
@@ -2009,6 +2012,38 @@ $$</p>
 <li>To compute the reward of a delegator.</li>
 </ol>
 <p>Intuitively, after having being used twice, an entry can be pruned from the state. We can make use of this by storing only the latest entry with its respective validator object, and a copy of the two entries each delegation needs with the delegation object. By storing entries directly with the objects that require them, state transitions can be statelessly validated without extra inclusion proofs.</p>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="fork-choice-rule-with-data-availability-sampling"><a class="header" href="#fork-choice-rule-with-data-availability-sampling">Fork Choice Rule with Data Availability Sampling</a></h1>
+<ul>
+<li><a href="rationale/fork_choice_das.html#preamble">Preamble</a></li>
+<li><a href="rationale/fork_choice_das.html#invalid-vs-unavailable">Invalid vs Unavailable</a></li>
+<li><a href="rationale/fork_choice_das.html#scenarios">Scenarios</a></li>
+</ul>
+<h2 id="preamble-1"><a class="header" href="#preamble-1">Preamble</a></h2>
+<p>Tendermint provides finality under an honest 2/3 of voting power assumption. It is one of several <a href="https://arxiv.org/abs/1807.04938">&quot;BFT&quot; consensus protocols</a> (also known as &quot;classical&quot; consensus protocols). Under that assumptions, new <em>valid</em> blocks are immediately and forever final as soon as 2/3 of voting power commits to the block. Therefore, under that assumption, Tendermint is fork-free.</p>
+<p>Contemporary blockchains support full nodes (which are secure under no assumption on voting power honesty) and light nodes (which are secure under an honest majority of voting power assumption). LazyLedger is unique in <a href="rationale/../specs/node_types.html#node-type-definitions">supporting light nodes with stronger security guarantees</a>:</p>
+<ol>
+<li>full nodes are secure under no assumptions on voting power honesty</li>
+<li>light nodes (and partial nodes) are secure under <a href="https://arxiv.org/abs/1809.09044">an honest minority of nodes and synchronous communication</a>, and no assumptions on voting power honesty</li>
+<li>superlight nodes are secure under an honest majority of voting assumption</li>
+</ol>
+<p>Note that <em>secure</em> in this context is defined as &quot;not accepting invalid blocks,&quot; as is orthogonal to <em>consensus safety</em>. The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.</p>
+<h2 id="invalid-vs-unavailable"><a class="header" href="#invalid-vs-unavailable">Invalid vs Unavailable</a></h2>
+<p>Tendermint (and other consensus protocols) requires blocks to be <em>valid</em>, i.e. pass a <a href="https://arxiv.org/abs/1807.04938">validity predicate</a> before they are accepted by an honest node. Note that both validity and invalidity are deterministic and monotonic, i.e. that once a block is valid or invalid, it will be valid or invalid for all future time.</p>
+<p>With <a href="https://arxiv.org/abs/1809.09044">Data Availability Sampling</a> (DAS), there is a notion of <em>available</em> and <em>unavailable</em> blocks. Both are probabilistic rather than deterministic. Availability is assumed monotonic (i.e. once a block is available, it will remain available since The Internet Never Forgets), but unavailability is not. A block proposer may hide a block to make currently-online nodes see the block as unavailable, then reveal the entire (valid) block at a later time.</p>
+<h2 id="scenarios"><a class="header" href="#scenarios">Scenarios</a></h2>
+<p>We consider two scenarios.</p>
+<p><strong>A dishonest majority hide a committed block, commit to a second block at the same height within the weak subjectivity window to fork the chain, then reveal the first block</strong>. This is trivially equivocation and requires social consensus to resolve which fork to accept. The unavailability of the first block is orthogonal. Nodes that detect equivocation by a majority of voting power within the weak subjectivity window must halt regardless.</p>
+<p><strong>A dishonest majority hide a committed block, commit additional blocks on top of it, then reveal the first block within the weak subjectivity window</strong>. There is no equivocation. Note that a node cannot distinguish a dishonest majority in this scenario from a transient network failure on their end and an honest majority.</p>
+<p>A requirement is that full nodes and light nodes agree on the same head of the chain automatically in this case, i.e. without human intervention.</p>
+<p>Light nodes follow consensus state (i.e. validator set changes and commits) and perform DAS. If a block is seen as unavailable but has a commit, DAS is performed on the block continuously until either DAS passes, or the weak subjectivity window is exceeded at which point the node halts.</p>
+<p>Full nodes fully download and execute blocks. If a block is seen as unavailable but has a commit, full downloading is re-attempted continuously until either it succeeds, or the weak subjectivity window is exceeded at which point the node halts.</p>
+<p>Under <a href="https://arxiv.org/abs/1809.09044">an honest minority of nodes and synchronous communication</a> assumptions, passing DAS probabilistically guarantees the block can be fully downloaded. Therefore, the above protocol guarantees light nodes and full nodes will agree on the same head automatically without manual intervention, under a synchrony assumption equal to the unbonding window (formal proof pending).</p>
+<blockquote>
+<p>Note: whether re-downloading/re-sampling is attempted at a fixed interval or on receipt of a new block header with a Tendermint commit is an implementation detail.</p>
+</blockquote>
+<blockquote>
+<p>Note: users may wish to set a much shorter timeout than the unbonding window before they are notified of their node being unable to verify the availability of a committed block. This does not affect the properties analyzed above, but may result in more manual attention in the event of intermittent network disruptions.</p>
+</blockquote>
 <div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="message-layout"><a class="header" href="#message-layout">Message Layout</a></h1>
 <ul>
 <li><a href="rationale/message_block_layout.html#preamble">Preamble</a></li>
@@ -2019,7 +2054,7 @@ $$</p>
 </ul>
 </li>
 </ul>
-<h2 id="preamble-1"><a class="header" href="#preamble-1">Preamble</a></h2>
+<h2 id="preamble-2"><a class="header" href="#preamble-2">Preamble</a></h2>
 <p>Celestia uses <a href="https://arxiv.org/abs/1809.09044">a data availability scheme</a> that allows nodes to determine whether a block's data was published without downloading the whole block. The core of this scheme is arranging data in a two-dimensional matrix then applying erasure coding to each row and column. This document describes the rationale for how data—transactions, messages, and other data—<a href="rationale/../specs/data_structures.html#arranging-available-data-into-shares">is actually arranged</a>. Familiarity with the <a href="https://arxiv.org/abs/1809.09044">originally proposed data layout format</a> is assumed.</p>
 <h2 id="message-layout-rationale"><a class="header" href="#message-layout-rationale">Message Layout Rationale</a></h2>
 <p>Block data consists of transactions (which modify the Celestia chain's state), intermediate state roots (required for fraud proofs of the aforementioned transactions), messages (binary blobs which do not modify the Celestia state, but which are intended for a Celestia application identified with a provided namespace ID), and other relevant pieces of data (e.g. evidence for slashing). We want to arrange this data into a <code>k * k</code> matrix of fixed-sized shares, which will later be committed to in <a href="rationale/../specs/data_structures.html#namespace-merkle-tree">Namespace Merkle Trees (NMTs)</a>.</p>
