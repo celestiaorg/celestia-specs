@@ -995,3 +995,14 @@ Various [consensus parameters](consensus.md#system-parameters) are committed to 
 | `availableDataOriginalSquareMax` | `uint64`                              | The `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`. |
 
 In order to compute the `consensusHash` field in the [block header](#header), the above list of parameters is [hashed](#hashing).
+
+## StateFraudProof
+
+| name                       | type                                                                 | description                                                            |
+|----------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------|
+| `headers`                  | [Header](#header)`[]`                                                | Headers of two consecutive blocks containing `availableDataRoot` of type [HashDigest](#hashdigest) committing to transaction and intermediate state root data                        |
+| `transactionShareProofs`   | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. isCol is set to zero.|
+| `stateShareProofs`         | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. isCol is set to zero.|
+| `wrapIndex`                | `uint64`                                                             | Index for connecting the [WrappedIntermediateStateRoot](#wrappedintermediatestateroot) and [WrappedTransaction](#wrappedtransaction) after shares are parsed.      |
+| `intermediateStateElements`| [key,value] (#state)                                                 | Keys are of type `byte[32]` and values are byte arrays.                                                                                                                               |
+| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements                                                                                                                               |
