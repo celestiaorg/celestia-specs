@@ -5,6 +5,7 @@
   - [AvailableDataRow](#availabledatarow)
   - [ConsensusProposal](#consensusproposal)
   - [WireTxPayForMessage](#wiretxpayformessage)
+- [BadEncodingFraudProof](#badencodingfraudproof)
 - [StateFraudProof](#statefraudproof)
 
 ## Wire Format
@@ -68,15 +69,25 @@ Transaction senders who want to pay for a message will create a [SignedTransacti
 
 Receiving a `WireTxPayForMessage` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
 
+## BadEncodingFraudProof
+
+| name          | type                                                  | description                                                                       |
+|---------------|-------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `shareProofs` | [ShareProof](#shareproof)`[]`                         | The available shares in the offending row or column.                              |
+| `root`        | [HashDigest](#hashdigest)                             | The Merkle root of the offending row or column.                                   |
+| `proof`       | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
+| `isCol`       | `bool`                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
+| `position`    | `uint64`                                              | The index of the row or column in the square.                                     |
+
+
 ## StateFraudProof
 
-| name                       | type                                                                 | description                                                            |
-|----------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------|
-| `headerForTxns`                  | [Header](#header)                                                | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to transaction data.                                                                                        |
-| `headerForISRs`                  | [Header](#header)                                                | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to intermediate state root data. `lastHeaderHash` within `headerForISRs` equals the hash of `headerForTxns`.|
+| name                       | type                                                                 | description                                                                                                                                                                                                      |
+|----------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `headerForTxns`            | [Header](#header)                                                    | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to transaction data.                                                                                        |
+| `headerForISRs`            | [Header](#header)                                                    | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to intermediate state root data. `lastHeaderHash` within `headerForISRs` equals the hash of `headerForTxns`.|
 | `transactionShareProofs`   | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.     |
 | `stateShareProofs`         | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.     |
 | `wrapIndex`                | `uint64`                                                             | Index for connecting the [WrappedIntermediateStateRoot](#wrappedintermediatestateroot) and [WrappedTransaction](#wrappedtransaction) after shares are parsed.                               |
-| `intermediateStateElements`| [(key,value)](#state)                                                 | Keys are of type `byte[32]` and values are byte arrays.                                                                                                                                                        |
-| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                                      |
-
+| `intermediateStateElements`| [(key,value)](#state)                                                | Keys are of type `byte[32]` and values are byte arrays.                                                                                                                                                          |
+| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                                        |
