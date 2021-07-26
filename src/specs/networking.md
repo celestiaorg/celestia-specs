@@ -69,29 +69,15 @@ Transaction senders who want to pay for a message will create a [SignedTransacti
 
 Receiving a `WireTxPayForMessage` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
 
-## Invalid Erasure Coding
-
-If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.
-
-### ShareProof
-
-| name       | type                                                  | description                                                                                       |
-|------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `share`    | [Share](#share)                                       | The share.                                                                                        |
-| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeinclusionproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
-| `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                              | The index of the share in the offending row or column.                                            |
-
-
 ## BadEncodingFraudProof
 
-| name          | type                                                                               | description                                                                                             |
-|---------------|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| `shareProofs` | [ShareProof](./data_structures.md#shareproof)`[]`                                  | The available shares in the offending row or column.                                                     |
-| `root`        | [HashDigest](./data_structures.md#hashdigest)                                      | The Merkle root of the offending row or column.                                                         |
-| `proof`       | [NamespaceMerkleTreeProof](./data_structures.md#namespacemerkletreeinclusionproof) | The Merkle proof of the row or column root in [`availableDataRoot`](./data_structures.md#header).|
-| `isCol`       | `bool`                                                                             | A Boolean indicating if it is an offending row or column; `false` if it is a row.                        |
-| `position`    | `uint64`                                                                           | The index of the row or column in the square.                                                           |
+| name          | type                                                                                        | description                                                                                                          |
+|---------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `shareProofs` | [ShareProof](./data_structures.md#shareproof)`[]`                                           | The available shares in the offending row or column.                                                                |
+| `root`        | [HashDigest](./data_structures.md#hashdigest)                                               | The Merkle root of the offending row or column.                                                                      |
+| `proof`       | [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) | The Merkle proof of the row or column root in [`availableDataRoot`](./data_structures.md#header).|
+| `isCol`       | `bool`                                                                                      | A Boolean indicating if it is an offending row or column; `false` if it is a row.                                    |
+| `position`    | `uint64`                                                                                    | The index of the row or column in the square.                                                                        |
 
 
 ## StateFraudProof
