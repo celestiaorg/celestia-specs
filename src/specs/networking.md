@@ -69,25 +69,39 @@ Transaction senders who want to pay for a message will create a [SignedTransacti
 
 Receiving a `WireTxPayForMessage` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
 
+## Invalid Erasure Coding
+
+If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.
+
+### ShareProof
+
+| name       | type                                                  | description                                                                                       |
+|------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `share`    | [Share](#share)                                       | The share.                                                                                        |
+| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeinclusionproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
+| `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
+| `position` | `uint64`                                              | The index of the share in the offending row or column.                                            |
+
+
 ## BadEncodingFraudProof
 
-| name          | type                                                                      | description                                                                                                       |
-|---------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| `shareProofs` | [ShareProof](./data_structures.md#shareproof)`[]`                         | The available shares in the offending row or column.                                                             |
-| `root`        | [HashDigest](./data_structures.md#hashdigest)                             | The Merkle root of the offending row or column.                                                                   |
-| `proof`       | [NamespaceMerkleTreeProof](./data_structures.md#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](./data_structures.md#header).|
-| `isCol`       | `bool`                                                                    | A Boolean indicating if it is an offending row or column; `false` if it is a row.                                 |
-| `position`    | `uint64`                                                                  | The index of the row or column in the square.                                                                     |
+| name          | type                                                                               | description                                                                                             |
+|---------------|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `shareProofs` | [ShareProof](./data_structures.md#shareproof)`[]`                                  | The available shares in the offending row or column.                                                     |
+| `root`        | [HashDigest](./data_structures.md#hashdigest)                                      | The Merkle root of the offending row or column.                                                         |
+| `proof`       | [NamespaceMerkleTreeProof](./data_structures.md#namespacemerkletreeinclusionproof) | The Merkle proof of the row or column root in [`availableDataRoot`](./data_structures.md#header).|
+| `isCol`       | `bool`                                                                             | A Boolean indicating if it is an offending row or column; `false` if it is a row.                        |
+| `position`    | `uint64`                                                                           | The index of the row or column in the square.                                                           |
 
 
 ## StateFraudProof
 
-| name                       | type                                                                 | description                                                                                                                                                                                                                                      |
-|----------------------------|----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `headerForTxns`            | [Header](./data_structures.md#header)                                | Header containing `availableDataRoot`(./data_structures.md#header) of type [HashDigest](./data_structures.md#hashdigest) committing to transaction data.                                                                                        |
-| `headerForISRs`            | [Header](./data_structures.md#header)                                | Header containing `availableDataRoot`(./data_structures.md#header) of type [HashDigest](./data_structures.md#hashdigest) committing to intermediate state root data. `lastHeaderHash` within `headerForISRs` equals the hash of `headerForTxns`.|
-| `transactionShareProofs`   | [ShareProof](./data_structures.md#shareproof)`[]`                    | ShareProof contains both the [Share](./data_structures.md#share) and [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.                 |
-| `stateShareProofs`         | [ShareProof](./data_structures.md#shareproof)`[]`                    | ShareProof contains both the [Share](./data_structures.md#share) and [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.                 |
-| `wrapIndex`                | `uint64`                                                             | Index for connecting the [WrappedIntermediateStateRoot](./data_structures.md#wrappedintermediatestateroot) and [WrappedTransaction](./data_structures.md#wrappedtransaction) after shares are parsed.                       |
-| `intermediateStateElements`| [(key,value)](./data_structures.md#state)                            | Keys are of type `byte[32]` and values are byte arrays.        |
-| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](./data_structures.md#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                                            |
+| name                       | type                                                                                     | description                                                                                                                                                                                                                                                                                  |
+|----------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `headerForTxns`            | [Header](./data_structures.md#header)                                                    | Header containing `availableDataRoot`(./data_structures.md#header) of type [HashDigest](./data_structures.md#hashdigest) committing to transaction data.                                                                                              |
+| `headerForISRs`            | [Header](./data_structures.md#header)                                                    | Header containing `availableDataRoot`(./data_structures.md#header) of type [HashDigest](./data_structures.md#hashdigest) committing to intermediate state root data. `lastHeaderHash` within `headerForISRs` equals the hash of `headerForTxns`.|
+| `transactionShareProofs`   | [ShareProof](./data_structures.md#shareproof)`[]`                                        | ShareProof contains both the [Share](./data_structures.md#share) and [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.                                           |
+| `stateShareProofs`         | [ShareProof](./data_structures.md#shareproof)`[]`                                        | ShareProof contains both the [Share](./data_structures.md#share) and [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.                                           |
+| `wrapIndex`                | `uint64`                                                                                 | Index for connecting the [WrappedIntermediateStateRoot](./data_structures.md#wrappedintermediatestateroot) and [WrappedTransaction](./data_structures.md#wrappedtransaction) after shares are parsed.                                                                                      |
+| `intermediateStateElements`| [(key,value)](./data_structures.md#state)                                                | Keys are of type `byte[32]` and values are byte arrays.                                                                                                                                                                                                                                      |
+| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](./data_structures.md#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                                                                                                            |
