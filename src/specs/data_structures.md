@@ -72,6 +72,7 @@
   - [MessagePaid](#messagepaid)
   - [MessagePaidHead](#messagepaidhead)
 - [Consensus Parameters](#consensus-parameters)
+- [StateFraudProof](#statefraudproof)
 
 ## Data Structures Overview
 
