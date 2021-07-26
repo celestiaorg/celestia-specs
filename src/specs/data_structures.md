@@ -30,7 +30,6 @@
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
   - [Invalid Erasure Coding](#invalid-erasure-coding)
     - [ShareProof](#shareproof)
-    - [BadEncodingFraudProof](#badencodingfraudproof)
   - [Share](#share)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
@@ -72,7 +71,6 @@
   - [MessagePaid](#messagepaid)
   - [MessagePaidHead](#messagepaidhead)
 - [Consensus Parameters](#consensus-parameters)
-- [StateFraudProof](#statefraudproof)
 
 ## Data Structures Overview
 
@@ -465,26 +463,16 @@ Finally, the `availableDataRoot` of the block [Header](#header) is computed as t
 
 ### Invalid Erasure Coding
 
-If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.
+If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented. Data type for the fraud proof can be found in [here](./networking.md#badencodingfraudproof).
 
 #### ShareProof
 
-| name       | type                                                  | description                                                                                       |
-|------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `share`    | [Share](#share)                                       | The share.                                                                                        |
-| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
-| `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                              | The index of the share in the offending row or column.                                            |
-
-#### BadEncodingFraudProof
-
-| name          | type                                                  | description                                                                       |
-|---------------|-------------------------------------------------------|-----------------------------------------------------------------------------------|
-| `shareProofs` | [ShareProof](#shareproof)`[]`                         | The available shares in the offending row or column.                              |
-| `root`        | [HashDigest](#hashdigest)                             | The Merkle root of the offending row or column.                                   |
-| `proof`       | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
-| `isCol`       | `bool`                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
-| `position`    | `uint64`                                              | The index of the row or column in the square.                                     |
+| name       | type                                                           | description                                                                                       |
+|------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `share`    | [Share](#share)                                                | The share.                                                                                        |
+| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeinclusionproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
+| `isCol`    | `bool`                                                         | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
+| `position` | `uint64`                                                       | The index of the share in the offending row or column.                                            |
 
 ### Share
 
@@ -996,15 +984,3 @@ Various [consensus parameters](consensus.md#system-parameters) are committed to 
 | `availableDataOriginalSquareMax` | `uint64`                              | The `AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`. |
 
 In order to compute the `consensusHash` field in the [block header](#header), the above list of parameters is [hashed](#hashing).
-
-## StateFraudProof
-
-| name                       | type                                                                 | description                                                            |
-|----------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------|
-| `headerForTxns`            | [Header](#header)                                                    | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to transaction data.                                                                                        |
-| `headerForISRs`            | [Header](#header)                                                    | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to intermediate state root data. `lastHeaderHash` within `headerForISRs` equals the hash of `headerForTxns`.|
-| `transactionShareProofs`   | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.     |
-| `stateShareProofs`         | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.     |
-| `wrapIndex`                | `uint64`                                                             | Index for connecting the [WrappedIntermediateStateRoot](#wrappedintermediatestateroot) and [WrappedTransaction](#wrappedtransaction) after shares are parsed.                               |
-| `intermediateStateElements`| [(key,value)](#state)                                                | Keys are of type `byte[32]` and values are byte arrays.                                                                                                                                                        |
-| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                                      |
