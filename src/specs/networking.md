@@ -5,6 +5,7 @@
   - [AvailableDataRow](#availabledatarow)
   - [ConsensusProposal](#consensusproposal)
   - [WireTxPayForMessage](#wiretxpayformessage)
+- [StateFraudProof](#statefraudproof)
 
 ## Wire Format
 
@@ -66,3 +67,16 @@ Accepting a `WireTxPayForMessage` into the mempool requires different logic than
 Transaction senders who want to pay for a message will create a [SignedTransactionDataPayForMessage](./data_structures.md#signedtransactiondatapayformessage) object, `stx`, filling in the `stx.messageShareCommitment` field [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) for `k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`, then signing it to get a [transaction](./data_structures.md#transaction) `tx`. This process is repeated with successively smaller `k`s, decreasing by powers of 2 until `k * k <= stx.messageSize`. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of `(tx.signedTransactionData.messageShareCommitment, tx.signature)`, a `WireTxPayForMessage` object is constructed.
 
 Receiving a `WireTxPayForMessage` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
+
+## StateFraudProof
+
+| name                       | type                                                                 | description                                                            |
+|----------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------|
+| `headerForTxns`                  | [Header](#header)                                                | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to transaction data.                                                                                        |
+| `headerForISRs`                  | [Header](#header)                                                | Header containing `availableDataRoot`(#header) of type [HashDigest](#hashdigest) committing to intermediate state root data. `lastHeaderHash` within `headerForISRs` equals the hash of `headerForTxns`.|
+| `transactionShareProofs`   | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.     |
+| `stateShareProofs`         | [ShareProof](#shareproof)`[]`                                        | ShareProof contains both the [Share](#share) and [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) for the Share. `isCol` of type `bool` is set to `false`.     |
+| `wrapIndex`                | `uint64`                                                             | Index for connecting the [WrappedIntermediateStateRoot](#wrappedintermediatestateroot) and [WrappedTransaction](#wrappedtransaction) after shares are parsed.                               |
+| `intermediateStateElements`| [(key,value)](#state)                                                 | Keys are of type `byte[32]` and values are byte arrays.                                                                                                                                                        |
+| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                                      |
+
