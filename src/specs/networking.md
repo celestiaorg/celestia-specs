@@ -80,8 +80,8 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 | name       | type                                                  | description                                                                                       |
 |------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `share`    | [Share](#share)                                       | The share.                                                                                        |
-| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
+| `share`    | [Share](./data_structures.md#share)                   | The share.                                                                                        |
+| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](./data_structures.md#header).              |
 | `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
 | `position` | `uint64`                                              | The index of the share in the offending row or column.                                            |
 
