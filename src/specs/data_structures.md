@@ -28,8 +28,6 @@
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
-  - [Invalid Erasure Coding](#invalid-erasure-coding)
-    - [ShareProof](#shareproof)
   - [Share](#share)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
@@ -58,6 +56,7 @@
   - [MessageData](#messagedata)
     - [Message](#message)
 - [State](#state)
+  - [StateElement](#stateelement)
   - [Account](#account)
   - [Delegation](#delegation)
   - [Validator](#validator)
@@ -461,19 +460,6 @@ Finally, the `availableDataRoot` of the block [Header](#header) is computed as t
 
 ![fig: Available data root.](./figures/data_root.svg)
 
-### Invalid Erasure Coding
-
-If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented. Data type for the fraud proof can be found in [here](./networking.md#badencodingfraudproof).
-
-#### ShareProof
-
-| name       | type                                                           | description                                                                                       |
-|------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `share`    | [Share](#share)                                                | The share.                                                                                        |
-| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeinclusionproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
-| `isCol`    | `bool`                                                         | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                                       | The index of the share in the offending row or column.                                            |
-
 ### Share
 
 | name          | type                         | description                |
@@ -822,6 +808,15 @@ A number of subtrees are maintained:
 1. [Inactive validator set](#validator)
 1. [Delegation set](#delegation)
 1. [Message shares paid for](#message-paid)
+
+### StateElement
+
+Data structure for state elements is given below:
+
+| name        | type       | description                                                                 |
+|-------------|------------|-----------------------------------------------------------------------------|
+| `key`       | `byte[32]` | Keys are byte arrays with size 32.                                          |
+| `value`     | `byte[]`   | Values are byte arrays whose size depends on the type of the state element. |
 
 ### Account
 
