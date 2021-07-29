@@ -74,16 +74,17 @@ Receiving a `WireTxPayForMessage` object from the network follows the reverse pr
 
 ## Invalid Erasure Coding
 
-If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.
+If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented. We assume that the light clients have the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) for each block. Hence, given a [ShareProof](#shareproof), they can verify if the `rowRoot` or `colRoot` specified by `isCol` and `position` commits to the corresponding [Share](./data_structures.md#share). Similarly, given the `height` of a block, they can access all elements within the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) of the block. 
 
 ### ShareProof
 
-| name       | type                                                                    | description                                                                                       |
-|------------|-------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `share`    | [Share](./data_structures.md#share)                                     | The share.                                                                                         |
-| `proof`    | [NamespaceMerkleTreeInclusionProof](#namespacemerkletreeinclusionproof) | The Merkle proof of the share in the offending row or column root [`availableDataRoot`](./data_structures.md#header).               |
-| `isCol`    | `bool`                                                                  | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                                                | The index of the share in the offending row or column.                                             |
+| name       | type                                                                                        | description                                                                                      |
+|------------|---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `share`    | [Share](./data_structures.md#share)                                                         | The share.                                                                                        |
+| `proof`    | [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) | The Merkle proof of the share in the offending row or column root.                                |
+| `isCol`    | `bool`                                                                                      | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
+| `position` | `uint64`                                                                                    | The index of the share in the offending row or column.                                            |
+
 
 ### BadEncodingFraudProof
 
@@ -92,10 +93,10 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 | `height`      | [Height](./data_structures.md#type-aliases)                                           | Height of the block with the offending row or column.                                                 |
 | `shareProofs` | [ShareProof](./data_structures.md#shareproof)`[]`                                     | The available shares in the offending row or column.                                                 |
 | `isCol`       | `bool`                                                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row.                     |
-| `position`    | `uint64`                                                                              | The index of the row or column in the square.                                                         |
+| `position`    | `uint64`                                                                              | The index of the offending row or column in the square.                                               |
 ## Invalid State Update
 
-If a malicious block producer incorrectly computes the state, a fraud proof for this can be presented.
+If a malicious block producer incorrectly computes the state, a fraud proof for this can be presented. We assume that the light clients have the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) for each block. Hence, given a [ShareProof](#shareproof), they can verify if the `rowRoot` or `colRoot` specified by `isCol` and `position` commits to the corresponding [Share](./data_structures.md#share). Similarly, given the `height` of a block, they can access all elements within the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) of the block. 
 
 ### StateFraudProof
 
