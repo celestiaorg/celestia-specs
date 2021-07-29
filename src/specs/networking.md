@@ -91,7 +91,7 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 | name          | type                                                                                  | description                                                                                           |
 |---------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
 | `height`      | [Height](./data_structures.md#type-aliases)                                           | Height of the block with the offending row or column.                                                 |
-| `shareProofs` | [ShareProof](./data_structures.md#shareproof)`[]`                                     | The available shares in the offending row or column.                                                 |
+| `shareProofs` | [ShareProof](#shareproof)`[]`                                                         | The available shares in the offending row or column.                                                 |
 | `isCol`       | `bool`                                                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row.                     |
 | `position`    | `uint64`                                                                              | The index of the offending row or column in the square.                                               |
 ## Invalid State Update
