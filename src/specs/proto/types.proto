@@ -37,3 +37,98 @@ message AvailableDataHeader {
   // array of 32-byte hashes
   repeated bytes col_roots = 2;
 }
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#namespacemerkletreeinclusionproof
+message NamespaceMerkleTreeInclusionProof {
+  // sibling hash values, ordered starting from the leaf's neighbor
+  // array of 32-byte hashes
+  repeated bytes siblingValues = 1;
+  // sibling min namespace IDs
+  // array of NAMESPACE_ID_BYTES-bytes
+  repeated bytes siblingMins = 2;
+  // sibling max namespace IDs
+  // array of NAMESPACE_ID_BYTES-bytes
+  repeated bytes siblingMaxes = 3;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#sparsemerkletreeinclusionproof
+message SparseMerkleTreeInclusionProof {
+  // depth of the leaf node, must be <= 256
+  // The root node is at depth 0. 
+  uint16 depth = 1;
+  // sibling hash values, ordered starting from the leaf's neighbor 
+  // array of 32-byte hashes
+  repeated bytes siblings = 2;
+  // bitfield of explicitly included sibling hashes
+  // 32-byte
+  bytes includedSiblings = 3;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#share
+message Share {
+  // namespace ID of the share
+  // NAMESPACE_ID_BYTES-bytes
+  bytes namespaceID = 1;
+  // raw share data
+  // SHARE_SIZE-bytes
+  bytes rawData = 2;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#stateelement
+message StateElement {
+  // key of the state element
+  // 32-bytes
+  bytes key = 1;
+  // key of the state element
+  // value can be of different types depending on the state element.
+  // There exists a unique protobuf for different state elements. TODO!!
+  bytes value = 2;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#shareproof
+message ShareProof {
+  // the share
+  Share share = 1;
+  // the Merkle proof of the share in the offending row or column root
+  NamespaceMerkleTreeInclusionProof proof = 2;
+  // a Boolean indicating if the Merkle proof is from a row root or column root; false if it is a row root
+  bool isCol = 3;
+  // the index of the share in the offending row or column
+  uint64 position = 4;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#badencodingfraudproof
+message BadEncodingFraudProof {
+  // height of the block with the offending row or column
+  int64 height = 1;
+  // the available shares in the offending row or column and their Merkle proofs
+  // array of ShareProofs
+  repeated ShareProof shareProofs = 2;
+  // a Boolean indicating if it is an offending row or column; false if it is a row
+  bool isCol = 3;
+  // the index of the offending row or column in the square
+  uint64 position = 4;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#statefraudproof
+message StateFraudProof {
+  // height of the block with the intermediate state roots 
+  // Subtracting one from height gives the height of the block with the transactions.
+  int64 height = 1;
+  // shares containing the transactions and their Merkle proofs
+  // isCol within the ShareProof must be false.
+  // array of ShareProofs
+  repeated ShareProof transactionShareProofs = 2;
+  // shares containing the intermediate state roots and their Merkle proofs
+  // isCol within the ShareProof must be false.
+  // array of ShareProofs
+  repeated ShareProof isrShareProofs = 3;
+  // index for connecting the WrappedIntermediateStateRoot and WrappedTransaction after shares are parsed
+  uint64 index = 4;
+  // state elements that were changed by the transactions
+  // array of StateElements
+  repeated StateElement intermediateStateElements = 5;
+  // sparse Merkle tree inclusion proofs for the state elements
+  // array of SparseMerkleTreeInclusionProofs
+  repeated SparseMerkleTreeInclusionProof stateInclusionProofs = 6;
+}
