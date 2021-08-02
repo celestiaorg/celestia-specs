@@ -97,6 +97,7 @@ message ShareProof {
   uint64 position = 4;
 }
 
+// ANCHOR: BadEncodingFraudProof
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#badencodingfraudproof
 message BadEncodingFraudProof {
   // height of the block with the offending row or column
@@ -110,6 +111,7 @@ message BadEncodingFraudProof {
   uint64 position = 4;
 }
 
+// ANCHOR: StateFraudProof
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#statefraudproof
 message StateFraudProof {
   // height of the block with the intermediate state roots 
