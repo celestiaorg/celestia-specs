@@ -87,6 +87,12 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 
 ### BadEncodingFraudProof
 
+Defined as `BadEncodingFraudProof`:
+
+```protobuf
+{{#include ./proto/types.proto:BadEncodingFraudProof}}
+```
+
 | name          | type                                                                                  | description                                                                                           |
 |---------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
 | `height`      | [Height](./data_structures.md#type-aliases)                                           | Height of the block with the offending row or column.                                                 |
@@ -99,6 +105,12 @@ If a malicious block producer incorrectly computes the 2D Reed-Solomon code for 
 If a malicious block producer incorrectly computes the state, a fraud proof for this can be presented. We assume that the light clients have the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) for each block. Hence, given a [ShareProof](#shareproof), they can verify if the `rowRoot` or `colRoot` specified by `isCol` and `position` commits to the corresponding [Share](./data_structures.md#share). Similarly, given the `height` of a block, they can access all elements within the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) of the block.
 
 ### StateFraudProof
+
+Defined as `StateFraudProof`:
+
+```protobuf
+{{#include ./proto/types.proto:StateFraudProof}}
+```
 
 | name                       | type                                                                                     | description                                                                                                                                                                                            |
 |----------------------------|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
