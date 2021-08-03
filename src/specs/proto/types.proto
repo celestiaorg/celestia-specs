@@ -38,6 +38,8 @@ message AvailableDataHeader {
   repeated bytes col_roots = 2;
 }
 
+//Protobuf definitions for the contents of fraud proofs
+
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#namespacemerkletreeinclusionproof
 message NamespaceMerkleTreeInclusionProof {
   // sibling hash values, ordered starting from the leaf's neighbor
@@ -97,6 +99,8 @@ message ShareProof {
   uint64 position = 4;
 }
 
+//Protobuf definitions for the fraud proofs
+
 // ANCHOR: BadEncodingFraudProof
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#badencodingfraudproof
 message BadEncodingFraudProof {
@@ -134,3 +138,48 @@ message StateFraudProof {
   // array of SparseMerkleTreeInclusionProofs
   repeated SparseMerkleTreeInclusionProof stateInclusionProofs = 6;
 }
+
+// Protobuf definitions for the state elements
+
+// AccountStatus
+enum AccountStatus : uint8_t {
+    None = 1,
+    DelegationBonded = 2,
+    DelegationUnbonding = 3,
+    ValidatorQueued = 4,
+    ValidatorBonded = 5,
+    ValidatorUnbonding = 6,
+    ValidatorUnbonded = 7,
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#account
+message Account {
+  // Coin balance
+  uint64 balance = 1;
+  // Account nonce. Every outgoing transaction from this account increments the nonce.
+  uint64 nonce = 2;
+  // Validator or delegation status of this account
+  AccountStatus status = 3;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#periodentry
+message PeriodEntry {
+  // Rewards per unit of voting power accumulated so far, in 1u
+  uint64 rewardRate = 1;
+}
+
+// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#delegation
+message Delegation {
+  // The validator being delegating to
+  // 32-bytes
+  bytes validator = 1;
+  // Delegated stake, in 4u
+  uint64 stakedBalance = 2;
+  // Entry when delegation began
+  PeriodEntry beginEntry = 3;
+   // Entry when delegation ended (i.e. began unbonding)
+  PeriodEntry endEntry = 4;
+   // Block height delegation began unbonding
+  int64 unbondingHeight = 5;
+}
+
