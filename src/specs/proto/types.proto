@@ -259,6 +259,7 @@ message BadEncodingFraudProof {
   // the index of the offending row or column in the square
   uint64 position = 4;
 }
+// ANCHOR_END: BadEncodingFraudProof
 
 // ANCHOR: StateFraudProof
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#statefraudproof
@@ -283,3 +284,4 @@ message StateFraudProof {
   // array of SparseMerkleTreeInclusionProofs
   repeated SparseMerkleTreeInclusionProof stateInclusionProofs = 6;
 }
+// ANCHOR_END: StateFraudProof
