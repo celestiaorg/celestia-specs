@@ -215,7 +215,7 @@ message StateElement {
   bytes key = 1;
   // key of the state element
   // value can be of different types depending on the state element.
-  // There exists a unique protobuf for different state elements, given at the bottom of this file.
+  // There exists a unique protobuf for different state elements.
   oneof value = {
     Account account = 2;
     Delegation delegation = 3;
@@ -225,11 +225,9 @@ message StateElement {
     ProposerBlockReward proposerBlockReward = 7;
     ProposerInitialVotingPower proposerInitialVotingPower = 8;
     ValidatorQueueHead validatorQueueHead = 9;
-    MessagePaidHead messagePaidHead = 10;
+    MessagePaid messagePaid = 10;
+    MessagePaidHead messagePaidHead = 11;
   }
-  // List of start/end indices for the paid message shares 
-  // This is necessary to update the state if value is messagePaidHead
-  repeated MessagePaid paidMessages = 11; 
 }
 
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#shareproof
