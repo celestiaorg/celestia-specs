@@ -85,7 +85,7 @@
 | `Amount`                    | `uint64`                    |
 | `Graffiti`                  | `byte[MAX_GRAFFITI_BYTES]`  |
 | [`HashDigest`](#hashdigest) | `byte[32]`                  |
-| `Height`                    | `int64`                     |
+| `Height`                    | `uint64`                    |
 | `NamespaceID`               | `byte[NAMESPACE_ID_BYTES]`  |
 | `Nonce`                     | `uint64`                    |
 | `Round`                     | `int32`                     |
