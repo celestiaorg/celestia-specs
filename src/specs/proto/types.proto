@@ -101,7 +101,7 @@ message Delegation {
    // Entry when delegation ended (i.e. began unbonding)
   PeriodEntry endEntry = 4;
    // Block height delegation began unbonding
-  int64 unbondingHeight = 5;
+  uint64 unbondingHeight = 5;
 }
 
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#validator
@@ -119,7 +119,7 @@ message StateValidator {
   // Latest entry, used for calculating reward distribution
   PeriodEntry latestEntry = 6;
   // Block height validator began unbonding
-  int64 unbondingHeight = 7;
+  uint64 unbondingHeight = 7;
   // If this validator has been slashed or not
   bool isSlashed = 8;
   // Rate at which this validator has been slashed
@@ -248,7 +248,7 @@ message ShareProof {
 // https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#badencodingfraudproof
 message BadEncodingFraudProof {
   // height of the block with the offending row or column
-  int64 height = 1;
+  uint64 height = 1;
   // the available shares in the offending row or column and their Merkle proofs
   // array of ShareProofs
   repeated ShareProof shareProofs = 2;
@@ -264,7 +264,7 @@ message BadEncodingFraudProof {
 message StateFraudProof {
   // height of the block with the intermediate state roots 
   // Subtracting one from height gives the height of the block with the transactions.
-  int64 height = 1;
+  uint64 height = 1;
   // shares containing the transactions and their Merkle proofs
   // isCol within the ShareProof must be false.
   // array of ShareProofs
