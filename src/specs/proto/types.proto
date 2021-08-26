@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 message Header {
   ConsensusVersion version = 1;
   string chain_id = 2;
-  int64 height = 3;
+  uint64 height = 3;
   google.protobuf.Timestamp time = 4;
   // 32-byte hash
   BlockID last_header_hash = 5;
