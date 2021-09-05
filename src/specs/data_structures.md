@@ -328,7 +328,7 @@ For leaf node `node` of [share](#share) data `d`:
 ```C++
 node.n_min = d.namespaceID
 node.n_max = d.namespaceID
-node.v = h(0x00, d.rawData)
+node.v = h(0x00, d.namespaceID, d.rawData)
 ```
 
 The `namespaceID` message field here is the namespace ID of the leaf, which is a [`NAMESPACE_ID_BYTES`](consensus.md#system-parameters)-long byte array.
