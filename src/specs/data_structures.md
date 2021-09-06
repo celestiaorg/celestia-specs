@@ -28,9 +28,6 @@
 - [Erasure Coding](#erasure-coding)
   - [Reed-Solomon Erasure Coding](#reed-solomon-erasure-coding)
   - [2D Reed-Solomon Encoding Scheme](#2d-reed-solomon-encoding-scheme)
-  - [Invalid Erasure Coding](#invalid-erasure-coding)
-    - [ShareProof](#shareproof)
-    - [BadEncodingFraudProof](#badencodingfraudproof)
   - [Share](#share)
   - [Arranging Available Data Into Shares](#arranging-available-data-into-shares)
 - [Available Data](#available-data)
@@ -59,6 +56,7 @@
   - [MessageData](#messagedata)
     - [Message](#message)
 - [State](#state)
+  - [StateElement](#stateelement)
   - [Account](#account)
   - [Delegation](#delegation)
   - [Validator](#validator)
@@ -462,29 +460,6 @@ Finally, the `availableDataRoot` of the block [Header](#header) is computed as t
 
 ![fig: Available data root.](./figures/data_root.svg)
 
-### Invalid Erasure Coding
-
-If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.
-
-#### ShareProof
-
-| name       | type                                                  | description                                                                                       |
-|------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `share`    | [Share](#share)                                       | The share.                                                                                        |
-| `proof`    | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the share in [`availableDataRoot`](#header).                                  |
-| `isCol`    | `bool`                                                | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
-| `position` | `uint64`                                              | The index of the share in the offending row or column.                                            |
-
-#### BadEncodingFraudProof
-
-| name          | type                                                  | description                                                                       |
-|---------------|-------------------------------------------------------|-----------------------------------------------------------------------------------|
-| `shareProofs` | [ShareProof](#shareproof)`[]`                         | The available shares in the offending row or column.                              |
-| `root`        | [HashDigest](#hashdigest)                             | The Merkle root of the offending row or column.                                   |
-| `proof`       | [NamespaceMerkleTreeProof](#namespacemerkletreeproof) | The Merkle proof of the row or column root in [`availableDataRoot`](#header).     |
-| `isCol`       | `bool`                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row. |
-| `position`    | `uint64`                                              | The index of the row or column in the square.                                     |
-
 ### Share
 
 | name          | type                         | description                |
@@ -833,6 +808,15 @@ A number of subtrees are maintained:
 1. [Inactive validator set](#validator)
 1. [Delegation set](#delegation)
 1. [Message shares paid for](#message-paid)
+
+### StateElement
+
+Data structure for state elements is given below:
+
+| name        | type                                                                                                                                                                                                                                                                                                                                                                  | description                                                                                                                                  |
+|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `key`       | `byte[32]`                                                                                                                                                                                                                                                                                                                                                            | Keys are byte arrays with size 32.                                                                                                           |
+| `value`     | [Account](#account), [Delegation](#delegation), [Validator](#validator), [ActiveValidatorCount](#activevalidatorcount), [ActiveVotingPower](#activevotingpower), [ProposerBlockReward](#proposerblockreward), [ProposerInitialVotingPower](#proposerinitialvotingpower), [ValidatorQueueHead](#validatorqueuehead), [MessagePaidHead](#messagepaidhead) | `value` can be of different types depending on the state elements listed below. There exists a unique protobuf for different state elements. |
 
 ### Account
 

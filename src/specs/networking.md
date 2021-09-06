@@ -5,6 +5,11 @@
   - [AvailableDataRow](#availabledatarow)
   - [ConsensusProposal](#consensusproposal)
   - [WireTxPayForMessage](#wiretxpayformessage)
+- [Invalid Erasure Coding](#invalid-erasure-coding)
+  - [ShareProof](#shareproof)
+  - [BadEncodingFraudProof](#badencodingfraudproof)
+- [Invalid State Update](#invalid-state-update)
+  - [StateFraudProof](#statefraudproof)
 
 ## Wire Format
 
@@ -66,3 +71,52 @@ Accepting a `WireTxPayForMessage` into the mempool requires different logic than
 Transaction senders who want to pay for a message will create a [SignedTransactionDataPayForMessage](./data_structures.md#signedtransactiondatapayformessage) object, `stx`, filling in the `stx.messageShareCommitment` field [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) for `k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`, then signing it to get a [transaction](./data_structures.md#transaction) `tx`. This process is repeated with successively smaller `k`s, decreasing by powers of 2 until `k * k <= stx.messageSize`. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of `(tx.signedTransactionData.messageShareCommitment, tx.signature)`, a `WireTxPayForMessage` object is constructed.
 
 Receiving a `WireTxPayForMessage` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
+
+## Invalid Erasure Coding
+
+If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented. We assume that the light clients have the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) for each block. Hence, given a [ShareProof](#shareproof), they can verify if the `rowRoot` or `colRoot` specified by `isCol` and `position` commits to the corresponding [Share](./data_structures.md#share). Similarly, given the `height` of a block, they can access all elements within the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) of the block.
+
+### ShareProof
+
+| name       | type                                                                                        | description                                                                                      |
+|------------|---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `share`    | [Share](./data_structures.md#share)                                                         | The share.                                                                                        |
+| `proof`    | [NamespaceMerkleTreeInclusionProof](./data_structures.md#namespacemerkletreeinclusionproof) | The Merkle proof of the share in the offending row or column root.                                |
+| `isCol`    | `bool`                                                                                      | A Boolean indicating if the proof is from a row root or column root; `false` if it is a row root. |
+| `position` | `uint64`                                                                                    | The index of the share in the offending row or column.                                            |
+
+### BadEncodingFraudProof
+
+Defined as `BadEncodingFraudProof`:
+
+```protobuf
+{{#include ./proto/types.proto:BadEncodingFraudProof}}
+```
+
+| name          | type                                                                                  | description                                                                                           |
+|---------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `height`      | [Height](./data_structures.md#type-aliases)                                           | Height of the block with the offending row or column.                                                 |
+| `shareProofs` | [ShareProof](#shareproof)`[]`                                                         | The available shares in the offending row or column.                                                 |
+| `isCol`       | `bool`                                                                                | A Boolean indicating if it is an offending row or column; `false` if it is a row.                     |
+| `position`    | `uint64`                                                                              | The index of the offending row or column in the square.                                               |
+
+## Invalid State Update
+
+If a malicious block producer incorrectly computes the state, a fraud proof for this can be presented. We assume that the light clients have the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) for each block. Hence, given a [ShareProof](#shareproof), they can verify if the `rowRoot` or `colRoot` specified by `isCol` and `position` commits to the corresponding [Share](./data_structures.md#share). Similarly, given the `height` of a block, they can access all elements within the [AvailableDataHeader](./data_structures.md#availabledataheader) and the [Header](./data_structures.md#header) of the block.
+
+### StateFraudProof
+
+Defined as `StateFraudProof`:
+
+```protobuf
+{{#include ./proto/types.proto:StateFraudProof}}
+```
+
+| name                       | type                                                                                     | description                                                                                                                                                                                            |
+|----------------------------|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `height`                   | [Height](./data_structures.md#type-aliases)                                              | Height of the block with the intermediate state roots. Subtracting one from `height` gives the height of the block with the transactions.                                                             |
+| `transactionShareProofs`   | [ShareProof](#shareproof)`[]`                                                            | `isCol` of type `bool` must be `false`.                                                                                                                                                                |
+| `isrShareProofs`           | [ShareProof](#shareproof)`[]`                                                            | `isCol` of type `bool` must be `false`.                                                                                                                                                                |
+| `index`                    | `uint64`                                                                                 | Index for connecting the [WrappedIntermediateStateRoot](./data_structures.md#wrappedintermediatestateroot) and [WrappedTransaction](./data_structures.md#wrappedtransaction) after shares are parsed. |
+| `intermediateStateElements`| [StateElement](./data_structures.md#stateelement)`[]`                                    | State elements that were changed by the transactions.                                                                                                                                                  |
+| `stateInclusionProofs`     | [SparseMerkleTreeInclusionProof](./data_structures.md#sparsemerkletreeinclusionproof)`[]`| SparseMerkleTree inclusion proofs for the state elements.                                                                                                                                      |
