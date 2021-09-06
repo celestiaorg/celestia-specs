@@ -270,12 +270,6 @@
 <ul>
 <li><a href="specs/data_structures.html#reed-solomon-erasure-coding">Reed-Solomon Erasure Coding</a></li>
 <li><a href="specs/data_structures.html#2d-reed-solomon-encoding-scheme">2D Reed-Solomon Encoding Scheme</a></li>
-<li><a href="specs/data_structures.html#invalid-erasure-coding">Invalid Erasure Coding</a>
-<ul>
-<li><a href="specs/data_structures.html#shareproof">ShareProof</a></li>
-<li><a href="specs/data_structures.html#badencodingfraudproof">BadEncodingFraudProof</a></li>
-</ul>
-</li>
 <li><a href="specs/data_structures.html#share">Share</a></li>
 <li><a href="specs/data_structures.html#arranging-available-data-into-shares">Arranging Available Data Into Shares</a></li>
 </ul>
@@ -325,6 +319,7 @@
 </li>
 <li><a href="specs/data_structures.html#state">State</a>
 <ul>
+<li><a href="specs/data_structures.html#stateelement">StateElement</a></li>
 <li><a href="specs/data_structures.html#account">Account</a></li>
 <li><a href="specs/data_structures.html#delegation">Delegation</a></li>
 <li><a href="specs/data_structures.html#validator">Validator</a></li>
@@ -594,23 +589,6 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p><img src="specs/./figures/rs2d_row.svg" alt="fig: RS2D encoding: a row root." /></p>
 <p>Finally, the <code>availableDataRoot</code> of the block <a href="specs/data_structures.html#header">Header</a> is computed as the Merkle root of the <a href="specs/data_structures.html#binary-merkle-tree">binary Merkle tree</a> with the row and column roots as leaves, in that order.</p>
 <p><img src="specs/./figures/data_root.svg" alt="fig: Available data root." /></p>
-<h3 id="invalid-erasure-coding"><a class="header" href="#invalid-erasure-coding">Invalid Erasure Coding</a></h3>
-<p>If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.</p>
-<h4 id="shareproof"><a class="header" href="#shareproof">ShareProof</a></h4>
-<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
-<tr><td><code>share</code></td><td><a href="specs/data_structures.html#share">Share</a></td><td>The share.</td></tr>
-<tr><td><code>proof</code></td><td><a href="specs/data_structures.html#namespacemerkletreeproof">NamespaceMerkleTreeProof</a></td><td>The Merkle proof of the share in <a href="specs/data_structures.html#header"><code>availableDataRoot</code></a>.</td></tr>
-<tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if the proof is from a row root or column root; <code>false</code> if it is a row root.</td></tr>
-<tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the share in the offending row or column.</td></tr>
-</tbody></table>
-<h4 id="badencodingfraudproof"><a class="header" href="#badencodingfraudproof">BadEncodingFraudProof</a></h4>
-<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
-<tr><td><code>shareProofs</code></td><td><a href="specs/data_structures.html#shareproof">ShareProof</a><code>[]</code></td><td>The available shares in the offending row or column.</td></tr>
-<tr><td><code>root</code></td><td><a href="specs/data_structures.html#hashdigest">HashDigest</a></td><td>The Merkle root of the offending row or column.</td></tr>
-<tr><td><code>proof</code></td><td><a href="specs/data_structures.html#namespacemerkletreeproof">NamespaceMerkleTreeProof</a></td><td>The Merkle proof of the row or column root in <a href="specs/data_structures.html#header"><code>availableDataRoot</code></a>.</td></tr>
-<tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if it is an offending row or column; <code>false</code> if it is a row.</td></tr>
-<tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the row or column in the square.</td></tr>
-</tbody></table>
 <h3 id="share"><a class="header" href="#share">Share</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>namespaceID</code></td><td><a href="specs/data_structures.html#type-aliases">NamespaceID</a></td><td>Namespace ID of the share.</td></tr>
@@ -881,6 +859,12 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><a href="specs/data_structures.html#delegation">Delegation set</a></li>
 <li><a href="specs/data_structures.html#message-paid">Message shares paid for</a></li>
 </ol>
+<h3 id="stateelement"><a class="header" href="#stateelement">StateElement</a></h3>
+<p>Data structure for state elements is given below:</p>
+<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
+<tr><td><code>key</code></td><td><code>byte[32]</code></td><td>Keys are byte arrays with size 32.</td></tr>
+<tr><td><code>value</code></td><td><a href="specs/data_structures.html#account">Account</a>, <a href="specs/data_structures.html#delegation">Delegation</a>, <a href="specs/data_structures.html#validator">Validator</a>, <a href="specs/data_structures.html#activevalidatorcount">ActiveValidatorCount</a>, <a href="specs/data_structures.html#activevotingpower">ActiveVotingPower</a>, <a href="specs/data_structures.html#proposerblockreward">ProposerBlockReward</a>, <a href="specs/data_structures.html#proposerinitialvotingpower">ProposerInitialVotingPower</a>, <a href="specs/data_structures.html#validatorqueuehead">ValidatorQueueHead</a>, <a href="specs/data_structures.html#messagepaidhead">MessagePaidHead</a></td><td><code>value</code> can be of different types depending on the state elements listed below. There exists a unique protobuf for different state elements.</td></tr>
+</tbody></table>
 <h3 id="account"><a class="header" href="#account">Account</a></h3>
 <pre><code class="language-C++">enum AccountStatus : uint8_t {
     None = 1,
@@ -1690,6 +1674,17 @@ else if account.status == AccountStatus.ValidatorBonded
 <li><a href="specs/networking.html#wiretxpayformessage">WireTxPayForMessage</a></li>
 </ul>
 </li>
+<li><a href="specs/networking.html#invalid-erasure-coding">Invalid Erasure Coding</a>
+<ul>
+<li><a href="specs/networking.html#shareproof">ShareProof</a></li>
+<li><a href="specs/networking.html#badencodingfraudproof">BadEncodingFraudProof</a></li>
+</ul>
+</li>
+<li><a href="specs/networking.html#invalid-state-update">Invalid State Update</a>
+<ul>
+<li><a href="specs/networking.html#statefraudproof">StateFraudProof</a></li>
+</ul>
+</li>
 </ul>
 <h2 id="wire-format"><a class="header" href="#wire-format">Wire Format</a></h2>
 <h3 id="availabledata-1"><a class="header" href="#availabledata-1">AvailableData</a></h3>
@@ -1754,6 +1749,71 @@ else if account.status == AccountStatus.ValidatorBonded
 <p>Accepting a <code>WireTxPayForMessage</code> into the mempool requires different logic than other transactions in Celestia, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> (the canonical data type that is included in blocks and committed to with a data root in the block header), each <code>WireTxPayForMessage</code> (the over-the-wire representation of the same) has potentially multiple signatures.</p>
 <p>Transaction senders who want to pay for a message will create a <a href="specs/./data_structures.html#signedtransactiondatapayformessage">SignedTransactionDataPayForMessage</a> object, <code>stx</code>, filling in the <code>stx.messageShareCommitment</code> field <a href="specs/../rationale/message_block_layout.html#non-interactive-default-rules">based on the non-interactive default rules</a> for <code>k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX</code>, then signing it to get a <a href="specs/./data_structures.html#transaction">transaction</a> <code>tx</code>. This process is repeated with successively smaller <code>k</code>s, decreasing by powers of 2 until <code>k * k &lt;= stx.messageSize</code>. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of <code>(tx.signedTransactionData.messageShareCommitment, tx.signature)</code>, a <code>WireTxPayForMessage</code> object is constructed.</p>
 <p>Receiving a <code>WireTxPayForMessage</code> object from the network follows the reverse process: for each <code>message_commitment_and_signature</code>, verify using the <a href="specs/../rationale/message_block_layout.html#non-interactive-default-rules">based on the non-interactive default rules</a> that the signature is valid.</p>
+<h2 id="invalid-erasure-coding"><a class="header" href="#invalid-erasure-coding">Invalid Erasure Coding</a></h2>
+<p>If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented. We assume that the light clients have the <a href="specs/./data_structures.html#availabledataheader">AvailableDataHeader</a> and the <a href="specs/./data_structures.html#header">Header</a> for each block. Hence, given a <a href="specs/networking.html#shareproof">ShareProof</a>, they can verify if the <code>rowRoot</code> or <code>colRoot</code> specified by <code>isCol</code> and <code>position</code> commits to the corresponding <a href="specs/./data_structures.html#share">Share</a>. Similarly, given the <code>height</code> of a block, they can access all elements within the <a href="specs/./data_structures.html#availabledataheader">AvailableDataHeader</a> and the <a href="specs/./data_structures.html#header">Header</a> of the block.</p>
+<h3 id="shareproof"><a class="header" href="#shareproof">ShareProof</a></h3>
+<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
+<tr><td><code>share</code></td><td><a href="specs/./data_structures.html#share">Share</a></td><td>The share.</td></tr>
+<tr><td><code>proof</code></td><td><a href="specs/./data_structures.html#namespacemerkletreeinclusionproof">NamespaceMerkleTreeInclusionProof</a></td><td>The Merkle proof of the share in the offending row or column root.</td></tr>
+<tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if the proof is from a row root or column root; <code>false</code> if it is a row root.</td></tr>
+<tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the share in the offending row or column.</td></tr>
+</tbody></table>
+<h3 id="badencodingfraudproof"><a class="header" href="#badencodingfraudproof">BadEncodingFraudProof</a></h3>
+<p>Defined as <code>BadEncodingFraudProof</code>:</p>
+<pre><code class="language-protobuf">// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#badencodingfraudproof
+message BadEncodingFraudProof {
+  // height of the block with the offending row or column
+  int64 height = 1;
+  // the available shares in the offending row or column and their Merkle proofs
+  // array of ShareProofs
+  repeated ShareProof shareProofs = 2;
+  // a Boolean indicating if it is an offending row or column; false if it is a row
+  bool isCol = 3;
+  // the index of the offending row or column in the square
+  uint64 position = 4;
+}
+</code></pre>
+<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
+<tr><td><code>height</code></td><td><a href="specs/./data_structures.html#type-aliases">Height</a></td><td>Height of the block with the offending row or column.</td></tr>
+<tr><td><code>shareProofs</code></td><td><a href="specs/networking.html#shareproof">ShareProof</a><code>[]</code></td><td>The available shares in the offending row or column.</td></tr>
+<tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if it is an offending row or column; <code>false</code> if it is a row.</td></tr>
+<tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the offending row or column in the square.</td></tr>
+</tbody></table>
+<h2 id="invalid-state-update"><a class="header" href="#invalid-state-update">Invalid State Update</a></h2>
+<p>If a malicious block producer incorrectly computes the state, a fraud proof for this can be presented. We assume that the light clients have the <a href="specs/./data_structures.html#availabledataheader">AvailableDataHeader</a> and the <a href="specs/./data_structures.html#header">Header</a> for each block. Hence, given a <a href="specs/networking.html#shareproof">ShareProof</a>, they can verify if the <code>rowRoot</code> or <code>colRoot</code> specified by <code>isCol</code> and <code>position</code> commits to the corresponding <a href="specs/./data_structures.html#share">Share</a>. Similarly, given the <code>height</code> of a block, they can access all elements within the <a href="specs/./data_structures.html#availabledataheader">AvailableDataHeader</a> and the <a href="specs/./data_structures.html#header">Header</a> of the block.</p>
+<h3 id="statefraudproof"><a class="header" href="#statefraudproof">StateFraudProof</a></h3>
+<p>Defined as <code>StateFraudProof</code>:</p>
+<pre><code class="language-protobuf">// https://github.com/celestiaorg/celestia-specs/blob/master/specs/networking.md#statefraudproof
+message StateFraudProof {
+  // height of the block with the intermediate state roots 
+  // Subtracting one from height gives the height of the block with the transactions.
+  int64 height = 1;
+  // shares containing the transactions and their Merkle proofs
+  // isCol within the ShareProof must be false.
+  // array of ShareProofs
+  repeated ShareProof transactionShareProofs = 2;
+  // shares containing the intermediate state roots and their Merkle proofs
+  // isCol within the ShareProof must be false.
+  // array of ShareProofs
+  repeated ShareProof isrShareProofs = 3;
+  // index for connecting the WrappedIntermediateStateRoot and WrappedTransaction after shares are parsed
+  uint64 index = 4;
+  // state elements that were changed by the transactions
+  // array of StateElements
+  repeated StateElement intermediateStateElements = 5;
+  // sparse Merkle tree inclusion proofs for the state elements
+  // array of SparseMerkleTreeInclusionProofs
+  repeated SparseMerkleTreeInclusionProof stateInclusionProofs = 6;
+}
+</code></pre>
+<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
+<tr><td><code>height</code></td><td><a href="specs/./data_structures.html#type-aliases">Height</a></td><td>Height of the block with the intermediate state roots. Subtracting one from <code>height</code> gives the height of the block with the transactions.</td></tr>
+<tr><td><code>transactionShareProofs</code></td><td><a href="specs/networking.html#shareproof">ShareProof</a><code>[]</code></td><td><code>isCol</code> of type <code>bool</code> must be <code>false</code>.</td></tr>
+<tr><td><code>isrShareProofs</code></td><td><a href="specs/networking.html#shareproof">ShareProof</a><code>[]</code></td><td><code>isCol</code> of type <code>bool</code> must be <code>false</code>.</td></tr>
+<tr><td><code>index</code></td><td><code>uint64</code></td><td>Index for connecting the <a href="specs/./data_structures.html#wrappedintermediatestateroot">WrappedIntermediateStateRoot</a> and <a href="specs/./data_structures.html#wrappedtransaction">WrappedTransaction</a> after shares are parsed.</td></tr>
+<tr><td><code>intermediateStateElements</code></td><td><a href="specs/./data_structures.html#stateelement">StateElement</a><code>[]</code></td><td>State elements that were changed by the transactions.</td></tr>
+<tr><td><code>stateInclusionProofs</code></td><td><a href="specs/./data_structures.html#sparsemerkletreeinclusionproof">SparseMerkleTreeInclusionProof</a><code>[]</code></td><td>SparseMerkleTree inclusion proofs for the state elements.</td></tr>
+</tbody></table>
 <div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="node-types"><a class="header" href="#node-types">Node Types</a></h1>
 <ul>
 <li><a href="specs/node_types.html#node-parameters">Node Parameters</a>

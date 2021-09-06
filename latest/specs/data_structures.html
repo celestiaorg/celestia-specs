@@ -218,12 +218,6 @@
 <ul>
 <li><a href="#reed-solomon-erasure-coding">Reed-Solomon Erasure Coding</a></li>
 <li><a href="#2d-reed-solomon-encoding-scheme">2D Reed-Solomon Encoding Scheme</a></li>
-<li><a href="#invalid-erasure-coding">Invalid Erasure Coding</a>
-<ul>
-<li><a href="#shareproof">ShareProof</a></li>
-<li><a href="#badencodingfraudproof">BadEncodingFraudProof</a></li>
-</ul>
-</li>
 <li><a href="#share">Share</a></li>
 <li><a href="#arranging-available-data-into-shares">Arranging Available Data Into Shares</a></li>
 </ul>
@@ -273,6 +267,7 @@
 </li>
 <li><a href="#state">State</a>
 <ul>
+<li><a href="#stateelement">StateElement</a></li>
 <li><a href="#account">Account</a></li>
 <li><a href="#delegation">Delegation</a></li>
 <li><a href="#validator">Validator</a></li>
@@ -542,23 +537,6 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <p><img src="./figures/rs2d_row.svg" alt="fig: RS2D encoding: a row root." /></p>
 <p>Finally, the <code>availableDataRoot</code> of the block <a href="#header">Header</a> is computed as the Merkle root of the <a href="#binary-merkle-tree">binary Merkle tree</a> with the row and column roots as leaves, in that order.</p>
 <p><img src="./figures/data_root.svg" alt="fig: Available data root." /></p>
-<h3 id="invalid-erasure-coding"><a class="header" href="#invalid-erasure-coding">Invalid Erasure Coding</a></h3>
-<p>If a malicious block producer incorrectly computes the 2D Reed-Solomon code for a block's data, a fraud proof for this can be presented.</p>
-<h4 id="shareproof"><a class="header" href="#shareproof">ShareProof</a></h4>
-<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
-<tr><td><code>share</code></td><td><a href="#share">Share</a></td><td>The share.</td></tr>
-<tr><td><code>proof</code></td><td><a href="#namespacemerkletreeproof">NamespaceMerkleTreeProof</a></td><td>The Merkle proof of the share in <a href="#header"><code>availableDataRoot</code></a>.</td></tr>
-<tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if the proof is from a row root or column root; <code>false</code> if it is a row root.</td></tr>
-<tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the share in the offending row or column.</td></tr>
-</tbody></table>
-<h4 id="badencodingfraudproof"><a class="header" href="#badencodingfraudproof">BadEncodingFraudProof</a></h4>
-<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
-<tr><td><code>shareProofs</code></td><td><a href="#shareproof">ShareProof</a><code>[]</code></td><td>The available shares in the offending row or column.</td></tr>
-<tr><td><code>root</code></td><td><a href="#hashdigest">HashDigest</a></td><td>The Merkle root of the offending row or column.</td></tr>
-<tr><td><code>proof</code></td><td><a href="#namespacemerkletreeproof">NamespaceMerkleTreeProof</a></td><td>The Merkle proof of the row or column root in <a href="#header"><code>availableDataRoot</code></a>.</td></tr>
-<tr><td><code>isCol</code></td><td><code>bool</code></td><td>A Boolean indicating if it is an offending row or column; <code>false</code> if it is a row.</td></tr>
-<tr><td><code>position</code></td><td><code>uint64</code></td><td>The index of the row or column in the square.</td></tr>
-</tbody></table>
 <h3 id="share"><a class="header" href="#share">Share</a></h3>
 <table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
 <tr><td><code>namespaceID</code></td><td><a href="#type-aliases">NamespaceID</a></td><td>Namespace ID of the share.</td></tr>
@@ -829,6 +807,12 @@ node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
 <li><a href="#delegation">Delegation set</a></li>
 <li><a href="#message-paid">Message shares paid for</a></li>
 </ol>
+<h3 id="stateelement"><a class="header" href="#stateelement">StateElement</a></h3>
+<p>Data structure for state elements is given below:</p>
+<table><thead><tr><th>name</th><th>type</th><th>description</th></tr></thead><tbody>
+<tr><td><code>key</code></td><td><code>byte[32]</code></td><td>Keys are byte arrays with size 32.</td></tr>
+<tr><td><code>value</code></td><td><a href="#account">Account</a>, <a href="#delegation">Delegation</a>, <a href="#validator">Validator</a>, <a href="#activevalidatorcount">ActiveValidatorCount</a>, <a href="#activevotingpower">ActiveVotingPower</a>, <a href="#proposerblockreward">ProposerBlockReward</a>, <a href="#proposerinitialvotingpower">ProposerInitialVotingPower</a>, <a href="#validatorqueuehead">ValidatorQueueHead</a>, <a href="#messagepaidhead">MessagePaidHead</a></td><td><code>value</code> can be of different types depending on the state elements listed below. There exists a unique protobuf for different state elements.</td></tr>
+</tbody></table>
 <h3 id="account"><a class="header" href="#account">Account</a></h3>
 <pre><code class="language-C++">enum AccountStatus : uint8_t {
     None = 1,
