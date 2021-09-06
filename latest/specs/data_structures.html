@@ -451,7 +451,7 @@ node.v = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 <p>For leaf node <code>node</code> of <a href="#share">share</a> data <code>d</code>:</p>
 <pre><code class="language-C++">node.n_min = d.namespaceID
 node.n_max = d.namespaceID
-node.v = h(0x00, d.rawData)
+node.v = h(0x00, d.namespaceID, d.rawData)
 </code></pre>
 <p>The <code>namespaceID</code> message field here is the namespace ID of the leaf, which is a <a href="consensus.html#system-parameters"><code>NAMESPACE_ID_BYTES</code></a>-long byte array.</p>
 <p>Leaves in an NMT <strong>must</strong> be lexicographically sorted by namespace ID in ascending order.</p>
