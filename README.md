@@ -8,7 +8,7 @@
 
 1. <https://github.com/celestiaorg/celestia-core>: Tendermint Core full node
 1. <https://github.com/celestiaorg/celestia-node>: Celestia-specific logic, attached to Celestia Core node
-1. <https://github.com/celestiaorg/lazyledger-app>: Celestia state machine (staking and fee payments) logic
+1. <https://github.com/celestiaorg/celestia-app>: Celestia state machine (staking and fee payments) logic
 
 The following core ideas in this repository inform the implementation:
 
