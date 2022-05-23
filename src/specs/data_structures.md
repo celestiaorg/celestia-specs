@@ -378,7 +378,7 @@ Nodes contain a single field:
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
 
-For a tree with `height = 0`, the root of an empty tree is defined as the [hash](#hashing) of the empty string:
+In the base case, where a sparse Merkle tree has `height = 0`, the root of a tree is defined as the [hash](#hashing) of the empty string:
 
 ```C++
 node.v = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
@@ -392,7 +392,7 @@ For a tree with `height > 0`, the root of an empty tree is defined as the defaul
 node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-Note that this is in contrast to the base case of the binary Merkle tree, where the root is the hash of the empty string. When a sparse Merkle tree has a height greater than 0, a new tree instance is composed of default value leaves. Nodes containing only default value children have the default value as well. Applying these rules recursively percolates the default value up to the tree's root.  
+Note that this is in contrast to the base case of the sparse and binary Merkle trees, where the root is the hash of the empty string. When a sparse Merkle tree has a height greater than 0, a new tree instance is composed of default value leaves. Nodes containing only default value children have the default value as well. Applying these rules recursively percolates the default value up to the tree's root.  
 
 For leaf node `node` of leaf data `d` with key `k`:
 
