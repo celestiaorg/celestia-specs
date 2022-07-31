@@ -19,7 +19,7 @@ Transactions pay fees similarly to how they would in a normal blockchain (e.g. B
 
 One desideratum that will most likely be included is [burning a non-proportional amount of coins for each transaction as a network fee](https://github.com/celestiaorg/celestia-specs/blob/066e14fca9de22555abc70dd4bcf4017fd0bfc64/rationale/fees.md). This provides baseline demand for the native coin: as the chain is used more, more coins must be bought then burned to pay for fees.
 
-This architecture has the benefit of allowing a spectrum of clients. Since different components are made available through commitments, client that are only interested in a portion of the block data do not need to download and process the whole block.
+This architecture has the benefit of allowing a spectrum of clients. Since different components are made available through commitments, clients that are only interested in a portion of the block data do not need to download and process the whole block.
 
 Non-consensus full clients have easy and direct access to all the data they need to validate: the transactions. Messages do not need to be validated, as they do not change the state, they simply need to be verified as available.
 
