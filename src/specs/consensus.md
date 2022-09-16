@@ -139,11 +139,11 @@ The [block header](./data_structures.md#header) `block.header` (`header` for sho
 
 ### `block.availableDataHeader`
 
-The [available data header](./data_structures.md#availabledataheader)) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be `true`:
+The [available data header](./data_structures.md#availabledataheader) `block.availableDataHeader` (`availableDataHeader` for short) is then processed. This commits to the available data, which is only downloaded after the [consensus commit](#blocklastcommit) is processed. The following checks must be `true`:
 
 1. Length of `availableDataHeader.rowRoots` == `availableDataOriginalSquareSize * 2`.
 1. Length of `availableDataHeader.colRoots` == `availableDataOriginalSquareSize * 2`.
-1. The length of each element in `availableDataHeader.rowRoots` and `availableDataHeader.colRoots` must be [`32`](./consensus.md#hashing).
+1. The length of each element in `availableDataHeader.rowRoots` and `availableDataHeader.colRoots` must be [`32`](./data_structures.md#hashing).
 
 ### `block.lastCommit`
 
@@ -202,7 +202,7 @@ tipCost(y, z) = y * z
 totalCost(x, y, z) = x + tipCost(y, z)
 ```
 
-, where `x` above is the amount of coins sent by the transaction authorizer, `y` above is the tip rate set in the transaction, and `z` above is the measure of the block space used by the transaction (i.e. size in bytes).
+where `x` above is the amount of coins sent by the transaction authorizer, `y` above is the tip rate set in the transaction, and `z` above is the measure of the block space used by the transaction (i.e. size in bytes).
 
 Four additional helper functions are defined to manage the [validator queue](./data_structures.md#validator):
 

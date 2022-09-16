@@ -70,7 +70,7 @@ Accepting a `MsgWirePayForData` into the mempool requires different logic than o
 
 Transaction senders who want to pay for a message will create a [SignedTransactionDataMsgPayForData](./data_structures.md#signedtransactiondatamsgpayfordata) object, `stx`, filling in the `stx.messageShareCommitment` field [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) for `k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`, then signing it to get a [transaction](./data_structures.md#transaction) `tx`. This process is repeated with successively smaller `k`s, decreasing by powers of 2 until `k * k <= stx.messageSize`. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of `(tx.signedTransactionData.messageShareCommitment, tx.signature)`, a `MsgWirePayForData` object is constructed.
 
-Receiving a `MsgWirePayForData` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
+Receiving a `MsgWirePayForData` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
 
 ## Invalid Erasure Coding
 

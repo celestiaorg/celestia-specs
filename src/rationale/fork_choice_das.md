@@ -6,7 +6,7 @@
 
 ## Preamble
 
-Tendermint provides finality under an honest 2/3 of voting power assumption. It is one of several ["BFT" consensus protocols](https://arxiv.org/abs/1807.04938) (also known as "classical" consensus protocols). Under that assumptions, new _valid_ blocks are immediately and forever final as soon as 2/3 of voting power commits to the block. Therefore, under that assumption, Tendermint is fork-free.
+Tendermint provides finality under an honest 2/3 of voting power assumption. It is one of several ["BFT" consensus protocols](https://arxiv.org/abs/1807.04938) (also known as "classical" consensus protocols). Under that assumption, new _valid_ blocks are immediately and forever final as soon as 2/3 of voting power commits to the block. Therefore, under that assumption, Tendermint is fork-free.
 
 Contemporary blockchains support full nodes (which are secure under no assumption on voting power honesty) and light nodes (which are secure under an honest majority of voting power assumption). LazyLedger is unique in [supporting light nodes with stronger security guarantees](../specs/node_types.md#node-type-definitions):
 
@@ -14,7 +14,7 @@ Contemporary blockchains support full nodes (which are secure under no assumptio
 1. light nodes (and partial nodes) are secure under [an honest minority of nodes and synchronous communication](https://arxiv.org/abs/1809.09044), and no assumptions on voting power honesty
 1. superlight nodes are secure under an honest majority of voting assumption
 
-Note that _secure_ in this context is defined as "not accepting invalid blocks," as is orthogonal to _consensus safety_. The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.
+Note that _secure_ in this context is defined as "not accepting invalid blocks," and is orthogonal to _consensus safety_. The introduction of light nodes that do not depend on an honest majority assumption also introduces additional cases that must be analyzed.
 
 ## Invalid vs Unavailable
 

@@ -268,6 +268,7 @@ Merkle trees are used to authenticate various pieces of data across the Celestia
 Binary Merkle trees are constructed in the same fashion as described in [Certificate Transparency (RFC-6962)](https://tools.ietf.org/html/rfc6962), except for using [a different hashing function](#hashing). Leaves are hashed once to get leaf node values and internal node values are the hash of the concatenation of their children (either leaf nodes or other internal nodes).
 
 Nodes contain a single field:
+
 | name | type                      | description |
 |------|---------------------------|-------------|
 | `v`  | [HashDigest](#hashdigest) | Node value. |
@@ -307,6 +308,7 @@ A proof for a leaf in a [binary Merkle tree](#binary-merkle-tree), as per Sectio
 [Shares](#share) in Celestia are associated with a provided _namespace ID_. The Namespace Merkle Tree (NMT) is a variation of the [Merkle Interval Tree](https://eprint.iacr.org/2018/642), which is itself an extension of the [Merkle Sum Tree](https://bitcointalk.org/index.php?topic=845978.0). It allows for compact proofs around the inclusion or exclusion of shares with particular namespace IDs.
 
 Nodes contain three fields:
+
 | name    | type                         | description                                      |
 |---------|------------------------------|--------------------------------------------------|
 | `n_min` | [NamespaceID](#type-aliases) | Min namespace ID in subtree rooted at this node. |
@@ -343,7 +345,7 @@ else if r.n_min == PARITY_SHARE_NAMESPACE_ID
   node.n_max = l.n_max
 else
   node.n_max = max(l.n_max, r.n_max)
-node.v = h(0x01, l.n_min, l.n_max, l.v, r.l_min, r.l_max, r.v)
+node.v = h(0x01, l.n_min, l.n_max, l.v, r.n_min, r.n_max, r.v)
 ```
 
 Note that the above snippet leverages the property that leaves are sorted by namespace ID: if `l.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `{l,r}.n_max`. By construction, either both the min and max namespace IDs of a node will be [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), or neither will: if `r.n_min` is [`PARITY_SHARE_NAMESPACE_ID`](consensus.md#reserved-state-subtree-ids), so must `r.n_max`.
@@ -373,6 +375,7 @@ Additional rules are added on top of plain [binary Merkle trees](#binary-merkle-
 1. The number of hashing operations can be reduced to be logarithmic in the number of non-empty leaves on average, assuming a uniform distribution of non-empty leaf keys. An internal node that is the root of a subtree that contains exactly one non-empty leaf is replaced by that leaf's leaf node.
 
 Nodes contain a single field:
+
 | name | type                      | description |
 |------|---------------------------|-------------|
 | `v`  | [HashDigest](#hashdigest) | Node value. |
@@ -418,10 +421,10 @@ A proof into an SMT is structured as:
 | name               | type                          | description                                                              |
 |--------------------|-------------------------------|--------------------------------------------------------------------------|
 | `depth`            | `uint16`                      | Depth of the leaf node. The root node is at depth `0`. Must be `<= 256`. |
-| `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values, ordered starting from the leaf's neighbor..         |
+| `siblings`         | [HashDigest](#hashdigest)`[]` | Sibling hash values, ordered starting from the leaf's neighbor.          |
 | `includedSiblings` | `byte[32]`                    | Bitfield of explicitly included sibling hashes.                          |
 
-The `includedSiblings` is ordered by most-significant-byte first, with each byte ordered by most-significant-bit first. The lowest bit corresponds the leaf node level.
+The `includedSiblings` is ordered by most-significant-byte first, with each byte ordered by most-significant-bit first. The lowest bit corresponds to the leaf node level.
 
 ## Erasure Coding
 
@@ -535,7 +538,7 @@ Transactions [must commit to a Merkle root of a list of hashes](#transaction) th
 
 However, with only the rule above, interaction between the block producer and transaction sender may be required to compute a commitment to the message the transaction sender can sign over. To remove interaction, messages can optionally be laid out using a non-interactive default:
 
-1. Place the first share of the message at the next unused location in the matrix whose column in aligned with the largest power of 2 that is not larger than the message length or [`availableDataOriginalSquareSize`](#header), then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
+1. Place the first share of the message at the next unused location in the matrix whose column is aligned with the largest power of 2 that is not larger than the message length or [`availableDataOriginalSquareSize`](#header), then place the remaining shares in the following locations **unless** there are insufficient unused locations in the row.
 1. If there are insufficient unused locations in the row, place the first share of the message at the first column of the next row. Then place the remaining shares in the following locations. By construction, any message whose length is greater than [`availableDataOriginalSquareSize`](#header) will be placed in this way.
 
 In the example below, two messages (of lengths 2 and 1, respectively) are placed using the aforementioned default non-interactive rules.
@@ -895,7 +898,7 @@ In the delegation subtree, delegations are keyed by the [hash](#hashdigest) of t
 
 Validator objects represent all the information needed to be keep track of a validator.
 
-In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with [`ACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the active validator set or [`INACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the inactive validator set. Active validators are bonded, (i.e. `ValidatorBonded`), while inactive validators are not bonded (i.e. `ValidatorBonded`). By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
+In the validators subtrees, validators are keyed by the [hash](#hashdigest) of their [address](#address). The first byte is then replaced with [`ACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the active validator set or [`INACTIVE_VALIDATORS_SUBTREE_ID`](./consensus.md#reserved-state-subtree-ids) for the inactive validator set. Active validators are bonded, (i.e. `ValidatorBonded`), while inactive validators are not bonded (i.e. `ValidatorUnbonded`). By construction, the validators subtrees will be a subset of a mirror of the [accounts subtree](#account).
 
 The validator queue (i.e. validators with status `ValidatorQueued`) is a subset of the inactive validator set. This queue is represented as a linked list, with each validator pointing to the `next` validator in the queue, and the head of the linked list stored in [ValidatorQueueHead](#validatorqueuehead).
 
@@ -978,7 +981,7 @@ If the paid list is empty, `head` is set to the default value (i.e. the hash of 
 
 ## Consensus Parameters
 
-Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such a limits and constants.
+Various [consensus parameters](consensus.md#system-parameters) are committed to in the block header, such as limits and constants.
 
 | name                             | type                                  | description                               |
 |----------------------------------|---------------------------------------|-------------------------------------------|

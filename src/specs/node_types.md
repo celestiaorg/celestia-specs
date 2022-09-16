@@ -31,7 +31,7 @@ Secure under an honest supermajority of validator voting power and a weak subjec
 #### Extended Block Headers
 
 Nodes that process extended block headers will download and validate both the [compact block header](#compact-block-headers) and the
-[`availabledataheader`](./data_structures.md##availabledataheader) [block](./data_structures.md#block) field. These nodes can perform Data Availability Sampling on [block bodies](#block-bodies), and their security assumptions depend on how block bodies are handled.
+[`availableDataHeader`](./data_structures.md#availabledataheader) [block](./data_structures.md#block) field. These nodes can perform Data Availability Sampling on [block bodies](#block-bodies), and their security assumptions depend on how block bodies are handled.
 
 ### Block Bodies
 
@@ -41,7 +41,7 @@ Block bodies (the `availableData` [block](./data_structures.md#block) field) can
 
 Nodes that only process [compact block headers](#compact-block-headers) have no need for block bodies and simply do not process block bodies.
 
-Secure under an honest supermajority majority of validator voting power and a weak subjectivity assumption.
+Secure under an honest supermajority of validator voting power and a weak subjectivity assumption.
 
 #### Sampled Bodies
 
@@ -65,7 +65,7 @@ If [transactions are not processed](#no-transactions), secure under an honest mi
 
 #### No Transactions
 
-These nodes process do not process requests [with a reserved namespace ID](./data_structures.md#arranging-available-data-into-shares) and thus to not know the chain state without relying on a third party.
+These nodes do not process requests [with a reserved namespace ID](./data_structures.md#arranging-available-data-into-shares) and thus do not know the chain state without relying on a third party.
 
 At most secure under an honest minority of nodes and a weak subjectivity assumption.
 
