@@ -14,7 +14,7 @@ The following core ideas in this repository inform the implementation:
 
 1. [Erasure coding](./src/specs/data_structures.md#erasure-coding)
 2. [Namespace IDs](./src/specs/consensus.md#reserved-namespace-ids)
-3. [PayForMessage transaction](./src/specs/data_structures.md#signedtransactiondatapayformessage)
+3. [MsgPayForData transaction](./src/specs/data_structures.md#signedtransactiondatamsgpayfordata)
 4. [State transition](./src/specs/consensus.md#blockavailabledatatransactiondata)
 
 ## Building From Source

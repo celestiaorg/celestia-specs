@@ -19,7 +19,7 @@ message MessageCommitmentAndSignature {
   // 32-byte hash: commitment to message shares
   bytes share_commitment = 2;
   // 64-byte signature a single SignedTransactionPayForMessage
-  // https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#signedtransactiondatapayformessage
+  // https://github.com/celestiaorg/celestia-specs/blob/master/specs/data_structures.md#signedtransactiondatamsgpayfordata
   bytes signature = 3;
 }
 
@@ -31,8 +31,8 @@ message WireTxTransfer {
   uint64 nonce = 4;
 }
 
-// ANCHOR: WireTxPayForMessage
-message WireTxPayForMessage {
+// ANCHOR: MsgWirePayForData
+message MsgWirePayForData {
   TransactionFee fee = 1;
   uint64 nonce = 2;
   // 8-byte namespace ID
@@ -41,7 +41,7 @@ message WireTxPayForMessage {
   bytes message = 5;
   repeated MessageCommitmentAndSignature message_commitment_and_signature = 6;
 }
-// ANCHOR_END: WireTxPayForMessage
+// ANCHOR_END: MsgWirePayForData
 
 message WireTxCreateValidator {
   TransactionFee fee = 1;

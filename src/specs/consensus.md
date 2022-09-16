@@ -18,7 +18,7 @@
   - [`block.availableData.evidenceData`](#blockavailabledataevidencedata)
   - [`block.availableData.transactionData`](#blockavailabledatatransactiondata)
     - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
-    - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+    - [SignedTransactionDataMsgPayForData](#signedtransactiondatamsgpayfordata)
     - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
     - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
     - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
@@ -302,7 +302,7 @@ state.accounts[tx.to].balance += tx.amount
 state.activeValidatorSet.proposerBlockReward += tipCost(bytesPaid)
 ```
 
-#### SignedTransactionDataPayForMessage
+#### SignedTransactionDataMsgPayForData
 
 ```py
 bytesPaid = len(tx) + tx.messageSize
@@ -312,12 +312,12 @@ parentStartFinish = state.messagesPaid[parentFromMessagePaidList(findFromMessage
 
 The following checks must be `true`:
 
-1. `tx.type` == [`TransactionType.PayForMessage`](./data_structures.md#signedtransactiondata).
+1. `tx.type` == [`TransactionType.MsgPayForData`](./data_structures.md#signedtransactiondata).
 1. `totalCost(0, tx.fee.tipRate, bytesPaid)` <= `state.accounts[sender].balance`.
 1. `tx.nonce` == `state.accounts[sender].nonce + 1`.
 1. The `ceil(tx.messageSize / SHARE_SIZE)` shares starting at index `tx.messageStartIndex` must:
     1. Have namespace ID `tx.messageNamespaceID`.
-1. `tx.messageShareCommitment` == computed as described [here](./data_structures.md#signedtransactiondatapayformessage).
+1. `tx.messageShareCommitment` == computed as described [here](./data_structures.md#signedtransactiondatamsgpayfordata).
 1. `parentStartFinish.finish` < `tx.messageStartIndex`.
 1. `currentStartFinish.start` == `0` or `currentStartFinish.start` > `tx.messageStartIndex + ceil(tx.messageSize / SHARE_SIZE)`.
 

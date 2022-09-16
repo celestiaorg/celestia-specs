@@ -36,7 +36,7 @@
     - [Transaction](#transaction)
     - [SignedTransactionData](#signedtransactiondata)
       - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
-      - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+      - [SignedTransactionDataMsgPayForData](#signedtransactiondatamsgpayfordata)
       - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
       - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
       - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
@@ -377,7 +377,6 @@ Nodes contain a single field:
 |------|---------------------------|-------------|
 | `v`  | [HashDigest](#hashdigest) | Node value. |
 
-
 In the base case, where a sparse Merkle tree has `height = 0`, the root of a tree is defined as the [hash](#hashing) of the empty string:
 
 ```C++
@@ -392,7 +391,7 @@ For a tree with `height > 0`, the root of an empty tree is defined as the defaul
 node.v = 0x0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-Note that this is in contrast to the base case of the sparse and binary Merkle trees, where the root is the hash of the empty string. When a sparse Merkle tree has a height greater than 0, a new tree instance is composed of default value leaves. Nodes containing only default value children have the default value as well. Applying these rules recursively percolates the default value up to the tree's root.  
+Note that this is in contrast to the base case of the sparse and binary Merkle trees, where the root is the hash of the empty string. When a sparse Merkle tree has a height greater than 0, a new tree instance is composed of default value leaves. Nodes containing only default value children have the default value as well. Applying these rules recursively percolates the default value up to the tree's root.
 
 For leaf node `node` of leaf data `d` with key `k`:
 
@@ -575,7 +574,7 @@ Wrapped transactions include additional metadata by the block proposer that is c
 ```C++
 enum TransactionType : uint8_t {
     Transfer = 1,
-    PayForMessage = 2,
+    MsgPayForData = 2,
     CreateValidator = 3,
     BeginUnbondingValidator = 4,
     UnbondValidator = 5,
@@ -591,7 +590,7 @@ enum TransactionType : uint8_t {
 Signed transaction data comes in a number of types:
 
 1. [Transfer](#signedtransactiondatatransfer)
-1. [PayForMessage](#signedtransactiondatapayformessage)
+1. [MsgPayForData](#signedtransactiondatamsgpayfordata)
 1. [CreateValidator](#signedtransactiondatacreatevalidator)
 1. [BeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
 1. [UnbondValidator](#signedtransactiondataunbondvalidator)
@@ -624,11 +623,11 @@ Common fields are denoted here to avoid repeating descriptions:
 
 Transfers `amount` coins to `to`.
 
-##### SignedTransactionDataPayForMessage
+##### SignedTransactionDataMsgPayForData
 
 | name                     | type                              | description                                                  |
 |--------------------------|-----------------------------------|--------------------------------------------------------------|
-| `type`                   | `TransactionType`                 | Must be `TransactionType.PayForMessage`.                     |
+| `type`                   | `TransactionType`                 | Must be `TransactionType.MsgPayForData`.                     |
 | `fee`                    | [TransactionFee](#transactionfee) |                                                              |
 | `nonce`                  | [Nonce](#type-aliases)            |                                                              |
 | `messageNamespaceID`     | [`NamespaceID`](#type-aliases)    | Namespace ID of message this transaction pays a fee for.     |
