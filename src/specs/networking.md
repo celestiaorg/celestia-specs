@@ -4,7 +4,7 @@
   - [AvailableData](#availabledata)
   - [AvailableDataRow](#availabledatarow)
   - [ConsensusProposal](#consensusproposal)
-  - [WireTxPayForMessage](#wiretxpayformessage)
+  - [MsgWirePayForData](#msgwirepayfordata)
 - [Invalid Erasure Coding](#invalid-erasure-coding)
   - [ShareProof](#shareproof)
   - [BadEncodingFraudProof](#badencodingfraudproof)
@@ -58,19 +58,19 @@ When receiving a new block proposal `proposal` from the network, the following s
 1. For [full nodes](./node_types.md#node-type-definitions), `proposal.da_header` must be the result of computing the roots of the shares (received separately).
 1. For [light nodes](./node_types.md#node-type-definitions), `proposal.da_header` should be sampled from for availability.
 
-### WireTxPayForMessage
+### MsgWirePayForData
 
-Defined as `WireTxPayForMessage`:
+Defined as `MsgWirePayForData`:
 
 ```protobuf
-{{#include ./proto/wire.proto:WireTxPayForMessage}}
+{{#include ./proto/wire.proto:MsgWirePayForData}}
 ```
 
-Accepting a `WireTxPayForMessage` into the mempool requires different logic than other transactions in Celestia, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike [SignedTransactionDataPayForMessage](./data_structures.md#signedtransactiondatapayformessage) (the canonical data type that is included in blocks and committed to with a data root in the block header), each `WireTxPayForMessage` (the over-the-wire representation of the same) has potentially multiple signatures.
+Accepting a `MsgWirePayForData` into the mempool requires different logic than other transactions in Celestia, since it leverages the paradigm of block proposers being able to malleate transaction data. Unlike [SignedTransactionDataMsgPayForData](./data_structures.md#signedtransactiondatamsgpayfordata) (the canonical data type that is included in blocks and committed to with a data root in the block header), each `MsgWirePayForData` (the over-the-wire representation of the same) has potentially multiple signatures.
 
-Transaction senders who want to pay for a message will create a [SignedTransactionDataPayForMessage](./data_structures.md#signedtransactiondatapayformessage) object, `stx`, filling in the `stx.messageShareCommitment` field [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) for `k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`, then signing it to get a [transaction](./data_structures.md#transaction) `tx`. This process is repeated with successively smaller `k`s, decreasing by powers of 2 until `k * k <= stx.messageSize`. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of `(tx.signedTransactionData.messageShareCommitment, tx.signature)`, a `WireTxPayForMessage` object is constructed.
+Transaction senders who want to pay for a message will create a [SignedTransactionDataMsgPayForData](./data_structures.md#signedtransactiondatamsgpayfordata) object, `stx`, filling in the `stx.messageShareCommitment` field [based on the non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) for `k = AVAILABLE_DATA_ORIGINAL_SQUARE_MAX`, then signing it to get a [transaction](./data_structures.md#transaction) `tx`. This process is repeated with successively smaller `k`s, decreasing by powers of 2 until `k * k <= stx.messageSize`. At that point, there would be insufficient shares to include both the message and transaction. Using the rest of the signed transaction data along with the pairs of `(tx.signedTransactionData.messageShareCommitment, tx.signature)`, a `MsgWirePayForData` object is constructed.
 
-Receiving a `WireTxPayForMessage` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
+Receiving a `MsgWirePayForData` object from the network follows the reverse process: for each `message_commitment_and_signature`, verify using the [non-interactive default rules](../rationale/message_block_layout.md#non-interactive-default-rules) that the signature is valid.
 
 ## Invalid Erasure Coding
 

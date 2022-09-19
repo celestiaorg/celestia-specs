@@ -36,7 +36,7 @@
     - [Transaction](#transaction)
     - [SignedTransactionData](#signedtransactiondata)
       - [SignedTransactionDataTransfer](#signedtransactiondatatransfer)
-      - [SignedTransactionDataPayForMessage](#signedtransactiondatapayformessage)
+      - [SignedTransactionDataMsgPayForData](#signedtransactiondatamsgpayfordata)
       - [SignedTransactionDataCreateValidator](#signedtransactiondatacreatevalidator)
       - [SignedTransactionDataBeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
       - [SignedTransactionDataUnbondValidator](#signedtransactiondataunbondvalidator)
@@ -577,7 +577,7 @@ Wrapped transactions include additional metadata by the block proposer that is c
 ```C++
 enum TransactionType : uint8_t {
     Transfer = 1,
-    PayForMessage = 2,
+    MsgPayForData = 2,
     CreateValidator = 3,
     BeginUnbondingValidator = 4,
     UnbondValidator = 5,
@@ -593,7 +593,7 @@ enum TransactionType : uint8_t {
 Signed transaction data comes in a number of types:
 
 1. [Transfer](#signedtransactiondatatransfer)
-1. [PayForMessage](#signedtransactiondatapayformessage)
+1. [MsgPayForData](#signedtransactiondatamsgpayfordata)
 1. [CreateValidator](#signedtransactiondatacreatevalidator)
 1. [BeginUnbondingValidator](#signedtransactiondatabeginunbondingvalidator)
 1. [UnbondValidator](#signedtransactiondataunbondvalidator)
@@ -626,11 +626,11 @@ Common fields are denoted here to avoid repeating descriptions:
 
 Transfers `amount` coins to `to`.
 
-##### SignedTransactionDataPayForMessage
+##### SignedTransactionDataMsgPayForData
 
 | name                     | type                              | description                                                  |
 |--------------------------|-----------------------------------|--------------------------------------------------------------|
-| `type`                   | `TransactionType`                 | Must be `TransactionType.PayForMessage`.                     |
+| `type`                   | `TransactionType`                 | Must be `TransactionType.MsgPayForData`.                     |
 | `fee`                    | [TransactionFee](#transactionfee) |                                                              |
 | `nonce`                  | [Nonce](#type-aliases)            |                                                              |
 | `messageNamespaceID`     | [`NamespaceID`](#type-aliases)    | Namespace ID of message this transaction pays a fee for.     |
